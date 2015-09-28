@@ -26,16 +26,13 @@ public class MyGame extends Game {
 			case 0:
 				this.setScreen(new Stage_test(this));
 				break;
-		
 		}
-		
 	}
 	
 	@Override
 	public void dispose(){
 		batch.dispose();
 		img.dispose();
-		
 	}
 	
 }

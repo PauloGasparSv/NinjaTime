@@ -11,7 +11,8 @@ public class DesktopLauncher {
 		config.title = "Ninja Time";
 		config.useGL30 = false;
 		config.width = 800;
-		config.height = 600;		
+		config.height = 600;
+		config.resizable = false;
 		
 		new LwjglApplication(new MyGame(), config);
 	}
