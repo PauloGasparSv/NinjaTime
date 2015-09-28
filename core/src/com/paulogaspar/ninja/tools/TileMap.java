@@ -49,12 +49,25 @@ public class TileMap {
 		
 	}
 	
-	public void draw(SpriteBatch batch){
-		for(int line = 0; line < num_tiles[1]; line++)
-			for(int col = 0; col < num_tiles[0]; col++)
-				try{
-				batch.draw(tiles[map[line][col]], col*64,line*64,64,64);
-				}catch(Exception e){}
+	public void draw(SpriteBatch batch,float camera_x,float camera_y){
+		int begin_x = (int)(camera_x-20)/64;
+		if(begin_x < 0)
+			begin_x = 0;
+		int end_x = (int)(camera_x+870)/64;
+		if(end_x > num_tiles[0])
+			end_x = num_tiles[0];
+		int begin_y = (int)(camera_y-20)/64;
+		if(begin_y < 0)
+			begin_y = 0;
+		int end_y = (int)(camera_y+670)/64;
+		if(end_y > num_tiles[1])
+			end_y = num_tiles[1];
+		
+		for(int line = begin_y; line < end_y; line++)
+			for(int col = begin_x; col < end_x; col++)
+				if(map[line][col] != -1)
+					batch.draw(tiles[map[line][col]], col*64,line*64,64,64);
+		
 	}
 	
 	public void dispose(){

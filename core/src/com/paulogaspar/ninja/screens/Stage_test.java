@@ -80,7 +80,7 @@ public class Stage_test implements Screen {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		
-		tilemap.draw(batch);
+		tilemap.draw(batch,camera.position.x - 400,camera.position.y-300);
 		player.draw(batch);;
 	
 		//font.draw(batch,i , 20, 400);
