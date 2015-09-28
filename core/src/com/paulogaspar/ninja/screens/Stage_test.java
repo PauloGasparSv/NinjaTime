@@ -33,7 +33,7 @@ public class Stage_test implements Screen {
 		font = new BitmapFont(Gdx.files.internal("Misc/font.fnt"),Gdx.files.internal("Misc/font.png"),false);
 		
 		tilemap = new TileMap();
-		player = new Ninja();
+		player = new Ninja(camera);
 		
 	}
 	
@@ -64,8 +64,12 @@ public class Stage_test implements Screen {
 		if(Gdx.input.isKeyPressed(Input.Keys.S) && camera.position.y - 300 > 8)
 			camera.translate(0,-350*delta);
 		
-		player.update(delta,tilemap.map);
-		
+		player.update(delta,tilemap.map,tilemap.width,tilemap.height);
+		if(camera.position.x + 400 - player.position[0] < 360 && camera.position.x - 400 < tilemap.width-808 && player.speed_x > 0)
+			camera.translate(player.speed_x,0);
+		if(player.position[0] - (camera.position.x - 400) < 300 && player.speed_x < 0 && camera.position.x - 400 > 8)
+			camera.translate(player.speed_x, 0);
+		//&& camera.position.x - 400 > 8
 		
 		//on end
 		//dispose();
