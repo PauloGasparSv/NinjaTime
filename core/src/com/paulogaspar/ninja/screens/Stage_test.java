@@ -48,7 +48,7 @@ public class Stage_test implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		update(delta);
-		draw();	
+		draw();
 		
 	}
 
@@ -72,7 +72,7 @@ public class Stage_test implements Screen {
 		//&& camera.position.x - 400 > 8
 		
 		//on end
-		//dispose();
+		//this.dispose();
 		
 	}
 	

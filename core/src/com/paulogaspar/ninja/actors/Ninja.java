@@ -25,6 +25,13 @@ public class Ninja {
 	
 	private OrthographicCamera camera;
 	
+	private Animation smoke_bomb[];
+	private float smoke_elapsed;
+	
+	public float time_mod;
+	public boolean stop_time;
+	public boolean slow_time;
+	
 	public Ninja(OrthographicCamera camera){
 		this.camera = camera;
 		animation =  new Animation[2];
@@ -61,11 +68,15 @@ public class Ninja {
 		
 		grounded = false;
 		
+		slow_time = false;
+		stop_time = false;
+		time_mod = 1;
+		
 	}
 	
 	public void update(float delta,int map[][],int width,int height){
-		elapsed_time += delta;
-		
+		elapsed_time += delta * time_mod;
+				
 		int x1 = ((int)(position[0]+10)/64);
 		int x2 = ((int)(position[0]+54)/64);
 		int y = ((int)(position[1]+4)/64);
@@ -90,15 +101,26 @@ public class Ninja {
 		}
 			
 		if(!grounded && speed_y < 8){
-			speed_y += delta*14.75f;
+			speed_y += delta*14.75f*time_mod;
 		}
-			
+		
+		if(Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
+			if(!slow_time){
+				slow_time = true;
+				time_mod = 0.5f;
+			}
+			else{
+				slow_time = false;
+				time_mod = 1f;
+			}
+		}
+		
 		if(Gdx.input.isKeyPressed(Input.Keys.D)){
 			facing_right = true;
 			if(speed_x < 4.5f)
-				speed_x += delta*6.5f;
+				speed_x += delta*6.5f*time_mod;
 			if(speed_x < 0)
-				speed_x += delta*4.5f;
+				speed_x += delta*4.5f*time_mod;
 				
 			if(current == IDLE){
 				elapsed_time = 0f;
@@ -109,9 +131,9 @@ public class Ninja {
 		else if(Gdx.input.isKeyPressed(Input.Keys.A)){
 			facing_right = false;
 			if(speed_x > -4.5f)
-				speed_x -= delta*6.5f;
+				speed_x -= delta*6.5f*time_mod;
 			if(speed_x > 0)
-				speed_x -= delta*4.5f;
+				speed_x -= delta*4.5f*time_mod;
 				
 			if(current == IDLE){
 				elapsed_time = 0f;
@@ -122,9 +144,9 @@ public class Ninja {
 			if(speed_x < 0.25f && speed_x > -0.25f)
 				speed_x = 0;
 			if(speed_x > 0.25f)
-				speed_x -= delta*8;
+				speed_x -= delta*8*time_mod;
 			if(speed_x < -0.25f)
-				speed_x += delta*8;
+				speed_x += delta*8*time_mod;
 				
 			if(current == WALK){
 				elapsed_time = 0f;
@@ -161,8 +183,8 @@ public class Ninja {
 			}
 		}
 		
-		position[0] += speed_x;
-		position[1] -= speed_y;
+		position[0] += speed_x*time_mod;
+		position[1] -= speed_y*time_mod;
 		if(position[0] < 0)
 			position[0] = 0;
 		if(position[0] > width-72)
@@ -178,8 +200,9 @@ public class Ninja {
 		TextureRegion frame = animation[current].getKeyFrame(elapsed_time,true);
 		if(facing_right == frame.isFlipX())
 			frame.flip(true, false);
-		
+		batch.setColor(1, 1, 1, 1);
 		batch.draw(frame,position[0],position[1],64,64);
+		batch.setColor(1, 1, 1, 1);
 	}
 	
 	public void dispose(){
