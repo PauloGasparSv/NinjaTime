@@ -68,13 +68,18 @@ public class Ninja {
 		
 		int x1 = ((int)(position[0]+10)/64);
 		int x2 = ((int)(position[0]+54)/64);
-		int y1 = ((int)(position[1]+5)/64);
+		int y = ((int)(position[1]+4)/64);
 		
-		if(map[y1][x1] == -1 && map[y1][x2] == -1){
+		int y2 = ((int)(position[1]+58)/64);
+		int y1 = ((int)(position[1]+12)/64);
+		int xr = ((int)(position[0]+64)/64);
+		int xl = ((int)(position[0])/64);
+		
+		if(map[y][x1] == -1 && map[y][x2] == -1){
 			grounded = false;
 		}
-		else if(map[y1][x1] != 16 && map[y1][x2] != 16 && map[y1][x1] != 17 && map[y1][x2] != 17
-				&& map[y1][x1] != 22 && map[y1][x2] != 22 && map[y1][x1] != 23 && map[y1][x2] != 23){
+		else if(map[y][x1] != 16 && map[y][x2] != 16 && map[y][x1] != 17 && map[y][x2] != 17
+				&& map[y][x1] != 22 && map[y][x2] != 22 && map[y][x1] != 23 && map[y][x2] != 23){
 			grounded = true;
 			jump_count = 0;	
 			speed_y = 0;
@@ -83,7 +88,7 @@ public class Ninja {
 			die();
 		}
 				
-		if(!grounded && speed_y < 10){
+		if(!grounded && speed_y < 8){
 			speed_y += delta*14.75f;
 		}
 			
@@ -93,20 +98,20 @@ public class Ninja {
 				speed_x += delta*6.5f;
 			if(speed_x < 0)
 				speed_x += delta*4.5f;
-			
+				
 			if(current == IDLE){
 				elapsed_time = 0f;
 				current = WALK;
 			}
+			
 		}
 		else if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
 			facing_right = false;
-			
 			if(speed_x > -5)
 				speed_x -= delta*6.5f;
 			if(speed_x > 0)
 				speed_x -= delta*4.5f;
-			
+				
 			if(current == IDLE){
 				elapsed_time = 0f;
 				current = WALK;
@@ -132,6 +137,16 @@ public class Ninja {
 			speed_y = -8;
 		}
 				
+		
+		if(current == WALK){
+			if(facing_right && (map[y1][xr] != -1 || map[y2][xr] != -1)){
+				speed_x = 0;			
+			}
+			else if(map[y1][xl] != -1 || map[y2][xl] != -1){
+				speed_x = 0;
+			}
+		}
+		
 		position[0] += speed_x;
 		position[1] -= speed_y;
 		if(position[0] < -32)
