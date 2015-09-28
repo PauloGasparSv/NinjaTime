@@ -7,6 +7,12 @@ import com.paulogaspar.ninja.MyGame;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		
+		config.title = "Ninja Time";
+		config.useGL30 = false;
+		config.width = 800;
+		config.height = 600;		
+		
 		new LwjglApplication(new MyGame(), config);
 	}
 }
