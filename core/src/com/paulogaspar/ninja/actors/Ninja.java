@@ -70,31 +70,32 @@ public class Ninja {
 		int x2 = ((int)(position[0]+54)/64);
 		int y = ((int)(position[1]+4)/64);
 		
-		int y2 = ((int)(position[1]+58)/64);
+		int y2 = ((int)(position[1]+48)/64);
 		int y1 = ((int)(position[1]+12)/64);
 		int xr = ((int)(position[0]+64)/64);
 		int xl = ((int)(position[0])/64);
 		
+		int yu = ((int)(position[1]+54)/64);
+		int xl2 = ((int)(position[0]+16)/64);
+		int xr2 = ((int)(position[0]+48)/64);
+		
+		grounded = true;
 		if(map[y][x1] == -1 && map[y][x2] == -1){
 			grounded = false;
 		}
-		else if(map[y][x1] != 16 && map[y][x2] != 16 && map[y][x1] != 17 && map[y][x2] != 17
-				&& map[y][x1] != 22 && map[y][x2] != 22 && map[y][x1] != 23 && map[y][x2] != 23){
-			grounded = true;
+		
+		if(grounded){
 			jump_count = 0;	
 			speed_y = 0;
 		}
-		else{
-			die();
-		}
-				
+			
 		if(!grounded && speed_y < 8){
 			speed_y += delta*14.75f;
 		}
 			
-		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+		if(Gdx.input.isKeyPressed(Input.Keys.D)){
 			facing_right = true;
-			if(speed_x < 5)
+			if(speed_x < 4.5f)
 				speed_x += delta*6.5f;
 			if(speed_x < 0)
 				speed_x += delta*4.5f;
@@ -105,9 +106,9 @@ public class Ninja {
 			}
 			
 		}
-		else if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+		else if(Gdx.input.isKeyPressed(Input.Keys.A)){
 			facing_right = false;
-			if(speed_x > -5)
+			if(speed_x > -4.5f)
 				speed_x -= delta*6.5f;
 			if(speed_x > 0)
 				speed_x -= delta*4.5f;
@@ -131,28 +132,41 @@ public class Ninja {
 			}
 		}
 		
-		if(Gdx.input.isKeyPressed(Input.Keys.Z) && grounded && jump_count < 2){
-			jump_count ++;
+		if((Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) && jump_count < 2){
+			if(!grounded)
+				jump_count = 2;
+			else
+				jump_count = 1;
 			grounded = false;
-			speed_y = -8;
+			if(jump_count == 1)
+				speed_y = -8;
+			else
+				speed_y = -4.5f;
+		}
+		
+		if(jump_count != 0 && (map[yu][xl2] != -1 || map[yu][xr2]!=-1) && speed_y < 0){
+			speed_y = 0;
 		}
 				
 		
+		
 		if(current == WALK){
-			if(facing_right && (map[y1][xr] != -1 || map[y2][xr] != -1)){
-				speed_x = 0;			
-			}
-			else if(map[y1][xl] != -1 || map[y2][xl] != -1){
+			if(speed_x > 0 && (map[y1][xr] != -1 || map[y2][xr] != -1)){
 				speed_x = 0;
+				position[0] -= 1;
+			}
+			if(speed_x < 0 && (map[y1][xl] != -1 || map[y2][xl] != -1)){
+				speed_x = 0;
+				position[0] += 1;
 			}
 		}
 		
 		position[0] += speed_x;
 		position[1] -= speed_y;
-		if(position[0] < -32)
-			position[0] = -32;
-		if(position[0] > width-64)
-			position[0] = width-64;
+		if(position[0] < 0)
+			position[0] = 0;
+		if(position[0] > width-72)
+			position[0] = width-72;
 	}
 	
 	public void die(){

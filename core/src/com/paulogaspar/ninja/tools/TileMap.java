@@ -10,16 +10,16 @@ public class TileMap {
 	private Texture tileset;
 	private TextureRegion tiles[];
 	
-	private int num_tiles[] = {15,10};
+	private int num_tiles[];
 	
-	public int width = num_tiles[0]*64;
-	public int height = num_tiles[1]*64;
+	public int width;
+	public int height;
 	
 	public int map[][] = {
 			{10,3,4,4,4,4,4,4,2,3,4,4,4,4,4},
 			{10,5,23,23,23,23,23,23,10,5,-1,-1,-1,-1,-1},
 			{0,1,-1,-1,-1,-1,-1,-1,0,1,-1,-1,-1,-1,-1},
-			{-1,-1,-1,-1,-1,-1,28,-1,-1,-1,-1,-1,-1,-1,-1},
+			{-1,-1,-1,-1,-1,-1,28,-1,-1,-1,-1,28,-1,-1,-1},
 			{-1,-1,-1,28,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
 			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
 			{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
@@ -40,6 +40,12 @@ public class TileMap {
 			}
 		}
 		tiles[30] = new TextureRegion(tileset,96,16,16,16);
+		
+		num_tiles = new int[2];
+		num_tiles[0] = map[0].length;
+		num_tiles[1] = map.length;
+		width = num_tiles[0]*64;
+		height = num_tiles[1]*64;
 		
 	}
 	

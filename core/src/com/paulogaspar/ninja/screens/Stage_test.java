@@ -55,13 +55,13 @@ public class Stage_test implements Screen {
 	private void update(float delta){
 		camera.update();
 		
-		if(Gdx.input.isKeyPressed(Input.Keys.D) && camera.position.x - 400 < tilemap.width-808)
+		if(Gdx.input.isKeyPressed(Input.Keys.L) && camera.position.x - 400 < tilemap.width-808)
 			camera.translate(350*delta, 0);
-		if(Gdx.input.isKeyPressed(Input.Keys.A) && camera.position.x - 400 > 8)
+		if(Gdx.input.isKeyPressed(Input.Keys.J) && camera.position.x - 400 > 8)
 			camera.translate(-350*delta, 0);
-		if(Gdx.input.isKeyPressed(Input.Keys.W) && camera.position.y - 300 < tilemap.height-608)
+		if(Gdx.input.isKeyPressed(Input.Keys.I) && camera.position.y - 300 < tilemap.height-608)
 			camera.translate(0,350*delta);
-		if(Gdx.input.isKeyPressed(Input.Keys.S) && camera.position.y - 300 > 8)
+		if(Gdx.input.isKeyPressed(Input.Keys.K) && camera.position.y - 300 > 8)
 			camera.translate(0,-350*delta);
 		
 		player.update(delta,tilemap.map,tilemap.width,tilemap.height);
