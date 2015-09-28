@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.paulogaspar.ninja.MyGame;
 import com.paulogaspar.ninja.actors.Ninja;
@@ -21,11 +22,15 @@ public class Stage_test implements Screen {
 	
 	private Ninja player;
 	
+	private BitmapFont font;
+	
 	public Stage_test(MyGame game) {
 		this.game = game;
 		batch = this.game.batch;
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false,800,600);
+		
+		font = new BitmapFont(Gdx.files.internal("Misc/font.fnt"),Gdx.files.internal("Misc/font.png"),false);
 		
 		tilemap = new TileMap();
 		player = new Ninja();
@@ -59,7 +64,7 @@ public class Stage_test implements Screen {
 		if(Gdx.input.isKeyPressed(Input.Keys.S) && camera.position.y - 300 > 8)
 			camera.translate(0,-350*delta);
 		
-		player.update(delta);
+		player.update(delta,tilemap.map);
 		
 		
 		//on end
@@ -73,6 +78,8 @@ public class Stage_test implements Screen {
 		
 		tilemap.draw(batch);
 		player.draw(batch);;
+	
+		//font.draw(batch,i , 20, 400);
 		
 		batch.end();
 	}
@@ -101,6 +108,7 @@ public class Stage_test implements Screen {
 	public void dispose() {
 		batch = null;
 		game = null;
+		font.dispose();
 		tilemap.dispose();
 	}
 
