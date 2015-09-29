@@ -25,8 +25,8 @@ public class Ninja {
 	
 	private OrthographicCamera camera;
 	
-	//private Animation smoke_bomb[];
-	//private float smoke_elapsed;
+	private Animation smoke_bomb;
+	private float smoke_elapsed;
 	
 	private TextureRegion gauge[];
 	private Texture gauge_texture;
@@ -37,14 +37,17 @@ public class Ninja {
 	private boolean slow_time;
 	private float timer;
 	
+	private boolean touching;
+	private float teleport_pos[];
+	
 	public Ninja(OrthographicCamera camera){
 		this.camera = camera;
 		animation =  new Animation[2];
 		
 		TextureRegion[] temp = new TextureRegion[4];
-		for(int i = 1; i < 5; i++){
+		for(int i = 1; i < 5; i++)
 			temp[i-1] = new TextureRegion(new Texture(Gdx.files.internal("Ninja/run"+i+".png")));
-		}
+		
 		animation[WALK] = new Animation(0.25f,temp);
 		
 		temp = new TextureRegion[2];
@@ -52,12 +55,20 @@ public class Ninja {
 		temp[1] = new TextureRegion(new Texture(Gdx.files.internal("Ninja/idle2.png")));
 		animation[IDLE] = new Animation(0.75f,temp);
 		
+		temp = new TextureRegion[4];
+		for(int i = 1; i < 5; i++)
+			temp[i-1] = new TextureRegion(new Texture(Gdx.files.internal("Misc/spr_smoke_"+i+".png")));
+		
+		smoke_bomb = new Animation(0.07f,temp);
+		
+		
 		gauge = new TextureRegion[5];
 		gauge_texture = new Texture(Gdx.files.internal("Misc/meter.png"));
 		for(int i = 0; i < 5; i++)
 			gauge[i] = new TextureRegion(gauge_texture,171,0,(4-i)*14,20);
 		
 		position = new float[2];
+		teleport_pos = new float[2];
 		init();
 	
 	}
@@ -65,6 +76,9 @@ public class Ninja {
 	public void init(){
 		position[0] = 20f;
 		position[1] = 280f;
+		
+		teleport_pos[0] = 0;
+		teleport_pos[1] = 0;
 		
 		elapsed_time = 0f;
 		
@@ -82,8 +96,11 @@ public class Ninja {
 		stop_time = false;
 		time_mod = 1;
 		
+		touching = false;
+		
 		timer = 0;
 		current_gauge = 0;
+		smoke_elapsed = 0;
 	}
 	
 	public void update(float delta,int map[][],int width,int height){
@@ -118,7 +135,8 @@ public class Ninja {
 
 		if(slow_time)
 			timer += delta*1.5f;
-	
+		if(stop_time)
+			timer += delta*0.8f;
 		if(slow_time){
 			if(timer > 5){
 				time_mod = 1f;
@@ -132,12 +150,45 @@ public class Ninja {
 				slow_time = false;
 			}
 		}
+		
+	
+		if(stop_time){
+			smoke_elapsed += delta;
+			if(timer < 5)
+				current_gauge = 4 - (int)timer;
+			if(timer > 5){
+				stop_time = false;
+				timer = 0;
+			}
+		}
 	
 		
-		if(Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT) && current_gauge == 0){
-				slow_time = true;
-				time_mod = 0.5f;
-				timer = delta;
+		if(Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT) && current_gauge == 0 && !slow_time && !stop_time){
+			slow_time = true;
+			time_mod = 0.5f;
+			timer = delta;
+		}
+		if(Gdx.input.isTouched() && !slow_time && !stop_time){
+			touching = true;
+			smoke_elapsed = 0;
+			int tx = ((int)(camera.position.x-400+Gdx.input.getX())/64);
+			int ty =  ((int)(camera.position.y-300+(600-Gdx.input.getY()))/64);
+			if(map[ty][tx] == -1){
+				teleport_pos[0] = tx*64;
+				teleport_pos[1] = ty*64;
+			}
+		}
+		if(!Gdx.input.isTouched()&& !slow_time && !stop_time && touching){
+			stop_time = true;
+			touching = false;
+			timer = delta;
+			current_gauge = 4;
+			float tx = position[0];
+			float ty = position[1];
+			position[0] = teleport_pos[0];
+			position[1] = teleport_pos[1];
+			teleport_pos[0] = tx;
+			teleport_pos[1] = ty;
 		}
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.D)){
@@ -225,12 +276,22 @@ public class Ninja {
 		TextureRegion frame = animation[current].getKeyFrame(elapsed_time,true);
 		if(facing_right == frame.isFlipX())
 			frame.flip(true, false);
-		batch.setColor(1, 1, 1, 1);
-		batch.draw(frame,position[0],position[1],64,64);
-		batch.setColor(1, 1, 1, 1);
 		
-		if(slow_time)
+		batch.draw(frame,position[0],position[1],64,64);
+		
+		if(slow_time || stop_time)
 			batch.draw(gauge[current_gauge],position[0]+5,position[1]+70);
+		
+		if(touching){
+			batch.setColor(0, 0, 0, 0.5f);
+			batch.draw(frame,teleport_pos[0],teleport_pos[1],64,64);
+			batch.setColor(1, 1, 1, 1);
+		}
+		
+		if(stop_time && !smoke_bomb.isAnimationFinished(smoke_elapsed)){
+			batch.draw(smoke_bomb.getKeyFrame(smoke_elapsed,false),position[0],position[1],64,64);
+			batch.draw(smoke_bomb.getKeyFrame(smoke_elapsed,false),teleport_pos[0],teleport_pos[1],64,64);			
+		}
 		
 	}
 	
