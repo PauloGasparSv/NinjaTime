@@ -171,8 +171,19 @@ public class Ninja {
 		if(Gdx.input.isTouched() && !slow_time && !stop_time){
 			touching = true;
 			smoke_elapsed = 0;
+			teleport_pos[0] = position[0];
+			teleport_pos[1] = position[1];
 			int tx = ((int)(camera.position.x-400+Gdx.input.getX())/64);
 			int ty =  ((int)(camera.position.y-300+(600-Gdx.input.getY()))/64);
+			if(tx < 0)
+				tx = 0;
+			if(tx > map[0].length)
+				tx = map[0].length;
+			if(ty < 0)
+				ty = 0;
+			if(ty > map.length)
+				ty = map.length;
+			
 			if(map[ty][tx] == -1){
 				teleport_pos[0] = tx*64;
 				teleport_pos[1] = ty*64;
