@@ -25,12 +25,17 @@ public class Ninja {
 	
 	private OrthographicCamera camera;
 	
-	private Animation smoke_bomb[];
-	private float smoke_elapsed;
+	//private Animation smoke_bomb[];
+	//private float smoke_elapsed;
 	
-	public float time_mod;
-	public boolean stop_time;
-	public boolean slow_time;
+	private TextureRegion gauge[];
+	private Texture gauge_texture;
+	private int current_gauge;
+	
+	private float time_mod;
+	private boolean stop_time;
+	private boolean slow_time;
+	private float timer;
 	
 	public Ninja(OrthographicCamera camera){
 		this.camera = camera;
@@ -46,6 +51,11 @@ public class Ninja {
 		temp[0] = new TextureRegion(new Texture(Gdx.files.internal("Ninja/idle1.png")));
 		temp[1] = new TextureRegion(new Texture(Gdx.files.internal("Ninja/idle2.png")));
 		animation[IDLE] = new Animation(0.75f,temp);
+		
+		gauge = new TextureRegion[5];
+		gauge_texture = new Texture(Gdx.files.internal("Misc/meter.png"));
+		for(int i = 0; i < 5; i++)
+			gauge[i] = new TextureRegion(gauge_texture,171,0,(4-i)*14,20);
 		
 		position = new float[2];
 		init();
@@ -72,6 +82,8 @@ public class Ninja {
 		stop_time = false;
 		time_mod = 1;
 		
+		timer = 0;
+		current_gauge = 0;
 	}
 	
 	public void update(float delta,int map[][],int width,int height){
@@ -103,16 +115,29 @@ public class Ninja {
 		if(!grounded && speed_y < 8){
 			speed_y += delta*14.75f*time_mod;
 		}
+
+		if(slow_time)
+			timer += delta*1.5f;
+	
+		if(slow_time){
+			if(timer > 5){
+				time_mod = 1f;
+				current_gauge =9-(int)timer;
+			}
+			else
+				current_gauge = (int)timer;
+			if(timer > 10){
+				timer = 0;
+				current_gauge = 0;
+				slow_time = false;
+			}
+		}
+	
 		
-		if(Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
-			if(!slow_time){
+		if(Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT) && current_gauge == 0){
 				slow_time = true;
 				time_mod = 0.5f;
-			}
-			else{
-				slow_time = false;
-				time_mod = 1f;
-			}
+				timer = delta;
 		}
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.D)){
@@ -203,11 +228,20 @@ public class Ninja {
 		batch.setColor(1, 1, 1, 1);
 		batch.draw(frame,position[0],position[1],64,64);
 		batch.setColor(1, 1, 1, 1);
+		
+		if(slow_time)
+			batch.draw(gauge[current_gauge],position[0]+5,position[1]+70);
+		
 	}
 	
 	public void dispose(){
 		camera = null;
+		gauge_texture.dispose();
 	}
 	
 	
 }
+
+
+
+
