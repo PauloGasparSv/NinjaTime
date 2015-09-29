@@ -120,7 +120,7 @@ public class Ninja {
 		int xr2 = ((int)(position[0]+48)/64);
 		
 		grounded = true;
-		if(map[y][x1] == -1 && map[y][x2] == -1){
+		if(map[y][x1] == -1 && map[y][x2] == -1||map[y][x1] == 23 && map[y][x2] == 23){
 			grounded = false;
 		}
 		
@@ -129,7 +129,7 @@ public class Ninja {
 			speed_y = 0;
 		}
 			
-		if(!grounded && speed_y < 8){
+		if(!grounded && speed_y < 7.4f){
 			speed_y += delta*14.75f*time_mod;
 		}
 
@@ -161,7 +161,6 @@ public class Ninja {
 				timer = 0;
 			}
 		}
-	
 		
 		if(Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT) && current_gauge == 0 && !slow_time && !stop_time){
 			slow_time = true;
@@ -204,7 +203,7 @@ public class Ninja {
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.D)){
 			facing_right = true;
-			if(speed_x < 4.5f)
+			if(speed_x < 4.2f)
 				speed_x += delta*6.5f*time_mod;
 			if(speed_x < 0)
 				speed_x += delta*4.5f*time_mod;
@@ -217,7 +216,7 @@ public class Ninja {
 		}
 		else if(Gdx.input.isKeyPressed(Input.Keys.A)){
 			facing_right = false;
-			if(speed_x > -4.5f)
+			if(speed_x > -4.2f)
 				speed_x -= delta*6.5f*time_mod;
 			if(speed_x > 0)
 				speed_x -= delta*4.5f*time_mod;
@@ -279,8 +278,9 @@ public class Ninja {
 	}
 	
 	public void die(){
-		init();
-		camera.translate(-1*((camera.position.x-400)-position[0]),0);
+		init();//
+		System.out.println(camera.position.x);
+		camera.translate(-1*(camera.position.x-400),0);
 	}
 	
 	public void draw(SpriteBatch batch){

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.paulogaspar.ninja.MyGame;
 import com.paulogaspar.ninja.actors.Ninja;
 import com.paulogaspar.ninja.tools.TileMap;
@@ -73,6 +74,11 @@ public class Stage_test implements Screen {
 		
 		//on end
 		//this.dispose();
+		
+		if(new Rectangle(player.position[0]+2,player.position[1]+2,60,60).overlaps(new Rectangle(128,24,512,64))){
+			player.die();
+		}
+		
 		
 	}
 	
