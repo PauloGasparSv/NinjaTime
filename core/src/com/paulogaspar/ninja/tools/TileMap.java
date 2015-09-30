@@ -22,9 +22,10 @@ public class TileMap {
 	
 	public int map[][];
 	public boolean edit_mode;
+	private int ribbon;
 	
 	public TileMap(){
-		FileHandle file = Gdx.files.internal("mapa.mapa");
+		FileHandle file = Gdx.files.local("Maps/mapa.mapa");
 		String text = file.readString();
 		
 		@SuppressWarnings("resource")
@@ -36,7 +37,10 @@ public class TileMap {
 		num_tiles[1] = Integer.parseInt(t.split(" ")[1]);
 		map = new int[num_tiles[0]][num_tiles[1]];
 		for(int line = 0; line < num_tiles[0]; line++){
+			System.out.println(num_tiles[0]);
+			System.out.println(line);
 			String temp[] = sc.nextLine().split(" ");
+			
 			for(int col = 0; col < num_tiles[1]; col++){
 				map[line][col] = Integer.parseInt(temp[col]);
 			}
@@ -58,16 +62,27 @@ public class TileMap {
 		width = num_tiles[1]*64;
 		height = num_tiles[0]*64;
 		edit_mode = true;
+		ribbon = -1;
 	}
 	
 	public void edit(OrthographicCamera camera){
 		if(edit_mode){
+			if(Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_RIGHT)){
+				saveMap();
+				return;
+			}
+			
+			
 			float mx = Gdx.input.getX();
 			mx += camera.position.x-400;
 			mx= (int)mx/64;
 			float my = 600 - Gdx.input.getY();
 			my += camera.position.y - 300;
 			my=(int)my/64;
+			if(Gdx.input.isKeyJustPressed(Input.Keys.C))
+				ribbon = map[(int)my][(int)mx];
+			if(Gdx.input.isKeyPressed(Input.Keys.V))
+				map[(int)my][(int)mx] = ribbon;
 			if(Gdx.input.isKeyJustPressed(Input.Keys.X))
 				map[(int)my][(int)mx] = -1;
 			if(Gdx.input.isKeyJustPressed(Input.Keys.Z))
@@ -75,6 +90,22 @@ public class TileMap {
 			if(map[(int)my][(int)mx]>30)
 				map[(int)my][(int)mx] = 0;
 		}
+	}
+	
+	private void saveMap(){
+		String output = num_tiles[0]+" "+num_tiles[1]+"\n";
+		for(int line = 0; line < num_tiles[0]; line++){
+			for(int col = 0; col < num_tiles[1]; col++){
+				output += map[line][col] != 23?map[line][col]:-2;
+				if(col != num_tiles[1])
+					output+=" ";
+			}
+			if(line != num_tiles[0]-1)
+				output += "\n";
+		}
+		System.out.println("OK");
+		FileHandle file = Gdx.files.external("mapa.mapa");
+		file.writeString(output,false);
 	}
 	
 	public void draw(SpriteBatch batch,float camera_x,float camera_y){

@@ -194,7 +194,7 @@ public class Ninja {
 			if(dy < 0)dy = -dy;
 			
 			
-			if(map[ty][tx] < 0 && dx<4 && dy < 4){
+			if(map[ty][tx] < 0 && dx<4 && dy < 5){
 				teleport_pos[0] = tx*64;
 				teleport_pos[1] = ty*64;
 			}

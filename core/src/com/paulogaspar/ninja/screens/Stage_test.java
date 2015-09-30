@@ -80,7 +80,12 @@ public class Stage_test implements Screen {
 				player.die();
 		
 		
+		
 		player.update(delta,tilemap.map,tilemap.width,tilemap.height);
+		if(player.position[1] > camera.position.y+50  && camera.position.y - 300 < tilemap.height-608)
+			camera.translate(0, player.position[1] - camera.position.y -50);
+		if(player.position[1] < camera.position.y-150  && camera.position.y - 300 > 8)
+			camera.translate(0, player.position[1] - camera.position.y+150);
 		if(camera.position.x + 400 - player.position[0] < 360 && camera.position.x - 400 < tilemap.width-808 && player.speed_x > 0)
 			camera.translate(player.speed_x,0);
 		if(player.position[0] - (camera.position.x - 400) < 300 && player.speed_x < 0 && camera.position.x - 400 > 8)
