@@ -24,17 +24,25 @@ public class Stage_test implements Screen {
 	private Ninja player;
 	
 	private BitmapFont font;
+	public Rectangle death_blocks[];
+	private int num_death_blocks;
 	
 	public Stage_test(MyGame game) {
 		this.game = game;
 		batch = this.game.batch;
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false,800,600);
+		camera.translate(0, 192);
 		
 		font = new BitmapFont(Gdx.files.internal("Misc/font.fnt"),Gdx.files.internal("Misc/font.png"),false);
-		
+			
 		tilemap = new TileMap();
 		player = new Ninja(camera);
+	
+		num_death_blocks = 2;
+		death_blocks = new Rectangle[2];
+		death_blocks[0] = new Rectangle(128,216,458,64);
+		death_blocks[1] = new Rectangle(0,70,tilemap.width,32);
 		
 	}
 	
@@ -56,14 +64,21 @@ public class Stage_test implements Screen {
 	private void update(float delta){
 		camera.update();
 		
-		if(Gdx.input.isKeyPressed(Input.Keys.L) && camera.position.x - 400 < tilemap.width-808)
+		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && camera.position.x - 400 < tilemap.width-808)
 			camera.translate(350*delta, 0);
-		if(Gdx.input.isKeyPressed(Input.Keys.J) && camera.position.x - 400 > 8)
+		if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && camera.position.x - 400 > 8)
 			camera.translate(-350*delta, 0);
-		if(Gdx.input.isKeyPressed(Input.Keys.I) && camera.position.y - 300 < tilemap.height-608)
+		if(Gdx.input.isKeyPressed(Input.Keys.UP) && camera.position.y - 300 < tilemap.height-608)
 			camera.translate(0,350*delta);
-		if(Gdx.input.isKeyPressed(Input.Keys.K) && camera.position.y - 300 > 8)
+		if(Gdx.input.isKeyPressed(Input.Keys.DOWN) && camera.position.y - 300 > 8)
 			camera.translate(0,-350*delta);
+		
+		
+		tilemap.edit(camera);
+		for(int i = 0; i < num_death_blocks; i++)
+			if(new Rectangle(player.position[0]+2,player.position[1]+2,60,60).overlaps(death_blocks[i]))
+				player.die();
+		
 		
 		player.update(delta,tilemap.map,tilemap.width,tilemap.height);
 		if(camera.position.x + 400 - player.position[0] < 360 && camera.position.x - 400 < tilemap.width-808 && player.speed_x > 0)
@@ -75,9 +90,9 @@ public class Stage_test implements Screen {
 		//on end
 		//this.dispose();
 		
-		if(new Rectangle(player.position[0]+2,player.position[1]+2,60,60).overlaps(new Rectangle(128,24,512,64))){
-			player.die();
-		}
+		
+		//DEATH
+		
 		
 		
 	}

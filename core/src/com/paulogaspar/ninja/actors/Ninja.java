@@ -40,8 +40,14 @@ public class Ninja {
 	private boolean touching;
 	private float teleport_pos[];
 	
+	public float camera_start_pos[];
+	
 	public Ninja(OrthographicCamera camera){
 		this.camera = camera;
+		camera_start_pos = new float[2];
+		camera_start_pos[0] = 0;
+		camera_start_pos[1] = 0;
+		
 		animation =  new Animation[2];
 		
 		TextureRegion[] temp = new TextureRegion[4];
@@ -75,7 +81,7 @@ public class Ninja {
 	
 	public void init(){
 		position[0] = 20f;
-		position[1] = 280f;
+		position[1] = 480f;
 		
 		teleport_pos[0] = 0;
 		teleport_pos[1] = 0;
@@ -120,7 +126,7 @@ public class Ninja {
 		int xr2 = ((int)(position[0]+48)/64);
 		
 		grounded = true;
-		if(map[y][x1] == -1 && map[y][x2] == -1||map[y][x1] == 23 && map[y][x2] == 23){
+		if(map[y][x1] < 0 && map[y][x2] < 0){
 			grounded = false;
 		}
 		
@@ -176,16 +182,26 @@ public class Ninja {
 			int ty =  ((int)(camera.position.y-300+(600-Gdx.input.getY()))/64);
 			if(tx < 0)
 				tx = 0;
-			if(tx > map[0].length)
-				tx = map[0].length;
+			if(tx > map[0].length-1)
+				tx = map[0].length-1;
 			if(ty < 0)
 				ty = 0;
-			if(ty > map.length)
-				ty = map.length;
+			if(ty > map.length-1)
+				ty = map.length-1;
+			int dx =  ((int)position[0]/64)-tx;
+			int dy =  ((int)position[1]/64)-ty;
+			if(dx < 0)dx = -dx;
+			if(dy < 0)dy = -dy;
 			
-			if(map[ty][tx] == -1){
+			
+			if(map[ty][tx] < 0 && dx<4 && dy < 4){
 				teleport_pos[0] = tx*64;
 				teleport_pos[1] = ty*64;
+			}
+			else{
+				touching = false;
+				teleport_pos[0] = 0;
+				teleport_pos[1] = 0;
 			}
 		}
 		if(!Gdx.input.isTouched()&& !slow_time && !stop_time && touching){
@@ -240,7 +256,7 @@ public class Ninja {
 			}
 		}
 		
-		if((Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) && jump_count < 2){
+		if(Gdx.input.isKeyJustPressed(Input.Keys.W) && jump_count < 2){
 			if(!grounded)
 				jump_count = 2;
 			else
@@ -280,7 +296,7 @@ public class Ninja {
 	public void die(){
 		init();//
 		System.out.println(camera.position.x);
-		camera.translate(-1*(camera.position.x-400),0);
+		camera.translate(camera_start_pos[0] - camera.position.x + 400,camera_start_pos[1]);
 	}
 	
 	public void draw(SpriteBatch batch){
