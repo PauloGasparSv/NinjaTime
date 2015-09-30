@@ -112,8 +112,8 @@ public class Ninja {
 	public void update(float delta,int map[][],int width,int height){
 		elapsed_time += delta * time_mod;
 				
-		int x1 = ((int)(position[0]+10)/64);
-		int x2 = ((int)(position[0]+54)/64);
+		int x1 = ((int)(position[0]+12)/64);
+		int x2 = ((int)(position[0]+52)/64);
 		int y = ((int)(position[1]+4)/64);
 		
 		int y2 = ((int)(position[1]+48)/64);
@@ -268,18 +268,18 @@ public class Ninja {
 				speed_y = -4.5f;
 		}
 		
-		if(jump_count != 0 && (map[yu][xl2] != -1 || map[yu][xr2]!=-1) && speed_y < 0){
+		if(jump_count != 0 && (map[yu][xl2] > -1 || map[yu][xr2] > -1) && speed_y < 0){
 			speed_y = 0;
 		}
 				
 		
 		
 		if(current == WALK){
-			if(speed_x > 0 && (map[y1][xr] != -1 || map[y2][xr] != -1)){
+			if(speed_x > 0 && (map[y1][xr] > -1 || map[y2][xr] > -1)){
 				speed_x = 0;
 				position[0] -= 1;
 			}
-			if(speed_x < 0 && (map[y1][xl] != -1 || map[y2][xl] != -1)){
+			if(speed_x < 0 && (map[y1][xl] > -1 || map[y2][xl] > -1)){
 				speed_x = 0;
 				position[0] += 1;
 			}

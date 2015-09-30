@@ -42,7 +42,7 @@ public class Stage_test implements Screen {
 		num_death_blocks = 2;
 		death_blocks = new Rectangle[2];
 		death_blocks[0] = new Rectangle(128,216,458,64);
-		death_blocks[1] = new Rectangle(0,70,tilemap.width,32);
+		death_blocks[1] = new Rectangle(0,40,tilemap.width,0);
 		
 	}
 	
@@ -82,15 +82,15 @@ public class Stage_test implements Screen {
 		
 		
 		player.update(delta,tilemap.map,tilemap.width,tilemap.height);
+		
 		if(player.position[1] > camera.position.y+50  && camera.position.y - 300 < tilemap.height-608)
 			camera.translate(0, player.position[1] - camera.position.y -50);
 		if(player.position[1] < camera.position.y-150  && camera.position.y - 300 > 8)
 			camera.translate(0, player.position[1] - camera.position.y+150);
-		if(camera.position.x + 400 - player.position[0] < 360 && camera.position.x - 400 < tilemap.width-808 && player.speed_x > 0)
-			camera.translate(player.speed_x,0);
-		if(player.position[0] - (camera.position.x - 400) < 300 && player.speed_x < 0 && camera.position.x - 400 > 8)
-			camera.translate(player.speed_x, 0);
-		//&& camera.position.x - 400 > 8
+		if(player.position[0] > camera.position.x + 40 && camera.position.x - 400 < tilemap.width-808)
+			camera.translate(player.position[0] - camera.position.x - 40,0);
+		if(player.position[0] < camera.position.x -100 && camera.position.x - 400 > 8)
+			camera.translate(player.position[0] - camera.position.x + 100, 0);
 		
 		//on end
 		//this.dispose();

@@ -37,8 +37,6 @@ public class TileMap {
 		num_tiles[1] = Integer.parseInt(t.split(" ")[1]);
 		map = new int[num_tiles[0]][num_tiles[1]];
 		for(int line = 0; line < num_tiles[0]; line++){
-			System.out.println(num_tiles[0]);
-			System.out.println(line);
 			String temp[] = sc.nextLine().split(" ");
 			
 			for(int col = 0; col < num_tiles[1]; col++){
@@ -79,6 +77,8 @@ public class TileMap {
 			float my = 600 - Gdx.input.getY();
 			my += camera.position.y - 300;
 			my=(int)my/64;
+			System.out.println("Current tile: "+map[(int)my][(int)mx]);
+			
 			if(Gdx.input.isKeyJustPressed(Input.Keys.C))
 				ribbon = map[(int)my][(int)mx];
 			if(Gdx.input.isKeyPressed(Input.Keys.V))
@@ -103,7 +103,6 @@ public class TileMap {
 			if(line != num_tiles[0]-1)
 				output += "\n";
 		}
-		System.out.println("OK");
 		FileHandle file = Gdx.files.external("mapa.mapa");
 		file.writeString(output,false);
 	}
