@@ -50,18 +50,25 @@ public class Stage_test implements Screen {
 		tilemap = new TileMap();
 		player = new Ninja(camera);
 	
-		num_death_blocks = 2;
+		num_death_blocks = 7;
 		death_blocks = new Rectangle[num_death_blocks];
 		death_blocks[0] = new Rectangle(128,216,458,64);
 		death_blocks[1] = new Rectangle(0,40,tilemap.width,0);
-		
+		death_blocks[2] = new Rectangle(778,960,52,28);
+		death_blocks[3] = new Rectangle(64,968,24,176);
+		death_blocks[4] = new Rectangle(64,840,24,52);
+		death_blocks[5] = new Rectangle(170,840,24,112);
+		death_blocks[6] = new Rectangle(1480,1024+36,52,28);
+		//X + 10, WIDTH - 14, IF ON CEEILING Y += 36 X - = 2
+		//Y + 8, HEIGHT - 16, IF ON RIGHT SIDE X += 42
+		//23 16
 		num_cannons = 3;
 		cannons = new Cannon[num_cannons];
 		cannons[2] = new Cannon(cannonD, cannonBall, 2048, 384, Cannon.RIGHT,Cannon.LEFT_RIGHT,500);
 		cannons[1] = new Cannon(cannonD, cannonBall, 2176, 256, Cannon.UP,Cannon.DOWN_UP,900);
 		cannons[0] = new Cannon(cannonD, cannonBall, 2176, 896, Cannon.RIGHT,Cannon.LEFT_RIGHT,200);
 
-		//2176 896
+		
 	}
 	
 	@Override
@@ -85,7 +92,7 @@ public class Stage_test implements Screen {
 	
 		
 		tilemap.edit(camera);
-		for(int i = 0; i < num_cannons; i++){
+		for(int i = 0; i < num_death_blocks; i++){
 			if(i < num_death_blocks && new Rectangle(player.rect()).overlaps(death_blocks[i]))
 				player.die();
 			if(i < num_cannons)

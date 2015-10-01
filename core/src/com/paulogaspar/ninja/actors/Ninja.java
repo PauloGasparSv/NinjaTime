@@ -316,8 +316,10 @@ public class Ninja {
 			position[0] += 1;
 		}
 		
-		
-		position[0] += speed_x*time_mod;
+		if(time_mod == 1)
+			position[0] += speed_x*time_mod;
+		else if(time_mod == 0.5f)
+			position[0] += speed_x*0.75f;
 		position[1] -= speed_y*time_mod;
 		if(position[0] < 0)
 			position[0] = 0;
