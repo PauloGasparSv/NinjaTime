@@ -83,15 +83,23 @@ public class Stage_test implements Screen {
 		
 		player.update(delta,tilemap.map,tilemap.width,tilemap.height);
 		
-		if(player.position[1] > camera.position.y+50  && camera.position.y - 300 < tilemap.height-608)
-			camera.translate(0, player.position[1] - camera.position.y -50);
-		if(player.position[1] < camera.position.y-150  && camera.position.y - 300 > 8)
-			camera.translate(0, player.position[1] - camera.position.y+150);
-		if(player.position[0] > camera.position.x + 40 && camera.position.x - 400 < tilemap.width-808)
-			camera.translate(player.position[0] - camera.position.x - 40,0);
-		if(player.position[0] < camera.position.x -100 && camera.position.x - 400 > 8)
-			camera.translate(player.position[0] - camera.position.x + 100, 0);
-		
+		if(!tilemap.edit_mode){
+			if(player.position[1] > camera.position.y+50  && camera.position.y - 300 < tilemap.height-608)
+				camera.translate(0, player.position[1] - camera.position.y -50);
+			if(player.position[1] < camera.position.y-150  && camera.position.y - 300 > 8)
+				camera.translate(0, player.position[1] - camera.position.y+150);
+			if(player.position[0] > camera.position.x + 40 && camera.position.x - 400 < tilemap.width-808)
+				camera.translate(player.position[0] - camera.position.x - 40,0);
+			if(player.position[0] < camera.position.x -100 && camera.position.x - 400 > 8)
+				camera.translate(player.position[0] - camera.position.x + 100, 0);
+		}
+		else{
+			if(Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)){
+				player.position[0] = Gdx.input.getX() + camera.position.x - 400;
+				player.position[1] = (600-Gdx.input.getY()) + camera.position.y - 300;
+			}
+				
+		}
 		//on end
 		//this.dispose();
 		

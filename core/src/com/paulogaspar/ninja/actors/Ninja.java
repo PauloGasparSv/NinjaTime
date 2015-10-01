@@ -111,19 +111,45 @@ public class Ninja {
 	
 	public void update(float delta,int map[][],int width,int height){
 		elapsed_time += delta * time_mod;
-				
-		int x1 = ((int)(position[0]+12)/64);
-		int x2 = ((int)(position[0]+52)/64);
+		
+		//I Know this part looks horrible
+		//But that's the way i started it :(
+		
+		int x1 = ((int)(position[0]+10)/64);
+		if(x1 < 0 )x1 = 0;
+		if(x1 > map[0].length-1) x1 = map[0].length-1;
+		int x2 = ((int)(position[0]+54)/64);
+		if(x2 < 0 )x2 = 0;
+		if(x2 > map[0].length-1) x2 = map[0].length-1;
 		int y = ((int)(position[1]+4)/64);
+		if(y < 0 )y = 0;
+		if(y > map.length-1) y = map.length-1;
 		
 		int y2 = ((int)(position[1]+48)/64);
+		if(y2 < 0 )y2 = 0;
+		if(y2 > map.length-1) y2 = map.length-1;
+		
 		int y1 = ((int)(position[1]+12)/64);
+		if(y1 < 0 )y1 = 0;
+		if(y1 > map.length-1) y1 = map.length-1;
+		
 		int xr = ((int)(position[0]+64)/64);
+		if(xr < 0 )xr = 0;
+		if(xr > map[0].length-1) xr = map[0].length-1;
 		int xl = ((int)(position[0])/64);
+		if(xl < 0 )xl = 0;
+		if(xl > map[0].length-1) xl = map[0].length-1;
 		
 		int yu = ((int)(position[1]+54)/64);
+		if(yu < 0 )yu = 0;
+		if(yu > map.length-1) yu = map.length-1;
 		int xl2 = ((int)(position[0]+16)/64);
+		if(xl2 < 0 )xl2 = 0;
+		if(xl2 > map[0].length-1) xl2 = map[0].length-1;
 		int xr2 = ((int)(position[0]+48)/64);
+		if(xr2 < 0 )xr2 = 0;
+		if(xr2 > map[0].length-1) xr2 = map[0].length-1;
+		
 		
 		grounded = true;
 		if(map[y][x1] < 0 && map[y][x2] < 0){
@@ -274,16 +300,16 @@ public class Ninja {
 				
 		
 		
-		if(current == WALK){
-			if(speed_x > 0 && (map[y1][xr] > -1 || map[y2][xr] > -1)){
-				speed_x = 0;
-				position[0] -= 1;
-			}
-			if(speed_x < 0 && (map[y1][xl] > -1 || map[y2][xl] > -1)){
-				speed_x = 0;
-				position[0] += 1;
-			}
+		
+		if(speed_x > 0 && (map[y1][xr] > -1 || map[y2][xr] > -1)){
+			speed_x = 0;
+			position[0] -= 1;
 		}
+		if(speed_x < 0 && (map[y1][xl] > -1 || map[y2][xl] > -1)){
+			speed_x = 0;
+			position[0] += 1;
+		}
+		
 		
 		position[0] += speed_x*time_mod;
 		position[1] -= speed_y*time_mod;

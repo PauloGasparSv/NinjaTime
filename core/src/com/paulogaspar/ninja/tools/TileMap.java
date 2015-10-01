@@ -91,12 +91,32 @@ public class TileMap {
 				map[(int)my][(int)mx] = 0;
 		}
 	}
-	
+	//21 -> -3
 	private void saveMap(){
 		String output = num_tiles[0]+" "+num_tiles[1]+"\n";
 		for(int line = 0; line < num_tiles[0]; line++){
 			for(int col = 0; col < num_tiles[1]; col++){
-				output += map[line][col] != 23?map[line][col]:-2;
+				int c = map[line][col];
+				if(c == 23)
+					output += -2;
+				else if(c == 21)
+					output += -3;
+				else if(c == 20)
+					output += -4;
+				else if(c == 19)
+					output += -5;
+				else if(c == 25)
+					output += -6;
+				else if(c == 26)
+					output += -7;
+				else if(c == 16)
+					output += -8;
+				else if(c == 17)
+					output += -9;
+				else if(c == 22)
+					output += -10;
+				else
+					output += map[line][col];
 				if(col != num_tiles[1])
 					output+=" ";
 			}
@@ -128,6 +148,22 @@ public class TileMap {
 					batch.draw(tiles[map[line][col]], col*64,line*64,64,64);
 				else if(map[line][col] == -2)
 					batch.draw(tiles[23], col*64,line*64,64,64);
+				else if(map[line][col] == -3)
+					batch.draw(tiles[21], col*64,line*64,64,64);
+				else if(map[line][col] == -4)
+					batch.draw(tiles[20], col*64,line*64,64,64);
+				else if(map[line][col] == -5)
+					batch.draw(tiles[19], col*64,line*64,64,64);
+				else if(map[line][col] == -6)
+					batch.draw(tiles[25], col*64,line*64,64,64);
+				else if(map[line][col] == -7)
+					batch.draw(tiles[26], col*64,line*64,64,64);
+				else if(map[line][col] == -8)
+					batch.draw(tiles[16], col*64,line*64,64,64);
+				else if(map[line][col] == -9)
+					batch.draw(tiles[17], col*64,line*64,64,64);
+				else if(map[line][col] == -10)
+					batch.draw(tiles[22], col*64,line*64,64,64);
 			}
 		}
 		
