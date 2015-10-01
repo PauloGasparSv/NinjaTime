@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -26,6 +27,8 @@ public class Stage_test implements Screen {
 	private BitmapFont font;
 	public Rectangle death_blocks[];
 	private int num_death_blocks;
+	
+	private Texture cannonD,cannonR,cannonL;
 	
 	public Stage_test(MyGame game) {
 		this.game = game;
@@ -146,6 +149,9 @@ public class Stage_test implements Screen {
 	public void dispose() {
 		batch = null;
 		game = null;
+		cannonD.dispose();
+		cannonR.dispose();
+		cannonL.dispose();
 		font.dispose();
 		tilemap.dispose();
 	}

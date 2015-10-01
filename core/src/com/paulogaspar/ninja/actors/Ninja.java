@@ -214,15 +214,19 @@ public class Ninja {
 				ty = 0;
 			if(ty > map.length-1)
 				ty = map.length-1;
+			
 			int dx =  ((int)position[0]/64)-tx;
-			int dy =  ((int)position[1]/64)-ty;
+			int dy =  ((int)(position[1]+64)/64)-ty;
+			
 			if(dx < 0)dx = -dx;
 			if(dy < 0)dy = -dy;
 			
 			
-			if(map[ty][tx] < 0 && dx<4 && dy < 5){
-				teleport_pos[0] = tx*64;
-				teleport_pos[1] = ty*64;
+			if(map[ty][tx] < 0 && dx<4 && dy < 3){
+				if(dx < 3 || dy <2){
+					teleport_pos[0] = tx*64;
+					teleport_pos[1] = ty*64;
+				}
 			}
 			else{
 				touching = false;
