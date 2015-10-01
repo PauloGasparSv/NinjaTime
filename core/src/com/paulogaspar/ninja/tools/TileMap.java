@@ -77,7 +77,7 @@ public class TileMap {
 			float my = 600 - Gdx.input.getY();
 			my += camera.position.y - 300;
 			my=(int)my/64;
-			System.out.println("Current tile: "+map[(int)my][(int)mx]);
+			//System.out.println("Current tile: "+map[(int)my][(int)mx]);
 			
 			if(Gdx.input.isKeyJustPressed(Input.Keys.C))
 				ribbon = map[(int)my][(int)mx];

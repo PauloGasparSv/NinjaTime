@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 
 public class Ninja {
 	private final int IDLE = 0, WALK = 1;
@@ -32,7 +33,7 @@ public class Ninja {
 	private Texture gauge_texture;
 	private int current_gauge;
 	
-	private float time_mod;
+	public float time_mod;
 	private boolean stop_time;
 	private boolean slow_time;
 	private float timer;
@@ -199,6 +200,7 @@ public class Ninja {
 			time_mod = 0.5f;
 			timer = delta;
 		}
+		
 		if(Gdx.input.isTouched() && !slow_time && !stop_time){
 			touching = true;
 			smoke_elapsed = 0;
@@ -325,7 +327,6 @@ public class Ninja {
 	
 	public void die(){
 		init();//
-		System.out.println(camera.position.x);
 		camera.translate(camera_start_pos[0] - camera.position.x + 400,camera_start_pos[1]);
 	}
 	
@@ -350,6 +351,10 @@ public class Ninja {
 			batch.draw(smoke_bomb.getKeyFrame(smoke_elapsed,false),teleport_pos[0],teleport_pos[1],64,64);			
 		}
 		
+	}
+	
+	public Rectangle rect(){
+		return new Rectangle(position[0]+2,position[1]+2,60,60);
 	}
 	
 	public void dispose(){
