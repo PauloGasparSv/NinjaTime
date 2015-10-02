@@ -5,7 +5,6 @@ With the power to slow time and teleport from one place to the other in the blin
 
 ![alt tag](thumn_nail.png)
 
-![alt tag](thumn_nail_2.png)
 
 Play with mouse and keyboard for better experience.
 
@@ -23,6 +22,7 @@ LEFT SHIFT ----------------------------	SLOW TIME
 
 LEFT or RIGHT MOUSE BUTTON ------------	TELEPORT
 
+![alt tag](thumn_nail_2.png)
 
 Huge thanks for Kenney (http://www.kenney.nl/) for the ninja sprites and for David (http://opengameart.org/users/littlesadnerd) for all the other sprites used in the game.
 Check out their work!
