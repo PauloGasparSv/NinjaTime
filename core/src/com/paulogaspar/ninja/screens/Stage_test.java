@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.paulogaspar.ninja.MyGame;
 import com.paulogaspar.ninja.actors.Cannon;
+import com.paulogaspar.ninja.actors.Master;
 import com.paulogaspar.ninja.actors.Ninja;
 import com.paulogaspar.ninja.tools.TileMap;
 
@@ -25,13 +26,15 @@ public class Stage_test implements Screen {
 	
 	private Ninja player;
 	
-	private BitmapFont font;
+	private BitmapFont font_32,font_16;
 	public Rectangle death_blocks[];
-	private int num_death_blocks;
 	
 	private Texture cannonD,cannonR,cannonL,cannonBall;
 	private Cannon cannons[];
-	private int num_cannons;
+	
+	private Texture master_texture[];
+	private Master masters[];
+	
 	
 	public Stage_test(MyGame game) {
 		this.game = game;
@@ -40,7 +43,8 @@ public class Stage_test implements Screen {
 		camera.setToOrtho(false,800,600);
 		camera.translate(0, 192);
 		
-		font = new BitmapFont(Gdx.files.internal("Misc/font.fnt"),Gdx.files.internal("Misc/font.png"),false);
+		font_32 = new BitmapFont(Gdx.files.internal("Misc/font.fnt"),Gdx.files.internal("Misc/font.png"),false);
+		font_16 = new BitmapFont(Gdx.files.internal("Misc/font_16.fnt"),Gdx.files.internal("Misc/font_16.png"),false);
 		cannonD = new Texture(Gdx.files.internal("Misc/spr_cannondown_0.png"));
 		cannonL = new Texture(Gdx.files.internal("Misc/spr_cannonright_0.png"));
 		cannonR = new Texture(Gdx.files.internal("Misc/spr_cannonleft_0.png"));
@@ -50,8 +54,7 @@ public class Stage_test implements Screen {
 		tilemap = new TileMap();
 		player = new Ninja(camera);
 	
-		num_death_blocks = 7;
-		death_blocks = new Rectangle[num_death_blocks];
+		death_blocks = new Rectangle[7];
 		death_blocks[0] = new Rectangle(128,216,458,64);
 		death_blocks[1] = new Rectangle(0,40,tilemap.width,0);
 		death_blocks[2] = new Rectangle(778,960,52,28);
@@ -62,13 +65,41 @@ public class Stage_test implements Screen {
 		//X + 10, WIDTH - 14, IF ON CEEILING Y += 36 X - = 2
 		//Y + 8, HEIGHT - 16, IF ON RIGHT SIDE X += 42
 		//23 16
-		num_cannons = 3;
-		cannons = new Cannon[num_cannons];
+		cannons = new Cannon[3];
 		cannons[2] = new Cannon(cannonD, cannonBall, 2048, 384, Cannon.RIGHT,Cannon.LEFT_RIGHT,500);
 		cannons[1] = new Cannon(cannonD, cannonBall, 2176, 256, Cannon.UP,Cannon.DOWN_UP,900);
 		cannons[0] = new Cannon(cannonD, cannonBall, 2176, 896, Cannon.RIGHT,Cannon.LEFT_RIGHT,200);
 
 		
+		master_texture = new Texture[2];
+		master_texture[0] = new Texture(Gdx.files.internal("Sensei/spr_boss_0.png"));
+		master_texture[1] = new Texture(Gdx.files.internal("Sensei/spr_boss_1.png"));
+		
+		masters = new Master[4];
+		
+		//I create multiple strins so i don't have to edit every single argument everytime i do a message=new string[something]
+		String message[] = {"The training you must continue",
+				"Jump to find the strength within you!",
+				"Or don't...",
+				"Enough said, excelsior!"};
+		masters[0] = new Master(master_texture, 605, 446, message);
+		String message2[] = {"Now a harder task you must complete",
+				"Leap to the top without defeat",
+				"...",
+				"Just avoid the cannon balls"};
+		masters[1] = new Master(master_texture, 1740, 446, message2);
+		String message3[] = {"Now you must avoid the fall",
+				"Press with magic through the wall",
+				"...",
+				"Yeah, it was pretty bad",
+				"What i meant was:",
+				"Go to the ledge and...",
+				"Click on the other side",
+				"Such magic"};
+		masters[2] = new Master(master_texture, 1840, 1088, message3);
+		String message4[] = {"Finisho"};
+		masters[3] = new Master(master_texture, 440, 1020, message4);
+		masters[3].changeTextColor();
 	}
 	
 	@Override
@@ -89,15 +120,15 @@ public class Stage_test implements Screen {
 	private void update(float delta){
 		camera.update();
 		
-	
-		
 		tilemap.edit(camera);
-		for(int i = 0; i < num_death_blocks; i++){
-			if(i < num_death_blocks && new Rectangle(player.rect()).overlaps(death_blocks[i]))
+		for(Rectangle block:death_blocks)
+			if(new Rectangle(player.rect()).overlaps(block))
 				player.die();
-			if(i < num_cannons)
-				cannons[i].update(delta, camera,player);
-		}
+		for(Cannon c:cannons)
+			c.update(delta, camera,player);
+		for(Master m:masters)
+			m.update(delta, camera, player);
+		
 		
 		player.update(delta,tilemap.map,tilemap.width,tilemap.height);
 		
@@ -144,6 +175,8 @@ public class Stage_test implements Screen {
 		tilemap.draw(batch,camera.position.x - 400,camera.position.y-300);
 		for(Cannon c:cannons)
 			c.draw(batch);
+		for(Master m:masters)
+			m.draw(batch,font_16);
 		player.draw(batch);;
 	
 	
@@ -176,11 +209,14 @@ public class Stage_test implements Screen {
 	public void dispose() {
 		batch = null;
 		game = null;
+		master_texture[0].dispose();
+		master_texture[1].dispose();
 		cannonD.dispose();
 		cannonR.dispose();
 		cannonL.dispose();
 		cannonBall.dispose();
-		font.dispose();
+		font_16.dispose();
+		font_32.dispose();
 		tilemap.dispose();
 	}
 

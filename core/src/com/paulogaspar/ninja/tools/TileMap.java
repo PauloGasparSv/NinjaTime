@@ -59,7 +59,7 @@ public class TileMap {
 		
 		width = num_tiles[1]*64;
 		height = num_tiles[0]*64;
-		edit_mode = false;
+		edit_mode = true;
 		ribbon = -1;
 	}
 	
