@@ -4,6 +4,7 @@ You are a ninja! Your sensei is training you to become the greatest ninja the wo
 With the power to slow time and teleport from one place to the other in the blink of an eye you must prove yourself worthy of the ninja title!
 
 ![alt tag](thumn_nail.png)
+
 ![alt tag](thumn_nail_2.png)
 
 Play with mouse and keyboard for better experience.
@@ -11,10 +12,15 @@ Play with mouse and keyboard for better experience.
 Controls:
 
 A -------------------------------------	WALK LEFT
+
 D -------------------------------------	WALK RIGHT
+
 W -------------------------------------	JUMP/DOUBLE JUMP
+
 SPACE ---------------------------------	INTERACT
+
 LEFT SHIFT ----------------------------	SLOW TIME
+
 LEFT or RIGHT MOUSE BUTTON ------------	TELEPORT
 
 
