@@ -1,5 +1,6 @@
 package com.paulogaspar.ninja.actors;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -29,20 +30,20 @@ public class Cannon {
 		this.timer = timer;
 		init = new float[2];
 		if(direction == LEFT){
-			init[0] = posX - 42;
+			init[0] = posX - 36;
 			init[1] = posY;
 		}
 		if(direction == RIGHT){
-			init[0] = posX + 42;
+			init[0] = posX + 36;
 			init[1] = posY;
 		}
 		if(direction == DOWN){
 			init[0] = posX;
-			init[1] = posY-42;
+			init[1] = posY-36;
 		}
 		if(direction == UP){
 			init[0] = posX;
-			init[1] = posY+42;
+			init[1] = posY+36;
 		}
 		ball_position = new float[2];
 		ball_position[0] = init[0];
@@ -56,14 +57,16 @@ public class Cannon {
 		
 	}
 	public void update(float delta,OrthographicCamera camera,Ninja player){
+		int width = Gdx.graphics.getWidth();
+		int height = Gdx.graphics.getHeight();
 		if(!live){
-			if(new Rectangle(position[0],position[1],64,64).overlaps(new Rectangle(camera.position.x-400,camera.position.y-300,800,600))){
+			if(new Rectangle(position[0],position[1],64,64).overlaps(new Rectangle(camera.position.x-width/2,camera.position.y-height/2,width,height))){
 				live = true;
 				time = System.currentTimeMillis();
 			}
 		}
 		else{
-			if(!new Rectangle(position[0],position[1],64,64).overlaps(new Rectangle(camera.position.x-400,camera.position.y-300,800,600))){
+			if(!new Rectangle(position[0],position[1],64,64).overlaps(new Rectangle(camera.position.x-width/2,camera.position.y-height/2,width,height))&&!shooting){
 				live = false;
 				time = 0;
 				return;
@@ -72,7 +75,7 @@ public class Cannon {
 				shooting = true;
 			}
 			if(shooting){
-				if(new Rectangle(ball_position[0]+24,ball_position[1]+24,16,16).overlaps(player.rect()))
+				if(new Rectangle(ball_position[0]+27,ball_position[1]+26,10,12).overlaps(player.rect()))
 					player.die();
 				if(direction == LEFT)
 					ball_position[0] -= delta * 350 * player.time_mod;

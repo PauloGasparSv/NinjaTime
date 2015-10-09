@@ -43,8 +43,11 @@ public class Master {
 	}
 	
 	public void update(float delta,OrthographicCamera camera,Ninja player){
+		int width = Gdx.graphics.getWidth();
+		int height = Gdx.graphics.getHeight();
 		if(!live){
-			if(new Rectangle(position[0],position[1],64,64).overlaps(new Rectangle(camera.position.x-400,camera.position.y-300,800,600)))
+			if(new Rectangle(position[0],position[1],64,64).overlaps(new Rectangle
+					(camera.position.x-width/2,camera.position.y-height/2,width,height)))
 				live = true;
 		}
 		else{
@@ -53,7 +56,8 @@ public class Master {
 				facingR = true;
 			else
 				facingR = false;
-			if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)&&new Rectangle(position[0]-100,position[1]-64,264,192).overlaps(new Rectangle(player.rect()))){
+			if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)&&new Rectangle(position[0]-100,position[1]-64,264,192).overlaps(
+					new Rectangle(player.rect()))){
 				current_message++;
 				if(current_message > message.length-1){
 					current_message = message.length-1;
@@ -61,7 +65,8 @@ public class Master {
 				}
 			}
 			
-			if(!new Rectangle(position[0],position[1],64,64).overlaps(new Rectangle(camera.position.x-400,camera.position.y-300,800,600))){
+			if(!new Rectangle(position[0],position[1],64,64).overlaps(new Rectangle(
+					camera.position.x-width/2,camera.position.y-height/2,width,height))){
 				live = false;
 				elapsed = 0 ;
 				dumb_counter = 0;

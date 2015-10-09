@@ -53,15 +53,13 @@ public class Stage_test implements Screen {
 		
 		tilemap = new TileMap();
 		player = new Ninja(camera);
-	
-		death_blocks = new Rectangle[7];
+		
+		death_blocks = new Rectangle[5];
 		death_blocks[0] = new Rectangle(128,216,458,64);
-		death_blocks[1] = new Rectangle(0,40,tilemap.width,0);
+		death_blocks[1] = new Rectangle(0,-24,tilemap.width,64);
 		death_blocks[2] = new Rectangle(778,960,52,28);
 		death_blocks[3] = new Rectangle(64,968,24,176);
 		death_blocks[4] = new Rectangle(64,840,24,52);
-		death_blocks[5] = new Rectangle(170,840,24,112);
-		death_blocks[6] = new Rectangle(1480,1024+36,52,28);
 		//X + 10, WIDTH - 14, IF ON CEEILING Y += 36 X - = 2
 		//Y + 8, HEIGHT - 16, IF ON RIGHT SIDE X += 42
 		//23 16
@@ -118,9 +116,14 @@ public class Stage_test implements Screen {
 	}
 
 	private void update(float delta){
-		camera.update();
-		
+		camera.update();		
 		tilemap.edit(camera);
+		int vwidth = Gdx.graphics.getWidth();
+		int vheight = Gdx.graphics.getHeight();
+		float wscale = vwidth/800f;
+		float hscale = vheight/600f;
+		
+		
 		for(Rectangle block:death_blocks)
 			if(new Rectangle(player.rect()).overlaps(block))
 				player.die();
@@ -131,6 +134,8 @@ public class Stage_test implements Screen {
 		
 		
 		player.update(delta,tilemap.map,tilemap.width,tilemap.height);
+		
+		Gdx.graphics.setTitle("Ninja Time Fps: "+Gdx.graphics.getFramesPerSecond());
 		
 		if(!tilemap.edit_mode){
 			if(player.position[1] > camera.position.y+50  && camera.position.y - 300 < tilemap.height-608)
@@ -153,8 +158,8 @@ public class Stage_test implements Screen {
 				camera.translate(0,-350*delta);
 			
 			if(Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)){
-				player.position[0] = Gdx.input.getX() + camera.position.x - 400;
-				player.position[1] = (600-Gdx.input.getY()) + camera.position.y - 300;
+				player.position[0] = (Gdx.input.getX() + camera.position.x*wscale - vwidth/2)/wscale;
+				player.position[1] = ((vheight-Gdx.input.getY()) + camera.position.y*hscale - vheight/2)/hscale;
 			}
 				
 		}

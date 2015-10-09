@@ -70,14 +70,17 @@ public class TileMap {
 				return;
 			}
 			
+			float vwidth = Gdx.graphics.getWidth();
+			float vheight = Gdx.graphics.getHeight();
+			float wscale = vwidth/800f;
+			float hscale = vheight/600f;
 			
-			float mx = Gdx.input.getX();
-			mx += camera.position.x-400;
-			mx= (int)mx/64;
-			float my = 600 - Gdx.input.getY();
-			my += camera.position.y - 300;
-			my=(int)my/64;
-			System.out.println("X: "+(int)mx+" Y: "+(int)my);
+			int mx = (int)((camera.position.x*wscale-vwidth/2+Gdx.input.getX())/(64*wscale));
+			int my =  (int)((camera.position.y*hscale-vheight/2+(vheight-Gdx.input.getY()))/(64*hscale));
+			if(mx > num_tiles[1]-1)mx = num_tiles[1] -1;
+			if(my > num_tiles[0]-1)my = num_tiles[0] -1;
+			
+			//System.out.println("X: "+(int)mx+" Y: "+(int)my);
 			
 			if(Gdx.input.isKeyJustPressed(Input.Keys.C))
 				ribbon = map[(int)my][(int)mx];

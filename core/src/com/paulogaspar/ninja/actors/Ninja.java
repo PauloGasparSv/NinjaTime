@@ -43,12 +43,19 @@ public class Ninja {
 	
 	public float camera_start_pos[];
 	
+	public float jump_mod;
+	public float g_mod;
+	private boolean slide_l,slide_r;
+	
+	private TextureRegion wallslide;
+	
 	public Ninja(OrthographicCamera camera){
 		this.camera = camera;
 		camera_start_pos = new float[2];
 		camera_start_pos[0] = 0;
 		camera_start_pos[1] = 0;
 		
+		wallslide = new TextureRegion(new Texture(Gdx.files.internal("Ninja/wallslide.png")));	
 		animation =  new Animation[2];
 		
 		TextureRegion[] temp = new TextureRegion[4];
@@ -81,7 +88,7 @@ public class Ninja {
 	}
 	
 	public void init(){
-		position[0] = 20f;
+		position[0] = 80f;
 		position[1] = 480f;
 		
 		teleport_pos[0] = 0;
@@ -108,9 +115,18 @@ public class Ninja {
 		timer = 0;
 		current_gauge = 0;
 		smoke_elapsed = 0;
+		jump_mod = 1;
+		g_mod = 1;
+		slide_l = false;
+		slide_r = false;
 	}
 	
 	public void update(float delta,int map[][],int width,int height){
+		float vwidth = Gdx.graphics.getWidth();
+		float vheight = Gdx.graphics.getHeight();
+		float wscale = vwidth/800f;
+		float hscale = vheight/600f;
+		
 		elapsed_time += delta * time_mod;
 		
 		//I Know this part looks horrible
@@ -158,12 +174,20 @@ public class Ninja {
 		}
 		
 		if(grounded){
-			jump_count = 0;	
+			jump_count = 0;
+			g_mod = 1;
+			slide_l = false;
+			slide_r = false;
 			speed_y = 0;
 		}
 			
 		if(!grounded && speed_y < 7.4f){
-			speed_y += delta*14.75f*time_mod;
+			if(slide_l || slide_r){
+				speed_y = g_mod;
+			}
+			else
+				speed_y += delta*14.75f*time_mod;
+					
 		}
 
 		if(slow_time)
@@ -206,8 +230,8 @@ public class Ninja {
 			smoke_elapsed = 0;
 			teleport_pos[0] = position[0];
 			teleport_pos[1] = position[1];
-			int tx = ((int)(camera.position.x-400+Gdx.input.getX())/64);
-			int ty =  ((int)(camera.position.y-300+(600-Gdx.input.getY()))/64);
+			int tx = (int)((camera.position.x*wscale-vwidth/2+Gdx.input.getX())/(64*wscale));
+			int ty =  (int)((camera.position.y*hscale-vheight/2+(vheight-Gdx.input.getY()))/(64*hscale));
 			if(tx < 0)
 				tx = 0;
 			if(tx > map[0].length-1)
@@ -217,18 +241,18 @@ public class Ninja {
 			if(ty > map.length-1)
 				ty = map.length-1;
 			
-			int dx =  ((int)position[0]/64)-tx;
-			int dy =  ((int)(position[1]+64)/64)-ty;
+			int dx = (x1-tx)*64;
+			int dy =  (y1-ty)*64;
+			boolean naopode = true;
+			if(dx != 0 && dy != 0)
+				naopode = Math.sqrt(dx*dx + dy*dy) > 190;
+			else
+				naopode = dx > 200 || dy > 160 || dx < -200 || dy <-160;
 			
-			if(dx < 0)dx = -dx;
-			if(dy < 0)dy = -dy;
 			
-			
-			if(map[ty][tx] < 0 && dx<4 && dy < 3){
-				if(dx < 3 || dy <2){
+			if(map[ty][tx] < 0 &&!naopode){
 					teleport_pos[0] = tx*64;
 					teleport_pos[1] = ty*64;
-				}
 			}
 			else{
 				touching = false;
@@ -245,16 +269,20 @@ public class Ninja {
 			float ty = position[1];
 			position[0] = teleport_pos[0];
 			position[1] = teleport_pos[1];
+			slide_l = false;
+			slide_r = false;
+			jump_count = 0;
 			teleport_pos[0] = tx;
 			teleport_pos[1] = ty;
 		}
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.D)){
 			facing_right = true;
-			if(speed_x < 4.2f)
-				speed_x += delta*6.5f*time_mod;
+			slide_l = false;
+			if(speed_x < 4.3f)
+				speed_x += delta*6.6f*time_mod;
 			if(speed_x < 0)
-				speed_x += delta*4.5f*time_mod;
+				speed_x += delta*4.6f*time_mod;
 				
 			if(current == IDLE){
 				elapsed_time = 0f;
@@ -264,10 +292,11 @@ public class Ninja {
 		}
 		else if(Gdx.input.isKeyPressed(Input.Keys.A)){
 			facing_right = false;
-			if(speed_x > -4.2f)
-				speed_x -= delta*6.5f*time_mod;
+			slide_r = false;
+			if(speed_x > -4.3f)
+				speed_x -= delta*6.6f*time_mod;
 			if(speed_x > 0)
-				speed_x -= delta*4.5f*time_mod;
+				speed_x -= delta*4.6f*time_mod;
 				
 			if(current == IDLE){
 				elapsed_time = 0f;
@@ -294,27 +323,63 @@ public class Ninja {
 			else
 				jump_count = 1;
 			grounded = false;
+			if(slide_l){
+				speed_x += 1f;
+				position[0] += 4;
+				slide_l = false;
+			}
+			if(slide_r){
+				speed_x -= 1f;
+				position[0] -= 4;
+				slide_r = false;
+			}
+			
 			if(jump_count == 1)
-				speed_y = -8;
+				speed_y = -8*jump_mod;
 			else
-				speed_y = -4.5f;
+				speed_y = -5.4f*jump_mod;
 		}
 		
-		if(jump_count != 0 && (map[yu][xl2] > -1 || map[yu][xr2] > -1) && speed_y < 0){
+		
+		if(speed_x > 0){
+			if((map[y1][xr] > -1 || map[y2][xr] > -1)){
+				if(grounded){
+					speed_x = -0.5f;
+				}
+				if(!grounded){
+					speed_x = 0f;
+					if(speed_y > 0.5f){
+						slide_r = true;
+						slide_l = false;
+						jump_count = 0;
+					}
+				}
+			}if(map[y1][xr] < 0 && map[y2][xr] < 0 && slide_r)
+				slide_r = false;
+		}
+		if(speed_x < 0){
+			if(map[y1][xl] > -1 || map[y2][xl] > -1){
+				if(grounded){
+					speed_x = 0.5f;
+				}
+				if(!grounded){
+					speed_x = 0f;
+					if(speed_y > 0.5f){
+						slide_l = true;
+						slide_r = false;
+						jump_count = 0;
+					}
+				}
+			}
+			if(map[y1][xl] < 0 && map[y2][xl] < 0 && slide_l)
+				slide_l = false;
+		}
+		
+		if((map[yu][xl2] > -1 || map[yu][xr2] > -1) && speed_y < 0){
 			speed_y = 0;
-		}
-				
-		
-		
-		
-		if(speed_x > 0 && (map[y1][xr] > -1 || map[y2][xr] > -1)){
-			speed_x = 0;
-			position[0] -= 1;
-		}
-		if(speed_x < 0 && (map[y1][xl] > -1 || map[y2][xl] > -1)){
-			speed_x = 0;
-			position[0] += 1;
-		}
+			slide_r = false;
+			slide_l = false;
+		}	
 		
 		if(time_mod == 1)
 			position[0] += speed_x*time_mod;
@@ -329,13 +394,22 @@ public class Ninja {
 	
 	public void die(){
 		init();//
-		camera.translate(camera_start_pos[0] - camera.position.x + 400,camera_start_pos[1]);
+		float vwidth = Gdx.graphics.getWidth();
+		float wscale = vwidth/800f;
+		camera.translate((camera_start_pos[0]*wscale - camera.position.x*wscale + vwidth/2)/wscale,camera_start_pos[1]);
 	}
 	
 	public void draw(SpriteBatch batch){
-		TextureRegion frame = animation[current].getKeyFrame(elapsed_time,true);
-		if(facing_right == frame.isFlipX())
-			frame.flip(true, false);
+		TextureRegion frame;
+		if(!slide_l && !slide_r){
+			frame = animation[current].getKeyFrame(elapsed_time,true);
+			if(facing_right == frame.isFlipX())
+				frame.flip(true, false);
+		}else{
+			frame = wallslide;
+			if(facing_right == frame.isFlipX())
+				frame.flip(true, false);
+		}
 		
 		batch.draw(frame,position[0],position[1],64,64);
 		
