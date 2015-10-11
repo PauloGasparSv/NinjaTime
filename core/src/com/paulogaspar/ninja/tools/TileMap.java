@@ -23,8 +23,11 @@ public class TileMap {
 	public int map[][];
 	public boolean edit_mode;
 	private int ribbon;
+	private float []pos_a;
+	private float []pos_b;
 	
 	public TileMap(){
+		
 		FileHandle file = Gdx.files.local("Maps/mapa.mapa");
 		String text = file.readString();
 		
@@ -57,14 +60,23 @@ public class TileMap {
 		}
 		tiles[30] = new TextureRegion(tileset,96,16,16,16);
 		
+		pos_a = new float[2];
+		pos_b = new float[2];
+		pos_a[0] = 0;
+		pos_a[1] =0;
+		pos_b[0] = 0;
+		pos_b[1] =0;
+		
 		width = num_tiles[1]*64;
 		height = num_tiles[0]*64;
-		edit_mode = false;
+		edit_mode = true;
 		ribbon = -1;
 	}
 	
 	public void edit(OrthographicCamera camera){
 		if(edit_mode){
+			
+			
 			if(Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_RIGHT)){
 				saveMap();
 				return;
@@ -74,9 +86,25 @@ public class TileMap {
 			float vheight = Gdx.graphics.getHeight();
 			float wscale = vwidth/800f;
 			float hscale = vheight/600f;
+			float x = (camera.position.x*wscale-vwidth/2+Gdx.input.getX());
+			float y = (camera.position.y*hscale-vheight/2+(vheight-Gdx.input.getY()));
 			
-			int mx = (int)((camera.position.x*wscale-vwidth/2+Gdx.input.getX())/(64*wscale));
-			int my =  (int)((camera.position.y*hscale-vheight/2+(vheight-Gdx.input.getY()))/(64*hscale));
+			if(Gdx.input.isKeyJustPressed(Input.Keys.K)){
+				if(pos_a[0] == pos_b[0] && pos_a[0] == 0){
+					pos_a[0] = x;
+					pos_a[1] = y;
+				}else{
+					pos_b[0] = x;
+					pos_b[1] = y;
+					System.out.println("X: "+pos_a[0]+" Y: "+pos_a[1]);
+					System.out.println("W: "+(pos_b[0]-pos_a[0])+" H: "+(pos_b[1]-pos_a[1]));
+				}
+			}
+			if(Gdx.input.isKeyJustPressed(Input.Keys.L))
+				pos_a[0] = pos_a[1] = pos_b[0] = pos_b[1] = 0;
+			
+			int mx = (int)(x/(64*wscale));
+			int my =  (int)(y/(64*hscale));
 			if(mx > num_tiles[1]-1)mx = num_tiles[1] -1;
 			if(my > num_tiles[0]-1)my = num_tiles[0] -1;
 			
@@ -125,12 +153,13 @@ public class TileMap {
 			}
 			if(line != num_tiles[0]-1)
 				output += "\n";
-		}
+		} 	
 		FileHandle file = Gdx.files.external("mapa.mapa");
 		file.writeString(output,false);
 	}
 	
-	public void draw(SpriteBatch batch,float camera_x,float camera_y){
+	public void draw(SpriteBatch batch,float camera_x,float camera_y,OrthographicCamera camera){
+	
 		int begin_x = (int)(camera_x-20)/64;
 		if(begin_x < 0)
 			begin_x = 0;
