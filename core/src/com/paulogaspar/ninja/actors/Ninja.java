@@ -2,6 +2,7 @@ package com.paulogaspar.ninja.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -49,6 +50,12 @@ public class Ninja {
 	
 	private TextureRegion wallslide;
 	
+	private Sound jump_sound;
+	private Sound slide_sound;
+	private long current_slide_sound;	
+	private Sound clock_sound;
+	private long clock_playing;
+	
 	public Ninja(OrthographicCamera camera){
 		this.camera = camera;
 		camera_start_pos = new float[2];
@@ -81,6 +88,11 @@ public class Ninja {
 		for(int i = 0; i < 5; i++)
 			gauge[i] = new TextureRegion(gauge_texture,171,0,(4-i)*14,20);
 		
+		
+		jump_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/jump_10.wav"));
+		slide_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/hiss.wav"));
+		clock_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/clock.wav"));
+		
 		position = new float[2];
 		teleport_pos = new float[2];
 		init();
@@ -90,7 +102,9 @@ public class Ninja {
 	public void init(){
 		position[0] = 80f;
 		position[1] = 480f;
+		current_slide_sound = 0;
 		
+		clock_playing = 0;
 		teleport_pos[0] = 0;
 		teleport_pos[1] = 0;
 		
@@ -178,24 +192,33 @@ public class Ninja {
 			g_mod = 1;
 			slide_l = false;
 			slide_r = false;
+			if(System.currentTimeMillis() - current_slide_sound > 500)
+				slide_sound.stop();
+			current_slide_sound = 0;
 			speed_y = 0;
 		}
 			
 		if(!grounded && speed_y < 7.4f){
 			if(slide_l || slide_r){
+				if(current_slide_sound == 0){
+					slide_sound.play(0.8f);
+					current_slide_sound = System.currentTimeMillis();
+				}
+				if(System.currentTimeMillis() - current_slide_sound > 650)
+					current_slide_sound = 0;
 				speed_y = g_mod;
 			}
 			else
 				speed_y += delta*14.75f*time_mod;
 					
 		}
-
-		if(slow_time)
-			timer += delta*1.5f;
-		if(stop_time)
-			timer += delta*0.8f;
 		if(slow_time){
+			timer += delta*1.5f;
 			if(timer > 5){
+				clock_sound.setLooping(clock_playing, false);
+				clock_sound.stop(clock_playing);
+				clock_playing = 0;
+				
 				time_mod = 1f;
 				current_gauge =9-(int)timer;
 			}
@@ -210,6 +233,7 @@ public class Ninja {
 		
 	
 		if(stop_time){
+			timer += delta*0.8f;
 			smoke_elapsed += delta;
 			if(timer < 5)
 				current_gauge = 4 - (int)timer;
@@ -219,10 +243,12 @@ public class Ninja {
 			}
 		}
 		
-		if(Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT) && current_gauge == 0 && !slow_time && !stop_time){
+		if(Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT) && current_gauge == 0 && !slow_time && !stop_time && !touching){
 			slow_time = true;
 			time_mod = 0.5f;
 			timer = delta;
+			clock_playing = clock_sound.play(0.9f);
+			clock_sound.setLooping(clock_playing,true);
 		}
 		
 		if(Gdx.input.isTouched() && !slow_time && !stop_time){
@@ -271,6 +297,8 @@ public class Ninja {
 			position[1] = teleport_pos[1];
 			slide_l = false;
 			slide_r = false;
+			current_slide_sound = 0;
+			slide_sound.stop();
 			jump_count = 0;
 			teleport_pos[0] = tx;
 			teleport_pos[1] = ty;
@@ -318,6 +346,8 @@ public class Ninja {
 		}
 		
 		if(Gdx.input.isKeyJustPressed(Input.Keys.W) && jump_count < 2){
+			jump_sound.play(0.2f);
+			
 			if(!grounded)
 				jump_count = 2;
 			else
@@ -327,11 +357,15 @@ public class Ninja {
 				speed_x += 1f;
 				position[0] += 4;
 				slide_l = false;
+				current_slide_sound = 0;
+				slide_sound.stop();
 			}
 			if(slide_r){
 				speed_x -= 1f;
 				position[0] -= 4;
 				slide_r = false;
+				slide_sound.stop();
+				current_slide_sound = 0;
 			}
 			
 			if(jump_count == 1)
@@ -354,8 +388,11 @@ public class Ninja {
 						jump_count = 0;
 					}
 				}
-			}if(map[y1][xr] < 0 && map[y2][xr] < 0 && slide_r)
+			}if(map[y1][xr] < 0 && map[y2][xr] < 0 && slide_r){
 				slide_r = false;
+				current_slide_sound = 0;
+				slide_sound.stop();
+			}
 		}
 		if(speed_x < 0){
 			if(map[y1][xl] > -1 || map[y2][xl] > -1){
@@ -371,15 +408,22 @@ public class Ninja {
 					}
 				}
 			}
-			if(map[y1][xl] < 0 && map[y2][xl] < 0 && slide_l)
+			if(map[y1][xl] < 0 && map[y2][xl] < 0 && slide_l){
 				slide_l = false;
+				current_slide_sound = 0;
+				slide_sound.stop();
+			}
+			
 		}
 		
 		if((map[yu][xl2] > -1 || map[yu][xr2] > -1) && speed_y < 0){
 			speed_y = 0;
 			slide_r = false;
 			slide_l = false;
-		}	
+			current_slide_sound = 0;
+			slide_sound.stop();
+		}
+		
 		
 		if(time_mod == 1)
 			position[0] += speed_x*time_mod;
