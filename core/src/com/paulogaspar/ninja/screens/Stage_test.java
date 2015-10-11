@@ -3,6 +3,8 @@ package com.paulogaspar.ninja.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -35,6 +37,8 @@ public class Stage_test implements Screen {
 	private Texture master_texture[];
 	private Master masters[];
 	
+	private Sound bomb_sound;
+	private Music main_theme;
 	
 	public Stage_test(MyGame game) {
 		this.game = game;
@@ -50,6 +54,8 @@ public class Stage_test implements Screen {
 		cannonR = new Texture(Gdx.files.internal("Misc/spr_cannonleft_0.png"));
 		cannonBall = new Texture(Gdx.files.internal("Misc/spr_smoke_0.png"));
 		
+		main_theme = Gdx.audio.newMusic(Gdx.files.internal("Music/main_theme.mp3"));
+		
 		
 		tilemap = new TileMap();
 		player = new Ninja(camera);
@@ -63,10 +69,11 @@ public class Stage_test implements Screen {
 		//X + 10, WIDTH - 14, IF ON CEEILING Y += 36 X - = 2
 		//Y + 8, HEIGHT - 16, IF ON RIGHT SIDE X += 42
 		//23 16
+		bomb_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/8bit_bomb_explosion.wav"));
 		cannons = new Cannon[3];
-		cannons[2] = new Cannon(cannonD, cannonBall, 2048, 384, Cannon.RIGHT,Cannon.LEFT_RIGHT,500);
-		cannons[1] = new Cannon(cannonD, cannonBall, 2176, 256, Cannon.UP,Cannon.DOWN_UP,900);
-		cannons[0] = new Cannon(cannonD, cannonBall, 2176, 896, Cannon.RIGHT,Cannon.LEFT_RIGHT,200);
+		cannons[2] = new Cannon(cannonD, cannonBall, 2048, 384, Cannon.RIGHT,Cannon.LEFT_RIGHT,500,bomb_sound);
+		cannons[1] = new Cannon(cannonD, cannonBall, 2176, 256, Cannon.UP,Cannon.DOWN_UP,900,bomb_sound);
+		cannons[0] = new Cannon(cannonD, cannonBall, 2176, 896, Cannon.RIGHT,Cannon.LEFT_RIGHT,200,bomb_sound);
 
 		
 		master_texture = new Texture[2];
@@ -98,6 +105,10 @@ public class Stage_test implements Screen {
 		String message4[] = {"Finisho"};
 		masters[3] = new Master(master_texture, 440, 1020, message4);
 		masters[3].changeTextColor();
+	
+		main_theme.play();
+		main_theme.setLooping(true);
+	
 	}
 	
 	@Override
@@ -223,6 +234,7 @@ public class Stage_test implements Screen {
 		font_16.dispose();
 		font_32.dispose();
 		tilemap.dispose();
+		main_theme.dispose();
+		bomb_sound.dispose();
 	}
-
 }

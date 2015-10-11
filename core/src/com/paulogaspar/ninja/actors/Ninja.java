@@ -55,6 +55,8 @@ public class Ninja {
 	private long current_slide_sound;	
 	private Sound clock_sound;
 	private long clock_playing;
+	private Sound teleport_sound;
+	private Sound death_sound;
 	
 	public Ninja(OrthographicCamera camera){
 		this.camera = camera;
@@ -92,6 +94,8 @@ public class Ninja {
 		jump_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/jump_10.wav"));
 		slide_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/hiss.wav"));
 		clock_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/clock.wav"));
+		teleport_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/skill_hit.mp3"));
+		death_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/death.wav"));
 		
 		position = new float[2];
 		teleport_pos = new float[2];
@@ -287,6 +291,7 @@ public class Ninja {
 			}
 		}
 		if(!Gdx.input.isTouched()&& !slow_time && !stop_time && touching){
+			teleport_sound.play(0.5f);
 			stop_time = true;
 			touching = false;
 			timer = delta;
@@ -437,6 +442,7 @@ public class Ninja {
 	}
 	
 	public void die(){
+		death_sound.play();
 		init();//
 		float vwidth = Gdx.graphics.getWidth();
 		float wscale = vwidth/800f;

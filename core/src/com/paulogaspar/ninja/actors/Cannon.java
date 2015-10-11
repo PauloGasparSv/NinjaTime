@@ -1,6 +1,7 @@
 package com.paulogaspar.ninja.actors;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -21,9 +22,11 @@ public class Cannon {
 	private float init[];
 	private int timer;
 	private boolean live;
+	private Sound sound;
 	
-	public Cannon(Texture cannon,Texture cannonBall,float posX,float posY,int direction,int type,int timer){
+	public Cannon(Texture cannon,Texture cannonBall,float posX,float posY,int direction,int type,int timer,Sound sound){
 		position = new float[2];
+		this.sound = sound;
 		position[0] = posX;
 		position[1] = posY;
 		this.type = type;
@@ -73,6 +76,18 @@ public class Cannon {
 			}
 			if(System.currentTimeMillis() - time > this.timer && !shooting){
 				shooting = true;
+				long i = sound.play();
+				float pan = 0;
+				if(position[0] < player.position[0] - 100){
+					pan = (position[0] - camera.position.x)/400;
+				}
+				if(position[0] > player.position[0] + 160){
+					pan = (position[0] - camera.position.x)/400;
+				}
+				float volume = 1;
+				if(pan > 0.75f || pan < -0.75f)
+					volume = 0.5f;
+				sound.setPan(i, pan, volume);
 			}
 			if(shooting){
 				if(new Rectangle(ball_position[0]+27,ball_position[1]+26,10,12).overlaps(player.rect()))
