@@ -443,6 +443,11 @@ public class Ninja {
 	
 	public void die(){
 		death_sound.play();
+		clock_sound.stop();
+		clock_playing = 0;
+		teleport_sound.stop();
+		current_slide_sound = 0;
+		slide_sound.stop();
 		init();//
 		float vwidth = Gdx.graphics.getWidth();
 		float wscale = vwidth/800f;
