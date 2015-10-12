@@ -10,7 +10,7 @@ public class MyGame extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		set_screen(0);
+		setScreen(new Stage_test(this,0f));
 	}
 
 	@Override
@@ -18,13 +18,6 @@ public class MyGame extends Game {
 		super.render();		
 	}
 	
-	public void set_screen(int screen){
-		switch(screen){
-			case 0:
-				this.setScreen(new Stage_test(this));
-				break;
-		}
-	}
 	
 	@Override
 	public void dispose(){

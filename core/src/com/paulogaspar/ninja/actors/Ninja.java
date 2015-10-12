@@ -139,7 +139,7 @@ public class Ninja {
 		slide_r = false;
 	}
 	
-	public void update(float delta,int map[][],int width,int height){
+	public void update(float delta,int map[][],int width,int height,float master_volume){
 		float vwidth = Gdx.graphics.getWidth();
 		float vheight = Gdx.graphics.getHeight();
 		float wscale = vwidth/800f;
@@ -205,7 +205,7 @@ public class Ninja {
 		if(!grounded && speed_y < 7.4f){
 			if(slide_l || slide_r){
 				if(current_slide_sound == 0){
-					slide_sound.play(0.8f);
+					slide_sound.play(0.8f*master_volume);
 					current_slide_sound = System.currentTimeMillis();
 				}
 				if(System.currentTimeMillis() - current_slide_sound > 650)
@@ -251,7 +251,7 @@ public class Ninja {
 			slow_time = true;
 			time_mod = 0.5f;
 			timer = delta;
-			clock_playing = clock_sound.play(0.9f);
+			clock_playing = clock_sound.play(0.9f*master_volume);
 			clock_sound.setLooping(clock_playing,true);
 		}
 		
@@ -291,7 +291,7 @@ public class Ninja {
 			}
 		}
 		if(!Gdx.input.isTouched()&& !slow_time && !stop_time && touching){
-			teleport_sound.play(0.5f);
+			teleport_sound.play(0.5f*master_volume);
 			stop_time = true;
 			touching = false;
 			timer = delta;
@@ -351,7 +351,7 @@ public class Ninja {
 		}
 		
 		if(Gdx.input.isKeyJustPressed(Input.Keys.W) && jump_count < 2){
-			jump_sound.play(0.2f);
+			jump_sound.play(0.2f*master_volume);
 			
 			if(!grounded)
 				jump_count = 2;
@@ -441,8 +441,8 @@ public class Ninja {
 			position[0] = width-72;
 	}
 	
-	public void die(){
-		death_sound.play();
+	public void die(float master_volume){
+		death_sound.play(master_volume);
 		clock_sound.stop();
 		clock_playing = 0;
 		teleport_sound.stop();

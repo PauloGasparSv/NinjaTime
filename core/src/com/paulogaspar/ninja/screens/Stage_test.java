@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Rectangle;
 import com.paulogaspar.ninja.MyGame;
 import com.paulogaspar.ninja.actors.Cannon;
 import com.paulogaspar.ninja.actors.Master;
@@ -29,7 +28,6 @@ public class Stage_test implements Screen {
 	private Ninja player;
 	
 	private BitmapFont font_32,font_16;
-	public Rectangle death_blocks[];
 	
 	private Texture cannonD,cannonR,cannonL,cannonBall;
 	private Cannon cannons[];
@@ -39,13 +37,15 @@ public class Stage_test implements Screen {
 	
 	private Sound bomb_sound;
 	private Music main_theme;
+	private float master_volume;
 	
-	public Stage_test(MyGame game) {
+	public Stage_test(MyGame game,float master_volume) {
 		this.game = game;
 		batch = this.game.batch;
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false,800,600);
 		camera.translate(0, 192);
+		this.master_volume = master_volume;
 		
 		font_32 = new BitmapFont(Gdx.files.internal("Misc/font.fnt"),Gdx.files.internal("Misc/font.png"),false);
 		font_16 = new BitmapFont(Gdx.files.internal("Misc/font_16.fnt"),Gdx.files.internal("Misc/font_16.png"),false);
@@ -60,16 +60,6 @@ public class Stage_test implements Screen {
 		tilemap = new TileMap();
 		player = new Ninja(camera);
 		
-		death_blocks = new Rectangle[6];
-		death_blocks[0] = new Rectangle(0,-24,tilemap.width,64);
-		death_blocks[1] = new Rectangle(64,968,24,176);
-		death_blocks[2] = new Rectangle(64,840,24,52);
-		death_blocks[3] = new Rectangle(168,836,25,120);
-		death_blocks[4] = new Rectangle(772,1024,56,23);
-		death_blocks[5] = new Rectangle(1284,1260,55,27);
-		//X + 10, WIDTH - 14, IF ON CEEILING Y += 36 X - = 2
-		//Y + 8, HEIGHT - 16, IF ON RIGHT SIDE X += 42
-		//23 16
 		bomb_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/8bit_bomb_explosion.wav"));
 		cannons = new Cannon[3];
 		cannons[2] = new Cannon(cannonD, cannonBall, 2048, 384, Cannon.RIGHT,Cannon.LEFT_RIGHT,500,bomb_sound);
@@ -108,6 +98,7 @@ public class Stage_test implements Screen {
 		masters[3].changeTextColor();
 	
 		main_theme.play();
+		main_theme.setVolume(master_volume);
 		main_theme.setLooping(true);
 	
 	}
@@ -128,24 +119,22 @@ public class Stage_test implements Screen {
 	}
 
 	private void update(float delta){
-		camera.update();		
-		tilemap.edit(camera);
+		camera.update();	
+		tilemap.update(camera,player,master_volume);
 		int vwidth = Gdx.graphics.getWidth();
 		int vheight = Gdx.graphics.getHeight();
 		float wscale = vwidth/800f;
 		float hscale = vheight/600f;
 		
 		
-		for(Rectangle block:death_blocks)
-			if(new Rectangle(player.rect()).overlaps(block))
-				player.die();
+		
 		for(Cannon c:cannons)
-			c.update(delta, camera,player);
+			c.update(delta, camera,player,master_volume);
 		for(Master m:masters)
 			m.update(delta, camera, player);
 		
 		
-		player.update(delta,tilemap.map,tilemap.width,tilemap.height);
+		player.update(delta,tilemap.map,tilemap.width,tilemap.height,master_volume);
 		
 		Gdx.graphics.setTitle("Ninja Time Fps: "+Gdx.graphics.getFramesPerSecond());
 		

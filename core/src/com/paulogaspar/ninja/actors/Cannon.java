@@ -59,7 +59,7 @@ public class Cannon {
 		live = false;
 		
 	}
-	public void update(float delta,OrthographicCamera camera,Ninja player){
+	public void update(float delta,OrthographicCamera camera,Ninja player,float master_volume){
 		int width = Gdx.graphics.getWidth();
 		int height = Gdx.graphics.getHeight();
 		if(!live){
@@ -76,7 +76,7 @@ public class Cannon {
 			}
 			if(System.currentTimeMillis() - time > this.timer && !shooting){
 				shooting = true;
-				long i = sound.play();
+				long i = sound.play(master_volume);
 				float pan = 0;
 				if(position[0] < player.position[0] - 100){
 					pan = (position[0] - camera.position.x)/400;
@@ -87,11 +87,11 @@ public class Cannon {
 				float volume = 1;
 				if(pan > 0.75f || pan < -0.75f)
 					volume = 0.5f;
-				sound.setPan(i, pan, volume);
+				sound.setPan(i, pan, volume*master_volume);
 			}
 			if(shooting){
 				if(new Rectangle(ball_position[0]+27,ball_position[1]+26,10,12).overlaps(player.rect()))
-					player.die();
+					player.die(master_volume);
 				if(direction == LEFT)
 					ball_position[0] -= delta * 350 * player.time_mod;
 				if(direction == RIGHT)

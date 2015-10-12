@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
+import com.paulogaspar.ninja.actors.Ninja;
 
 public class TileMap {
 	
@@ -25,6 +27,8 @@ public class TileMap {
 	private int ribbon;
 	private float []pos_a;
 	private float []pos_b;
+	
+	private Rectangle death_blocks[];
 	
 	public TileMap(){
 		
@@ -69,8 +73,24 @@ public class TileMap {
 		
 		width = num_tiles[1]*64;
 		height = num_tiles[0]*64;
-		edit_mode = true;
+		edit_mode = false;
 		ribbon = -1;
+	
+		death_blocks = new Rectangle[6];
+		death_blocks[0] = new Rectangle(0,-24,width,64);
+		death_blocks[1] = new Rectangle(64,968,24,176);
+		death_blocks[2] = new Rectangle(64,840,24,52);
+		death_blocks[3] = new Rectangle(168,836,25,120);
+		death_blocks[4] = new Rectangle(772,1024,56,23);
+		death_blocks[5] = new Rectangle(1284,1260,55,27);
+	
+	}
+	
+	public void update(OrthographicCamera camera,Ninja player,float master_volume){
+		for(Rectangle block:death_blocks)
+			if(new Rectangle(player.rect()).overlaps(block))
+				player.die(master_volume);
+		edit(camera);
 	}
 	
 	public void edit(OrthographicCamera camera){
