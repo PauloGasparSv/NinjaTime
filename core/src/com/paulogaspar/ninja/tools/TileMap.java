@@ -43,11 +43,37 @@ public class TileMap {
 		num_tiles[0] = Integer.parseInt(t.split(" ")[0]);
 		num_tiles[1] = Integer.parseInt(t.split(" ")[1]);
 		map = new int[num_tiles[0]][num_tiles[1]];
+		int num_death_blocks = 0;
+		
 		for(int line = 0; line < num_tiles[0]; line++){
 			String temp[] = sc.nextLine().split(" ");
-			
 			for(int col = 0; col < num_tiles[1]; col++){
 				map[line][col] = Integer.parseInt(temp[col]);
+				if(map[line][col] == -2 || map[line][col] == -10 || map[line][col] == -9 || map[line][col] == -8)
+					num_death_blocks++;
+			}
+		}
+		
+		death_blocks = new Rectangle[num_death_blocks];
+		num_death_blocks = 0;
+		for(int line = 0; line < num_tiles[0]; line++){
+			for(int col = 0; col < num_tiles[1]; col++){
+				if(map[line][col] == -2){
+					death_blocks[num_death_blocks] = new Rectangle(col*64+6,line*64,52,24);
+					num_death_blocks++;
+				}
+				if(map[line][col] == -8){
+					death_blocks[num_death_blocks] = new Rectangle(col*64+6,line*64+40,52,24);
+					num_death_blocks++;
+				}
+				if(map[line][col] == -10){
+					death_blocks[num_death_blocks] = new Rectangle(col*64,line*64+6,24,52);
+					num_death_blocks++;
+				}
+				if(map[line][col] == -9){
+					death_blocks[num_death_blocks] = new Rectangle(col*64+40,line*64+6,24,52);
+					num_death_blocks++;
+				}
 			}
 		}
 		
@@ -73,17 +99,11 @@ public class TileMap {
 		
 		width = num_tiles[1]*64;
 		height = num_tiles[0]*64;
-		edit_mode = false;
+		edit_mode = true;
 		ribbon = -1;
+		
 	
-		death_blocks = new Rectangle[6];
-		death_blocks[0] = new Rectangle(0,-24,width,64);
-		death_blocks[1] = new Rectangle(64,968,24,176);
-		death_blocks[2] = new Rectangle(64,840,24,52);
-		death_blocks[3] = new Rectangle(168,836,25,120);
-		death_blocks[4] = new Rectangle(772,1024,56,23);
-		death_blocks[5] = new Rectangle(1284,1260,55,27);
-	
+		
 	}
 	
 	public void update(OrthographicCamera camera,Ninja player,float master_volume){
@@ -109,6 +129,7 @@ public class TileMap {
 			float x = (camera.position.x*wscale-vwidth/2+Gdx.input.getX());
 			float y = (camera.position.y*hscale-vheight/2+(vheight-Gdx.input.getY()));
 			
+			
 			if(Gdx.input.isKeyJustPressed(Input.Keys.K)){
 				if(pos_a[0] == pos_b[0] && pos_a[0] == 0){
 					pos_a[0] = x;
@@ -128,7 +149,7 @@ public class TileMap {
 			if(mx > num_tiles[1]-1)mx = num_tiles[1] -1;
 			if(my > num_tiles[0]-1)my = num_tiles[0] -1;
 			
-			//System.out.println("X: "+(int)mx+" Y: "+(int)my);
+			System.out.println("X: "+(int)mx+" Y: "+(int)my+" Tile: "+map[my][mx]);
 			
 			if(Gdx.input.isKeyJustPressed(Input.Keys.C))
 				ribbon = map[(int)my][(int)mx];
