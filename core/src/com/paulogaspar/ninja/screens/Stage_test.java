@@ -39,6 +39,9 @@ public class Stage_test implements Screen {
 	private Music main_theme;
 	private float master_volume;
 	
+	private boolean options;
+	
+	
 	public Stage_test(MyGame game,float master_volume) {
 		this.game = game;
 		batch = this.game.batch;
@@ -78,12 +81,12 @@ public class Stage_test implements Screen {
 				"Jump to find the strength within you!",
 				"Or don't...",
 				"Enough said, excelsior!"};
-		masters[0] = new Master(master_texture, 605, 446, message);
+		masters[0] = new Master(master_texture, 605, 446, message,"You can go now... please");
 		String message2[] = {"Now a harder task you must complete",
 				"Leap to the top without defeat",
 				"...",
 				"Just avoid the cannon balls"};
-		masters[1] = new Master(master_texture, 1740, 446, message2);
+		masters[1] = new Master(master_texture, 1740, 446, message2,"Just fall off the ledge");
 		String message3[] = {"Now you must avoid the fall",
 				"Press with magic through the wall",
 				"...",
@@ -92,15 +95,15 @@ public class Stage_test implements Screen {
 				"Go to the ledge and...",
 				"Click on the other side",
 				"Such magic"};
-		masters[2] = new Master(master_texture, 1840, 1088, message3);
+		masters[2] = new Master(master_texture, 1840, 1088, message3,"Or you can press space forever, who cares");
 		String message4[] = {"Finisho"};
-		masters[3] = new Master(master_texture, 440, 1020, message4);
+		masters[3] = new Master(master_texture, 440, 1020, message4,"GO TO THE NEXT STAGE DAMMIT!");
 		masters[3].changeTextColor();
 	
 		main_theme.play();
 		main_theme.setVolume(master_volume);
 		main_theme.setLooping(true);
-	
+		options = false;
 	}
 	
 	@Override
@@ -127,42 +130,45 @@ public class Stage_test implements Screen {
 		float hscale = vheight/600f;
 		
 		
-		
-		for(Cannon c:cannons)
-			c.update(delta, camera,player,master_volume);
-		for(Master m:masters)
-			m.update(delta, camera, player);
-		
-		
-		player.update(delta,tilemap.map,tilemap.width,tilemap.height,master_volume);
-		
 		Gdx.graphics.setTitle("Ninja Time Fps: "+Gdx.graphics.getFramesPerSecond());
-		
-		if(!tilemap.edit_mode){
-			if(player.position[1] > camera.position.y+50  && camera.position.y - 300 < tilemap.height-608)
-				camera.translate(0, player.position[1] - camera.position.y -50);
-			if(player.position[1] < camera.position.y-150  && camera.position.y - 300 > 8)
-				camera.translate(0, player.position[1] - camera.position.y+150);
-			if(player.position[0] > camera.position.x + 40 && camera.position.x - 400 < tilemap.width-808)
-				camera.translate(player.position[0] - camera.position.x - 40,0);
-			if(player.position[0] < camera.position.x -100 && camera.position.x - 400 > 8)
-				camera.translate(player.position[0] - camera.position.x + 100, 0);
+
+		if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+			options = !options;
 		}
-		else{
-			if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && camera.position.x - 400 < tilemap.width-808)
-				camera.translate(350*delta, 0);
-			if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && camera.position.x - 400 > 8)
-				camera.translate(-350*delta, 0);
-			if(Gdx.input.isKeyPressed(Input.Keys.UP) && camera.position.y - 300 < tilemap.height-608)
-				camera.translate(0,350*delta);
-			if(Gdx.input.isKeyPressed(Input.Keys.DOWN) && camera.position.y - 300 > 8)
-				camera.translate(0,-350*delta);
+		
+		if(!options){
+			for(Cannon c:cannons)
+				c.update(delta, camera,player,master_volume);
+			for(Master m:masters)
+				m.update(delta, camera, player);
 			
-			if(Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)){
-				player.position[0] = (Gdx.input.getX() + camera.position.x*wscale - vwidth/2)/wscale;
-				player.position[1] = ((vheight-Gdx.input.getY()) + camera.position.y*hscale - vheight/2)/hscale;
+			player.update(delta,tilemap.map,tilemap.width,tilemap.height,master_volume);		
+			if(!tilemap.edit_mode){
+				if(player.position[1] > camera.position.y+50  && camera.position.y - 300 < tilemap.height-608)
+					camera.translate(0, player.position[1] - camera.position.y -50);
+				if(player.position[1] < camera.position.y-150  && camera.position.y - 300 > 8)
+					camera.translate(0, player.position[1] - camera.position.y+150);
+				if(player.position[0] > camera.position.x + 40 && camera.position.x - 400 < tilemap.width-808)
+					camera.translate(player.position[0] - camera.position.x - 40,0);
+				if(player.position[0] < camera.position.x -100 && camera.position.x - 400 > 8)
+					camera.translate(player.position[0] - camera.position.x + 100, 0);
 			}
+			else{
+				if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && camera.position.x - 400 < tilemap.width-808)
+					camera.translate(350*delta, 0);
+				if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && camera.position.x - 400 > 8)
+					camera.translate(-350*delta, 0);
+				if(Gdx.input.isKeyPressed(Input.Keys.UP) && camera.position.y - 300 < tilemap.height-608)
+					camera.translate(0,350*delta);
+				if(Gdx.input.isKeyPressed(Input.Keys.DOWN) && camera.position.y - 300 > 8)
+					camera.translate(0,-350*delta);
 				
+				if(Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)){
+					player.position[0] = (Gdx.input.getX() + camera.position.x*wscale - vwidth/2)/wscale;
+					player.position[1] = ((vheight-Gdx.input.getY()) + camera.position.y*hscale - vheight/2)/hscale;
+				}
+					
+			}
 		}
 		//on end
 		//this.dispose();
@@ -185,7 +191,11 @@ public class Stage_test implements Screen {
 			m.draw(batch,font_16);
 		player.draw(batch);;
 	
-	
+		if(options){
+			font_32.draw(batch, "Options", camera.position.x-100, camera.position.y+250);
+			
+				
+		}
 		//font.draw(batch,i , 20, 400);
 		
 		batch.end();

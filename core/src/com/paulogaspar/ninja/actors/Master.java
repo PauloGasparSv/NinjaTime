@@ -14,6 +14,7 @@ public class Master {
 	
 	private float position[];
 	private String message[];
+	private String secret_message;
 	private Animation idle;
 	private boolean live;
 	private int current_message;
@@ -22,8 +23,9 @@ public class Master {
 	private int dumb_counter;
 	private boolean white_text;
 	
-	public Master(Texture master[],float posX,float posY,String message[]){
+	public Master(Texture master[],float posX,float posY,String message[],String secret_message){
 		TextureRegion a[] = new TextureRegion[2];
+		this.secret_message = secret_message;
 		a[0] = new TextureRegion(master[0]);
 		a[1] = new TextureRegion(master[1]);
 		idle = new Animation(0.75f,a);
@@ -78,10 +80,10 @@ public class Master {
 	public void draw(SpriteBatch batch,BitmapFont font){
 		if(live){
 			if(current_message > -1){
-				if(dumb_counter < 40)
+				if(dumb_counter < 32)
 					font.draw(batch, message[current_message], position[0]-message[current_message].length()*9f, position[1]+100);
 				else
-					font.draw(batch, "DUDE, GO AWAY", position[0]-145, position[1]+100);
+					font.draw(batch,secret_message, position[0]-145, position[1]+100);
 			}
 			TextureRegion frame = idle.getKeyFrame(elapsed,true);
 			if(facingR == frame.isFlipX())

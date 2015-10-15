@@ -49,10 +49,41 @@ public class TileMap {
 			String temp[] = sc.nextLine().split(" ");
 			for(int col = 0; col < num_tiles[1]; col++){
 				map[line][col] = Integer.parseInt(temp[col]);
-				if(map[line][col] == -2 || map[line][col] == -10 || map[line][col] == -9 || map[line][col] == -8)
-					num_death_blocks++;
 			}
 		}
+		for(int line = 0; line < num_tiles[0]; line++){
+			for(int col = 0; col < num_tiles[1]; col++){
+				if(map[line][col] == -2){ 
+					while(col + 1 < num_tiles[1] && map[line][col+1] == -2){
+						col++;
+					}
+					num_death_blocks++;
+				}
+				if(map[line][col] == -8){
+					while(col + 1 < num_tiles[1] && map[line][col+1] == -8){
+						col++;
+					}
+					num_death_blocks++;
+				}
+			}
+		}
+		for(int col = 0; col < num_tiles[1]; col++){
+			for(int line = 0; line < num_tiles[0]; line++){
+				if(map[line][col] == -10){
+					while(line + 1 < num_tiles[1] && map[line+1][col] == -10){
+						line++;
+					}
+					num_death_blocks++;
+				}
+				if(map[line][col] == -9){
+					while(line + 1 < num_tiles[1] && map[line+1][col] == -9){
+						line++;
+					}
+					num_death_blocks++;
+				}
+			}
+		}
+		System.out.println(num_death_blocks);
 		
 		death_blocks = new Rectangle[num_death_blocks];
 		num_death_blocks = 0;
@@ -60,18 +91,39 @@ public class TileMap {
 			for(int col = 0; col < num_tiles[1]; col++){
 				if(map[line][col] == -2){
 					death_blocks[num_death_blocks] = new Rectangle(col*64+6,line*64,52,24);
+					while(col + 1 < num_tiles[1] && map[line][col+1] == -2){
+						col++;
+						death_blocks[num_death_blocks].width += 64;
+					}
 					num_death_blocks++;
 				}
-				if(map[line][col] == -8){
-					death_blocks[num_death_blocks] = new Rectangle(col*64+6,line*64+40,52,24);
+				else if(map[line][col] == -8){
+					death_blocks[num_death_blocks] = new Rectangle(col*64+6,line*64+44,52,24);
+					while(col + 1 < num_tiles[1] && map[line][col+1] == -8){
+						col++;
+						death_blocks[num_death_blocks].width += 64;
+					}
 					num_death_blocks++;
 				}
+			}
+		}
+				
+		for(int col = 0; col < num_tiles[1]; col++){
+			for(int line = 0; line < num_tiles[0]; line++){
 				if(map[line][col] == -10){
-					death_blocks[num_death_blocks] = new Rectangle(col*64,line*64+6,24,52);
+					death_blocks[num_death_blocks] = new Rectangle(col*64,line*64+8,24,46);
+					while(line + 1 < num_tiles[1] && map[line+1][col] == -10){
+						line++;
+						death_blocks[num_death_blocks].height += 64;
+					}
 					num_death_blocks++;
 				}
-				if(map[line][col] == -9){
-					death_blocks[num_death_blocks] = new Rectangle(col*64+40,line*64+6,24,52);
+				else if(map[line][col] == -9){
+					death_blocks[num_death_blocks] = new Rectangle(col*64+40,line*64+8,24,46);
+					while(line + 1 < num_tiles[1] && map[line+1][col] == -9){
+						line++;
+						death_blocks[num_death_blocks].height += 64;
+					}
 					num_death_blocks++;
 				}
 			}
@@ -99,10 +151,8 @@ public class TileMap {
 		
 		width = num_tiles[1]*64;
 		height = num_tiles[0]*64;
-		edit_mode = true;
+		edit_mode = false;
 		ribbon = -1;
-		
-	
 		
 	}
 	

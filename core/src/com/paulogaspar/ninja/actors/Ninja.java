@@ -393,7 +393,8 @@ public class Ninja {
 						jump_count = 0;
 					}
 				}
-			}if(map[y1][xr] < 0 && map[y2][xr] < 0 && slide_r){
+			}
+			if(map[y1][xr] < 0 && map[y2][xr] < 0 && slide_r){
 				slide_r = false;
 				current_slide_sound = 0;
 				slide_sound.stop();
@@ -419,6 +420,13 @@ public class Ninja {
 				slide_sound.stop();
 			}
 			
+		}
+		if(speed_x == 0 && ((map[y1][xl] < 0 &&
+				map[y2][xl] < 0 && slide_l)||(map[y1][xr] < 0 && map[y2][xr] < 0 && slide_r))){
+			slide_r = false;
+			slide_l = false;
+			current_slide_sound = 0;
+			slide_sound.stop();		
 		}
 		
 		if((map[yu][xl2] > -1 || map[yu][xr2] > -1) && speed_y < 0){
