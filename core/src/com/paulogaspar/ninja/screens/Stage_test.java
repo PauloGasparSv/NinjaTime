@@ -1,5 +1,7 @@
 package com.paulogaspar.ninja.screens;
 
+import javax.swing.JOptionPane;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -30,6 +32,7 @@ public class Stage_test implements Screen {
 	private BitmapFont font_32,font_16;
 	
 	private Texture cannonD,cannonR,cannonL,cannonBall;
+	private Texture ninja_star;
 	private Cannon cannons[];
 	
 	private Texture master_texture[];
@@ -40,6 +43,8 @@ public class Stage_test implements Screen {
 	private float master_volume;
 	
 	private boolean options;
+	private boolean volume;
+	private int current_option;
 	
 	
 	public Stage_test(MyGame game,float master_volume) {
@@ -50,6 +55,8 @@ public class Stage_test implements Screen {
 		camera.translate(0, 192);
 		this.master_volume = master_volume;
 		
+		
+		ninja_star = new Texture(Gdx.files.internal("Misc/spr_star_0.png"));
 		font_32 = new BitmapFont(Gdx.files.internal("Misc/font.fnt"),Gdx.files.internal("Misc/font.png"),false);
 		font_16 = new BitmapFont(Gdx.files.internal("Misc/font_16.fnt"),Gdx.files.internal("Misc/font_16.png"),false);
 		cannonD = new Texture(Gdx.files.internal("Misc/spr_cannondown_0.png"));
@@ -104,6 +111,8 @@ public class Stage_test implements Screen {
 		main_theme.setVolume(master_volume);
 		main_theme.setLooping(true);
 		options = false;
+		current_option = 0;
+		volume = false;
 	}
 	
 	@Override
@@ -132,11 +141,70 @@ public class Stage_test implements Screen {
 		
 		Gdx.graphics.setTitle("Ninja Time Fps: "+Gdx.graphics.getFramesPerSecond());
 
-		if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+		if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !volume){
 			options = !options;
 		}
-		
-		if(!options){
+		if(options){
+			if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN) || Gdx.input.isKeyJustPressed(Input.Keys.S))
+				current_option++;
+			if(Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W))
+				current_option--;
+			if(current_option > 2) current_option = 0;
+			if(current_option < 0) current_option = 2;
+			if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) ||
+					Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
+				if(current_option == 0)
+					options = false;
+				if(current_option == 1){
+					options = false;
+					volume = true;
+				}
+				if(current_option == 2){
+					int a = JOptionPane.showConfirmDialog(null, "Are you sure you wanna quit?");
+					if(a == JOptionPane.YES_OPTION)
+						Gdx.app.exit();
+				}
+				current_option = 0;					
+			}
+			
+		}
+		if(volume){
+			if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+				volume = false;
+				options = true;
+			}
+			if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN) || Gdx.input.isKeyJustPressed(Input.Keys.S))
+				current_option++;
+			if(Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W))
+				current_option--;
+			if(current_option > 2) current_option = 0;
+			if(current_option < 0) current_option = 2;
+			if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) ||
+					Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
+				if(current_option == 1){
+					master_volume = 0;
+					main_theme.setVolume(master_volume);
+
+				}
+				if(current_option == 2){
+					options = true;
+					volume = false;
+					current_option = 0;		
+				}			
+			}
+			if(current_option == 0){
+				if((Gdx.input.isKeyPressed(Input.Keys.RIGHT)||Gdx.input.isKeyPressed(Input.Keys.D))&&master_volume <= 1)
+					master_volume += delta * 0.4f;
+				if((Gdx.input.isKeyPressed(Input.Keys.LEFT)||Gdx.input.isKeyPressed(Input.Keys.A))&&master_volume >= 0)
+					master_volume -= delta * 0.4f;
+				if(master_volume > 1) master_volume = 1;
+				if(master_volume < 0) master_volume = 0;
+				main_theme.setVolume(master_volume);
+			}
+			
+			
+		}
+		if(!options && !volume){
 			for(Cannon c:cannons)
 				c.update(delta, camera,player,master_volume);
 			for(Master m:masters)
@@ -189,12 +257,38 @@ public class Stage_test implements Screen {
 			c.draw(batch);
 		for(Master m:masters)
 			m.draw(batch,font_16);
-		player.draw(batch);;
+		player.draw(batch);
 	
 		if(options){
-			font_32.draw(batch, "Options", camera.position.x-100, camera.position.y+250);
+			font_32.draw(batch, "Options", camera.position.x-110, camera.position.y+265);
+			batch.draw(ninja_star,camera.position.x - 220, camera.position.y+90-100*current_option,64,64);
+			if(current_option == 0)
+				font_32.draw(batch,"RESUME",camera.position.x-96, camera.position.y+150);
+			else
+				font_16.draw(batch,"RESUME",camera.position.x-50, camera.position.y+125);
+			if(current_option == 1)
+				font_32.draw(batch,"VOLUME",camera.position.x-100, camera.position.y+50);
+			else
+				font_16.draw(batch,"VOLUME",camera.position.x-45, camera.position.y+25);
+			if(current_option == 2)
+				font_32.draw(batch,"QUIT GAME",camera.position.x-140, camera.position.y-50);
+			else
+				font_16.draw(batch,"QUIT GAME",camera.position.x-70, camera.position.y-75);				
+		}
+		if(volume){
+			font_32.draw(batch, "Volume", camera.position.x-98, camera.position.y+265);
+			batch.draw(ninja_star,camera.position.x - 360, camera.position.y+90-100*current_option,64,64);
 			
-				
+			font_16.draw(batch,"MIN ------------------------ MAX",camera.position.x-250, camera.position.y+120);
+			font_32.draw(batch,"|",camera.position.x-190+master_volume*375, camera.position.y+142);
+			if(current_option == 1)
+				font_32.draw(batch,"MUTE",camera.position.x-75, camera.position.y+50);
+			else
+				font_16.draw(batch,"MUTE",camera.position.x-40, camera.position.y+25);
+			if(current_option == 2)
+				font_32.draw(batch,"GO BACK",camera.position.x-120, camera.position.y-50);
+			else
+				font_16.draw(batch,"GO BACK",camera.position.x-60, camera.position.y-75);
 		}
 		//font.draw(batch,i , 20, 400);
 		
@@ -229,6 +323,7 @@ public class Stage_test implements Screen {
 		master_texture[1].dispose();
 		cannonD.dispose();
 		cannonR.dispose();
+		ninja_star.dispose();
 		cannonL.dispose();
 		cannonBall.dispose();
 		font_16.dispose();
