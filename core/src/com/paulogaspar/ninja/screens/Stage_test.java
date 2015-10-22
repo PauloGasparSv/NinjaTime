@@ -20,31 +20,38 @@ import com.paulogaspar.ninja.tools.TileMap;
 
 public class Stage_test implements Screen {
 	
-	private SpriteBatch batch;
-	private MyGame game;
+	private int current_option;
 	
+	private float master_volume;
+	
+	private boolean options;
+	private boolean volume;
+
 	private OrthographicCamera camera;
+	
+	//DELETE REFERENCE
+	private MyGame game;
+
+	//DISPOSE
+	private SpriteBatch batch;
 	
 	private TileMap tilemap;
 	
 	private Ninja player;
 	
-	private BitmapFont font_32,font_16;
-	
-	private Texture cannonD,cannonR,cannonL,cannonBall;
-	private Texture ninja_star;
 	private Cannon cannons[];
-	
-	private Texture master_texture[];
+
 	private Master masters[];
 	
-	private Sound bomb_sound;
-	private Music main_theme;
-	private float master_volume;
+	private BitmapFont font_32,font_16;
 	
-	private boolean options;
-	private boolean volume;
-	private int current_option;
+	private Texture master_texture[];
+	private Texture cannonD,cannonR,cannonL,cannonBall;
+	private Texture ninja_star;
+	
+	private Sound bomb_sound;
+
+	private Music main_theme;
 	
 	
 	public Stage_test(MyGame game,float master_volume) {
@@ -66,8 +73,7 @@ public class Stage_test implements Screen {
 		
 		main_theme = Gdx.audio.newMusic(Gdx.files.internal("Music/main_theme.mp3"));
 		
-		
-		tilemap = new TileMap();
+		tilemap = new TileMap("mapa.mapa");
 		player = new Ninja(camera);
 		
 		bomb_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/8bit_bomb_explosion.wav"));
@@ -88,12 +94,10 @@ public class Stage_test implements Screen {
 				"Jump to find the strength within you!",
 				"Or don't...",
 				"Enough said, excelsior!"};
-		masters[0] = new Master(master_texture, 605, 446, message,"You can go now... please");
 		String message2[] = {"Now a harder task you must complete",
 				"Leap to the top without defeat",
 				"...",
 				"Just avoid the cannon balls"};
-		masters[1] = new Master(master_texture, 1740, 446, message2,"Just fall off the ledge");
 		String message3[] = {"Now you must avoid the fall",
 				"Press with magic through the wall",
 				"...",
@@ -102,8 +106,10 @@ public class Stage_test implements Screen {
 				"Go to the ledge and...",
 				"Click on the other side",
 				"Such magic"};
+		String message4[] = {"Like a ninja"};
+		masters[0] = new Master(master_texture, 605, 446, message,"You can go now... please");
+		masters[1] = new Master(master_texture, 1740, 446, message2,"Just fall off the ledge");
 		masters[2] = new Master(master_texture, 1840, 1088, message3,"Or you can press space forever, who cares");
-		String message4[] = {"Finisho"};
 		masters[3] = new Master(master_texture, 440, 1020, message4,"GO TO THE NEXT STAGE DAMMIT!");
 		masters[3].changeTextColor();
 	
@@ -161,8 +167,11 @@ public class Stage_test implements Screen {
 				}
 				if(current_option == 2){
 					int a = JOptionPane.showConfirmDialog(null, "Are you sure you wanna quit?");
-					if(a == JOptionPane.YES_OPTION)
+					if(a == JOptionPane.YES_OPTION){
 						Gdx.app.exit();
+						return;
+						
+					}
 				}
 				current_option = 0;					
 			}
@@ -316,20 +325,22 @@ public class Stage_test implements Screen {
 	}
 
 	@Override
-	public void dispose() {
-		batch = null;
+	public void dispose() {		
 		game = null;
-		master_texture[0].dispose();
-		master_texture[1].dispose();
+		batch.dispose();
+		tilemap.dispose();
+		player.init();
+		for(int i = 0; i < cannons.length; i++)cannons[i].dispose();
+		for(int i = 0; i < masters.length; i++)masters[i].dispose();
+		font_32.dispose();
+		font_16.dispose();
+		for(int i = 0; i < master_texture.length; i++)master_texture[i].dispose();
 		cannonD.dispose();
 		cannonR.dispose();
-		ninja_star.dispose();
 		cannonL.dispose();
 		cannonBall.dispose();
-		font_16.dispose();
-		font_32.dispose();
-		tilemap.dispose();
-		main_theme.dispose();
+		ninja_star.dispose();
 		bomb_sound.dispose();
+		main_theme.dispose();
 	}
 }

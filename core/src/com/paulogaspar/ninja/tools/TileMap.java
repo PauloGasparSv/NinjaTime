@@ -14,28 +14,29 @@ import com.paulogaspar.ninja.actors.Ninja;
 
 public class TileMap {
 	
-	private Texture tileset;
-	private TextureRegion tiles[];
-	
-	private int num_tiles[];
-	
 	public int width;
 	public int height;
-	
-	public int map[][];
-	public boolean edit_mode;
 	private int ribbon;
+	public int map[][];
+	private int num_tiles[];
+		
 	private float []pos_a;
 	private float []pos_b;
 	
+	public boolean edit_mode;
+
 	private Rectangle death_blocks[];
+
+	//DELETE REFERENCE
+	private TextureRegion tiles[];
+
+	//DISPOSE
+	private Texture tileset;
 	
-	public TileMap(){
-		
-		FileHandle file = Gdx.files.local("Maps/mapa.mapa");
+	public TileMap(String source){
+		FileHandle file = Gdx.files.local("Maps/"+source);
 		String text = file.readString();
 		
-		@SuppressWarnings("resource")
 		Scanner sc = new Scanner(text);
 	
 		num_tiles = new int[2];
@@ -51,6 +52,8 @@ public class TileMap {
 				map[line][col] = Integer.parseInt(temp[col]);
 			}
 		}
+		sc.close();
+		
 		for(int line = 0; line < num_tiles[0]; line++){
 			for(int col = 0; col < num_tiles[1]; col++){
 				if(map[line][col] == -2){ 
@@ -83,7 +86,6 @@ public class TileMap {
 				}
 			}
 		}
-		System.out.println(num_death_blocks);
 		
 		death_blocks = new Rectangle[num_death_blocks];
 		num_death_blocks = 0;
@@ -164,9 +166,7 @@ public class TileMap {
 	}
 	
 	public void edit(OrthographicCamera camera){
-		if(edit_mode){
-			
-			
+		if(edit_mode){	
 			if(Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_RIGHT)){
 				saveMap();
 				return;
@@ -187,8 +187,6 @@ public class TileMap {
 				}else{
 					pos_b[0] = x;
 					pos_b[1] = y;
-					System.out.println("X: "+pos_a[0]+" Y: "+pos_a[1]);
-					System.out.println("W: "+(pos_b[0]-pos_a[0])+" H: "+(pos_b[1]-pos_a[1]));
 				}
 			}
 			if(Gdx.input.isKeyJustPressed(Input.Keys.L))
@@ -250,7 +248,6 @@ public class TileMap {
 	}
 	
 	public void draw(SpriteBatch batch,float camera_x,float camera_y,OrthographicCamera camera){
-	
 		int begin_x = (int)(camera_x-20)/64;
 		if(begin_x < 0)
 			begin_x = 0;
@@ -263,7 +260,6 @@ public class TileMap {
 		int end_y = (int)(camera_y+670)/64;
 		if(end_y > num_tiles[0]-1)
 			end_y = num_tiles[0]-1;
-		
 		
 		for(int line = begin_y; line <= end_y; line++){
 			for(int col = begin_x; col <= end_x; col++){
@@ -293,6 +289,8 @@ public class TileMap {
 	}
 	
 	public void dispose(){
+		for(int i = 0; i < tiles.length; i++)tiles[i] = null;
+		tiles = null;
 		tileset.dispose();
 	}
 	

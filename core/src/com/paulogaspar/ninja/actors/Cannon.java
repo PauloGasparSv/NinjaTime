@@ -13,8 +13,6 @@ public class Cannon {
 	public static final int UP = 3,DOWN = 2,LEFT = 1,RIGHT = 0;
 	private int type;
 	private int direction;
-	private TextureRegion cannon;
-	private TextureRegion cannonBall;
 	private float position[];
 	private boolean shooting;
 	private long time;
@@ -22,7 +20,11 @@ public class Cannon {
 	private float init[];
 	private int timer;
 	private boolean live;
+	
+	//DELETE REFERENCE
 	private Sound sound;
+	private TextureRegion cannon;
+	private TextureRegion cannonBall;
 	
 	public Cannon(Texture cannon,Texture cannonBall,float posX,float posY,int direction,int type,int timer,Sound sound){
 		position = new float[2];
@@ -121,7 +123,12 @@ public class Cannon {
 			if(shooting)
 				batch.draw(cannonBall,ball_position[0],ball_position[1],64,64);
 		}
-		
+	}
+	
+	public void dispose(){
+		sound = null;
+		cannon = null;
+		cannonBall = null;
 	}
 	
 }

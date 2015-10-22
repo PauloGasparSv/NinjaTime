@@ -12,51 +12,56 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Ninja {
 	private final int IDLE = 0, WALK = 1;
-	
-	private Animation animation[];
-	private float elapsed_time;
-	public float position[];
-	boolean facing_right;
+		
 	private int current;
+	private int jump_count;
+	private int current_gauge;
 	
+	public float position[];
+	private float teleport_pos[];
+	public float camera_start_pos[];
+	private float elapsed_time;
+	private float smoke_elapsed;
 	public float speed_y;
 	public float speed_x;
+	public float time_mod;
+	private float timer;
+	public float jump_mod;
+	public float g_mod;
 	
+	boolean facing_right;
+	private boolean stop_time;
+	private boolean slow_time;
+	private boolean touching;
+	private boolean slide_l,slide_r;	
 	private boolean grounded;
-	private int jump_count;
 	
+	private long current_slide_sound;
+	private long clock_playing;	
+	
+	
+	//DELETE REFERENCE
 	private OrthographicCamera camera;
 	
 	private Animation smoke_bomb;
-	private float smoke_elapsed;
-	
-	private TextureRegion gauge[];
-	private Texture gauge_texture;
-	private int current_gauge;
-	
-	public float time_mod;
-	private boolean stop_time;
-	private boolean slow_time;
-	private float timer;
-	
-	private boolean touching;
-	private float teleport_pos[];
-	
-	public float camera_start_pos[];
-	
-	public float jump_mod;
-	public float g_mod;
-	private boolean slide_l,slide_r;
+	private Animation animation[];
 	
 	private TextureRegion wallslide;
+	private TextureRegion gauge[];
 	
+	//DISPOSE	
 	private Sound jump_sound;
 	private Sound slide_sound;
-	private long current_slide_sound;	
 	private Sound clock_sound;
-	private long clock_playing;
 	private Sound teleport_sound;
 	private Sound death_sound;
+	
+	private Texture gauge_texture;
+	private Texture wallslide_texture;
+	private Texture walk_texture[];
+	private Texture idle_texture[];
+	private Texture smokebomb_texture[];
+
 	
 	public Ninja(OrthographicCamera camera){
 		this.camera = camera;
@@ -64,32 +69,40 @@ public class Ninja {
 		camera_start_pos[0] = 0;
 		camera_start_pos[1] = 0;
 		
-		wallslide = new TextureRegion(new Texture(Gdx.files.internal("Ninja/wallslide.png")));	
+		wallslide_texture = new Texture(Gdx.files.internal("Ninja/wallslide.png"));
+		wallslide = new TextureRegion(wallslide_texture);
+		
 		animation =  new Animation[2];
+
+		walk_texture = new Texture[4];
 		
 		TextureRegion[] temp = new TextureRegion[4];
-		for(int i = 1; i < 5; i++)
-			temp[i-1] = new TextureRegion(new Texture(Gdx.files.internal("Ninja/run"+i+".png")));
-		
+		for(int i = 1; i < 5; i++){
+			walk_texture[i-1] = new Texture(Gdx.files.internal("Ninja/run"+i+".png"));
+			temp[i-1] = new TextureRegion(walk_texture[i-1]);
+		}
 		animation[WALK] = new Animation(0.25f,temp);
 		
+		idle_texture = new Texture[2];
 		temp = new TextureRegion[2];
-		temp[0] = new TextureRegion(new Texture(Gdx.files.internal("Ninja/idle1.png")));
-		temp[1] = new TextureRegion(new Texture(Gdx.files.internal("Ninja/idle2.png")));
+		idle_texture[0] = new Texture(Gdx.files.internal("Ninja/idle1.png"));
+		idle_texture[1] = new Texture(Gdx.files.internal("Ninja/idle2.png"));
+		temp[0] = new TextureRegion(idle_texture[0]);
+		temp[1] = new TextureRegion(idle_texture[1]);
 		animation[IDLE] = new Animation(0.75f,temp);
 		
+		smokebomb_texture = new Texture[4];
 		temp = new TextureRegion[4];
-		for(int i = 1; i < 5; i++)
-			temp[i-1] = new TextureRegion(new Texture(Gdx.files.internal("Misc/spr_smoke_"+i+".png")));
-		
+		for(int i = 1; i < 5; i++){
+			smokebomb_texture[i-1] = new Texture(Gdx.files.internal("Misc/spr_smoke_"+i+".png"));
+			temp[i-1] = new TextureRegion(smokebomb_texture[i-1]);
+		}
 		smoke_bomb = new Animation(0.07f,temp);
-		
 		
 		gauge = new TextureRegion[5];
 		gauge_texture = new Texture(Gdx.files.internal("Misc/meter.png"));
 		for(int i = 0; i < 5; i++)
 			gauge[i] = new TextureRegion(gauge_texture,171,0,(4-i)*14,20);
-		
 		
 		jump_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/jump_10.wav"));
 		slide_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/hiss.wav"));
@@ -151,45 +164,26 @@ public class Ninja {
 		//But that's the way i started it :(
 		
 		int x1 = ((int)(position[0]+10)/64);
-		if(x1 < 0 )x1 = 0;
-		if(x1 > map[0].length-1) x1 = map[0].length-1;
 		int x2 = ((int)(position[0]+54)/64);
-		if(x2 < 0 )x2 = 0;
-		if(x2 > map[0].length-1) x2 = map[0].length-1;
-		int y = ((int)(position[1]+4)/64);
-		if(y < 0 )y = 0;
-		if(y > map.length-1) y = map.length-1;
-		
-		int y2 = ((int)(position[1]+48)/64);
-		if(y2 < 0 )y2 = 0;
-		if(y2 > map.length-1) y2 = map.length-1;
-		
-		int y1 = ((int)(position[1]+12)/64);
-		if(y1 < 0 )y1 = 0;
-		if(y1 > map.length-1) y1 = map.length-1;
-		
 		int xr = ((int)(position[0]+64)/64);
-		if(xr < 0 )xr = 0;
-		if(xr > map[0].length-1) xr = map[0].length-1;
 		int xl = ((int)(position[0])/64);
-		if(xl < 0 )xl = 0;
-		if(xl > map[0].length-1) xl = map[0].length-1;
-		
-		int yu = ((int)(position[1]+54)/64);
-		if(yu < 0 )yu = 0;
-		if(yu > map.length-1) yu = map.length-1;
 		int xl2 = ((int)(position[0]+16)/64);
-		if(xl2 < 0 )xl2 = 0;
-		if(xl2 > map[0].length-1) xl2 = map[0].length-1;
 		int xr2 = ((int)(position[0]+48)/64);
-		if(xr2 < 0 )xr2 = 0;
-		if(xr2 > map[0].length-1) xr2 = map[0].length-1;
 		
+		int y = ((int)(position[1]+4)/64);
+		int y2 = ((int)(position[1]+48)/64);
+		int y1 = ((int)(position[1]+12)/64);
+		int yu = ((int)(position[1]+54)/64);
+
+		if(y > map.length-1) y = map.length-1;
+		if(y2 > map.length-1) y2 = map.length-1;
+		if(y1 > map.length-1) y1 = map.length-1;
+		if(yu > map.length-1) yu = map.length-1;
 		
-		grounded = true;
-		if(map[y][x1] < 0 && map[y][x2] < 0){
+		if(map[y][x1] < 0 && map[y][x2] < 0)
 			grounded = false;
-		}
+		else
+			grounded = true;
 		
 		if(grounded){
 			jump_count = 0;
@@ -200,9 +194,8 @@ public class Ninja {
 				slide_sound.stop();
 			current_slide_sound = 0;
 			speed_y = 0;
-		}
-			
-		if(!grounded && speed_y < 7.4f){
+		}	
+		else{
 			if(slide_l || slide_r){
 				if(current_slide_sound == 0){
 					slide_sound.play(0.8f*master_volume);
@@ -212,10 +205,11 @@ public class Ninja {
 					current_slide_sound = 0;
 				speed_y = g_mod;
 			}
-			else
+			else if(speed_y < 7.4f)
 				speed_y += delta*14.75f*time_mod;
 					
 		}
+		
 		if(slow_time){
 			timer += delta*1.5f;
 			if(timer > 5){
@@ -247,7 +241,7 @@ public class Ninja {
 			}
 		}
 		
-		if(Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT) && current_gauge == 0 && !slow_time && !stop_time && !touching){
+		if(Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT) && !slow_time && !stop_time && !touching){
 			slow_time = true;
 			time_mod = 0.5f;
 			timer = delta;
@@ -258,27 +252,22 @@ public class Ninja {
 		if(Gdx.input.isTouched() && !slow_time && !stop_time){
 			touching = true;
 			smoke_elapsed = 0;
+			
 			teleport_pos[0] = position[0];
 			teleport_pos[1] = position[1];
+			
 			int tx = (int)((camera.position.x*wscale-vwidth/2+Gdx.input.getX())/(64*wscale));
 			int ty =  (int)((camera.position.y*hscale-vheight/2+(vheight-Gdx.input.getY()))/(64*hscale));
-			if(tx < 0)
-				tx = 0;
-			if(tx > map[0].length-1)
-				tx = map[0].length-1;
-			if(ty < 0)
-				ty = 0;
-			if(ty > map.length-1)
-				ty = map.length-1;
+		
+			if(tx > map[0].length-1)tx = map[0].length-1;
+			if(ty > map.length-1)ty = map.length-1;
 			
 			int dx = (x1-tx)*64;
 			int dy =  (y1-ty)*64;
-			boolean naopode = true;
-			if(dx != 0 && dy != 0)
-				naopode = Math.sqrt(dx*dx + dy*dy) > 190;
-			else
-				naopode = dx > 200 || dy > 160 || dx < -200 || dy <-160;
 			
+			boolean naopode = true;
+			if(dx != 0 && dy != 0) naopode = Math.sqrt(dx*dx + dy*dy) > 190;
+			else naopode = dx*dx > 4000 || dy*dy > 25600;
 			
 			if(map[ty][tx] < 0 &&!naopode){
 					teleport_pos[0] = tx*64;
@@ -290,6 +279,7 @@ public class Ninja {
 				teleport_pos[1] = 0;
 			}
 		}
+		
 		if(!Gdx.input.isTouched()&& !slow_time && !stop_time && touching){
 			teleport_sound.play(0.5f*master_volume);
 			stop_time = true;
@@ -312,6 +302,7 @@ public class Ninja {
 		if(Gdx.input.isKeyPressed(Input.Keys.D)){
 			facing_right = true;
 			slide_l = false;
+			
 			if(speed_x < 4.3f)
 				speed_x += delta*6.6f*time_mod;
 			if(speed_x < 0)
@@ -326,6 +317,7 @@ public class Ninja {
 		else if(Gdx.input.isKeyPressed(Input.Keys.A)){
 			facing_right = false;
 			slide_r = false;
+			
 			if(speed_x > -4.3f)
 				speed_x -= delta*6.6f*time_mod;
 			if(speed_x > 0)
@@ -357,7 +349,9 @@ public class Ninja {
 				jump_count = 2;
 			else
 				jump_count = 1;
+			
 			grounded = false;
+			
 			if(slide_l){
 				speed_x += 1f;
 				position[0] += 4;
@@ -419,8 +413,8 @@ public class Ninja {
 				current_slide_sound = 0;
 				slide_sound.stop();
 			}
-			
 		}
+		
 		if(speed_x == 0 && ((map[y1][xl] < 0 &&
 				map[y2][xl] < 0 && slide_l)||(map[y1][xr] < 0 && map[y2][xr] < 0 && slide_r))){
 			slide_r = false;
@@ -442,7 +436,9 @@ public class Ninja {
 			position[0] += speed_x*time_mod;
 		else if(time_mod == 0.5f)
 			position[0] += speed_x*0.75f;
+		
 		position[1] -= speed_y*time_mod;
+		
 		if(position[0] < 0)
 			position[0] = 0;
 		if(position[0] > width-72)
@@ -498,7 +494,25 @@ public class Ninja {
 	
 	public void dispose(){
 		camera = null;
+		smoke_bomb = null;
+		animation = null;
+		wallslide = null;;
+		gauge = null;
+		
+		jump_sound.dispose();
+		slide_sound.dispose();
+		clock_sound.dispose();
+		teleport_sound.dispose();
+		death_sound.dispose();
+		
 		gauge_texture.dispose();
+		wallslide_texture.dispose();
+		for(int i = 0; i < walk_texture.length; i++)walk_texture[i].dispose();
+		walk_texture = null;
+		for(int i = 0; i < smokebomb_texture.length; i++)smokebomb_texture[i].dispose();
+		smokebomb_texture = null;
+		for(int i = 0; i < idle_texture.length; i++)idle_texture[i].dispose();
+		idle_texture = null;
 	}
 	
 	

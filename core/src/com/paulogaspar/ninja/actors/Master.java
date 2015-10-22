@@ -15,13 +15,16 @@ public class Master {
 	private float position[];
 	private String message[];
 	private String secret_message;
-	private Animation idle;
 	private boolean live;
 	private int current_message;
 	private float elapsed;
 	private boolean facingR;
 	private int dumb_counter;
 	private boolean white_text;
+
+	//DELETE REFERENCE
+	private Animation idle;
+
 	
 	public Master(Texture master[],float posX,float posY,String message[],String secret_message){
 		TextureRegion a[] = new TextureRegion[2];
@@ -91,6 +94,10 @@ public class Master {
 		
 			batch.draw(idle.getKeyFrame(elapsed,true),position[0],position[1],64,64);
 		}
+	}
+	
+	public void dispose(){
+		idle = null;
 	}
 
 }
