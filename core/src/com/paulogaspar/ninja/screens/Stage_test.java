@@ -29,7 +29,7 @@ public class Stage_test implements Screen {
 
 	private OrthographicCamera camera;
 	
-	//DELETE REFERENCE
+	//DELETE REFERENCEf
 	private MyGame game;
 
 	//DISPOSE
@@ -155,17 +155,24 @@ public class Stage_test implements Screen {
 				current_option++;
 			if(Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W))
 				current_option--;
-			if(current_option > 2) current_option = 0;
-			if(current_option < 0) current_option = 2;
+			if(current_option > 3) current_option = 3;
+			if(current_option < 0) current_option = 0;
 			if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) ||
 					Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
-				if(current_option == 0)
+				if(current_option == 0){
 					options = false;
+					current_option = 0;					
+
+				}
 				if(current_option == 1){
 					options = false;
 					volume = true;
+					current_option = 0;					
 				}
 				if(current_option == 2){
+					player.particles_on = !player.particles_on;
+				}
+				if(current_option == 3){
 					int a = JOptionPane.showConfirmDialog(null, "Are you sure you wanna quit?");
 					if(a == JOptionPane.YES_OPTION){
 						Gdx.app.exit();
@@ -173,7 +180,6 @@ public class Stage_test implements Screen {
 						
 					}
 				}
-				current_option = 0;					
 			}
 			
 		}
@@ -186,8 +192,8 @@ public class Stage_test implements Screen {
 				current_option++;
 			if(Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W))
 				current_option--;
-			if(current_option > 2) current_option = 0;
-			if(current_option < 0) current_option = 2;
+			if(current_option > 2) current_option = 2;
+			if(current_option < 0) current_option = 0;
 			if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) ||
 					Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
 				if(current_option == 1){
@@ -270,16 +276,20 @@ public class Stage_test implements Screen {
 	
 		if(options){
 			font_32.draw(batch, "Options", camera.position.x-110, camera.position.y+265);
-			batch.draw(ninja_star,camera.position.x - 220, camera.position.y+90-100*current_option,64,64);
+			batch.draw(ninja_star,camera.position.x - 260, camera.position.y+90-68*current_option,64,64);
 			if(current_option == 0)
 				font_32.draw(batch,"RESUME",camera.position.x-96, camera.position.y+150);
 			else
 				font_16.draw(batch,"RESUME",camera.position.x-50, camera.position.y+125);
 			if(current_option == 1)
-				font_32.draw(batch,"VOLUME",camera.position.x-100, camera.position.y+50);
+				font_32.draw(batch,"VOLUME",camera.position.x-100, camera.position.y+85);
 			else
-				font_16.draw(batch,"VOLUME",camera.position.x-45, camera.position.y+25);
+				font_16.draw(batch,"VOLUME",camera.position.x-45, camera.position.y+55);
 			if(current_option == 2)
+				font_32.draw(batch,"PARTICLES "+(player.particles_on?"ON":"OFF"),camera.position.x-180, camera.position.y+15);
+			else
+				font_16.draw(batch,"PARTICLES "+(player.particles_on?"ON":"OFF"),camera.position.x-100, camera.position.y-10);
+			if(current_option == 3)
 				font_32.draw(batch,"QUIT GAME",camera.position.x-140, camera.position.y-50);
 			else
 				font_16.draw(batch,"QUIT GAME",camera.position.x-70, camera.position.y-75);				

@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.paulogaspar.ninja.tools.Particle;
 
 public class Ninja {
 	private final int IDLE = 0, WALK = 1;
@@ -35,6 +36,7 @@ public class Ninja {
 	private boolean touching;
 	private boolean slide_l,slide_r;	
 	private boolean grounded;
+	public boolean particles_on;
 	
 	private long current_slide_sound;
 	private long clock_playing;	
@@ -61,6 +63,8 @@ public class Ninja {
 	private Texture walk_texture[];
 	private Texture idle_texture[];
 	private Texture smokebomb_texture[];
+	
+	private Particle particlefx;
 
 	
 	public Ninja(OrthographicCamera camera){
@@ -112,6 +116,10 @@ public class Ninja {
 		
 		position = new float[2];
 		teleport_pos = new float[2];
+		
+		particlefx = new Particle(14, smokebomb_texture[0], 55f, 90, 100, 60,2.2f);
+		particles_on = true;
+		
 		init();
 	
 	}
@@ -179,12 +187,24 @@ public class Ninja {
 		if(y2 > map.length-1) y2 = map.length-1;
 		if(y1 > map.length-1) y1 = map.length-1;
 		if(yu > map.length-1) yu = map.length-1;
+				
+		if(!particles_on && particlefx.isActive()){
+			particlefx.stop();
+		}
+		
+		if(particles_on && particlefx.isActive()){
+			particlefx.update(delta, camera);
+			if(!slide_l && !slide_r){
+				particlefx.canCreate(false);
+				if(particlefx.getNum() == 0)particlefx.stop();
+			}
+		}
 		
 		if(map[y][x1] < 0 && map[y][x2] < 0)
 			grounded = false;
 		else
 			grounded = true;
-		
+				
 		if(grounded){
 			jump_count = 0;
 			g_mod = 1;
@@ -197,6 +217,15 @@ public class Ninja {
 		}	
 		else{
 			if(slide_l || slide_r){
+				if(particles_on){
+					if(!particlefx.isActive()){
+						particlefx.start();
+						particlefx.canCreate(true);
+					}
+					if(slide_r){particlefx.setOrigin(position[0]+46, position[1]);}
+					else particlefx.setOrigin(position[0], position[1]);
+				}
+
 				if(current_slide_sound == 0){
 					slide_sound.play(0.8f*master_volume);
 					current_slide_sound = System.currentTimeMillis();
@@ -358,6 +387,7 @@ public class Ninja {
 				slide_l = false;
 				current_slide_sound = 0;
 				slide_sound.stop();
+				
 			}
 			if(slide_r){
 				speed_x -= 1f;
@@ -443,6 +473,8 @@ public class Ninja {
 			position[0] = 0;
 		if(position[0] > width-72)
 			position[0] = width-72;
+		
+		
 	}
 	
 	public void die(float master_volume){
@@ -459,6 +491,9 @@ public class Ninja {
 	}
 	
 	public void draw(SpriteBatch batch){
+		if(particles_on &&particlefx.isActive())
+			particlefx.draw(batch);
+		
 		TextureRegion frame;
 		if(!slide_l && !slide_r){
 			frame = animation[current].getKeyFrame(elapsed_time,true);
@@ -485,7 +520,7 @@ public class Ninja {
 			batch.draw(smoke_bomb.getKeyFrame(smoke_elapsed,false),position[0],position[1],64,64);
 			batch.draw(smoke_bomb.getKeyFrame(smoke_elapsed,false),teleport_pos[0],teleport_pos[1],64,64);			
 		}
-		
+	
 	}
 	
 	public Rectangle rect(){
@@ -499,6 +534,7 @@ public class Ninja {
 		wallslide = null;;
 		gauge = null;
 		
+		particlefx.dispose();
 		jump_sound.dispose();
 		slide_sound.dispose();
 		clock_sound.dispose();

@@ -1,34 +1,151 @@
 package com.paulogaspar.ninja.tools;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Particle {
 
-	private int x[];
-	private int y[];
-	private int angle[];
+	//REALLY BAD
+	private float x[];
+	private float y[];
+	private float ix[];
+	private float iy[];
 	private float speed[];
+	private float angle[];
 	private float average_speed;
+	private float average_angle;
+	private float origin_x;
+	private float origin_y;
+	private long delay;
+	private long timer;
+	private boolean active;
+	private float dist;
+	private int sent;
+	private int width;
+	private int height;
+	private float scale;
+	private int counter;
+	private boolean cancreate;
 	
 	//DELETE REFERENCE
 	private TextureRegion texture;
 	
-	public Particle(int size, Texture texture, float average_speed){
-		x = new int[size];
-		y = new int[size];
-		angle = new int[size];
+	
+	public Particle(int size, Texture texture, float average_speed,float average_angle,long delay,float dist,float scale){
+		x = new float[size];
+		y = new float[size];
+		ix = new float[size];
+		iy = new float[size];
 		speed = new float[size];
-		average_speed = average_speed;
+		angle = new float[size];
+		sent = 0;
+		this.scale = scale;
+		this.average_angle = average_angle;
+		this.average_speed = average_speed;
 		this.texture = new TextureRegion(texture);
+		this.origin_x = 0;
+		this.origin_y = 0;
+		this.delay = delay;
+		this.timer = -1;
+		this.active = false;
+		this.dist = dist;
+		this.counter = 0;
+		width = texture.getWidth();
+		height = texture.getHeight();
+		cancreate = true;
 	}
 	
-	public void init(){
-		x = new int[x.length];
-		y = new int[y.length];
-		angle = new int[angle.length];
+	public void init(float origin_x,float origin_y){
+		x = new float[x.length];
+		y = new float[y.length];
+		ix = new float[ix.length];
+		iy = new float[iy.length];
+		angle = new float[angle.length];
 		speed = new float[speed.length];
+		this.origin_x = origin_x;
+		this.origin_y = origin_y;
+		counter = 0;
+		timer = -1;
+		sent = 0;
+		cancreate = true;
+		active = false;
 	}
+	
+	public void start(){
+		active = true;
+		timer = System.currentTimeMillis();
+	}
+	public void stop(){init(0,0);}
+	public void canCreate(boolean can){cancreate = can;}
+	public int getNum(){return counter;}
+	
+	public void update(float delta,OrthographicCamera camera){
+		if(active){
+			if(sent != -1 && cancreate){
+				if(System.currentTimeMillis() - timer > delay){
+
+					x[sent] = origin_x;
+					y[sent] = origin_y;
+					ix[sent] = origin_x;
+					iy[sent] = origin_y;
+					
+					speed[sent] = average_speed + (System.currentTimeMillis()%16 - 8)*0.01f*average_speed;
+					angle[sent] = average_angle + System.currentTimeMillis()%16 - 8;
+					counter++;
+					
+					boolean found = false;
+					for(int i = 0; i < speed.length; i++){if(speed[i] == 0){sent = i;found = true;}};
+					if(!found) sent = -1;
+					
+					timer = System.currentTimeMillis();
+				}
+			}
+			for(int i = 0; i < x.length; i++){
+				if(speed[i] != 0){
+					x[i] += delta*speed[i]*Math.cos(Math.toRadians(angle[i]));
+					y[i] += delta*speed[i]*Math.sin(Math.toRadians(angle[i]));
+					
+					if(x[i] > ix[i] + dist || x[i] < ix[i] - dist ||
+							y[i] > iy[i] + dist || y[i] < iy[i] -dist){
+						counter --;
+						x[i] = 0;
+						y[i] = 0;
+						ix[i] = 0;
+						iy[i] = 0;
+						speed[i] = 0;
+						angle[i] = 0;
+						sent = i;					
+					}
+				}
+			}
+		}
+	}
+	
+	public boolean isActive(){
+		return active;
+	}
+	
+	public void draw(SpriteBatch batch){
+
+		for(int i = 0; i < x.length; i++){
+			if(speed[i] != 0){
+				float alpha = (x[i] - ix[i])/dist;
+				if(alpha < 0) alpha = -1*alpha;
+				alpha = 1-(alpha*10);
+				if(alpha < 0) alpha = 0;
+				batch.setColor(1, 1, 1,alpha);
+				batch.draw(texture,x[i],y[i],width/2,height/2,width,height,scale,scale,alpha*360);
+				batch.setColor(1,1,1,1);
+			}
+		}
+	}
+	public void setOrigin(float x,float y){
+		this.origin_x = x;
+		this.origin_y = y;
+	}
+	
 	public void dispose(){
 		texture = null;
 	}
