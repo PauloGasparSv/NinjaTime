@@ -28,12 +28,13 @@ public class Particle {
 	private float scale;
 	private int counter;
 	private boolean cancreate;
+	private int angleDecoy;
 	
 	//DELETE REFERENCE
 	private TextureRegion texture;
 	
 	
-	public Particle(int size, Texture texture, float average_speed,float average_angle,long delay,float dist,float scale){
+	public Particle(int size, Texture texture,float scale){
 		x = new float[size];
 		y = new float[size];
 		ix = new float[size];
@@ -42,19 +43,21 @@ public class Particle {
 		angle = new float[size];
 		sent = 0;
 		this.scale = scale;
-		this.average_angle = average_angle;
-		this.average_speed = average_speed;
+		this.average_angle = 0;
+		this.average_speed = 0;
 		this.texture = new TextureRegion(texture);
 		this.origin_x = 0;
 		this.origin_y = 0;
-		this.delay = delay;
+		this.delay = 0;
 		this.timer = -1;
 		this.active = false;
-		this.dist = dist;
+		this.dist = 0;
 		this.counter = 0;
 		width = texture.getWidth();
 		height = texture.getHeight();
+		this.angleDecoy = 16;
 		cancreate = true;
+		
 	}
 	
 	public void init(float origin_x,float origin_y){
@@ -69,19 +72,30 @@ public class Particle {
 		counter = 0;
 		timer = -1;
 		sent = 0;
-		cancreate = true;
 		active = false;
+		
 	}
+
 	
-	public void start(){
+	public void start(float average_speed,float average_angle,long delay,float dist){
+		this.average_speed = average_speed;
+		this.average_angle = average_angle;
+		this.delay = delay;
+		this.dist = dist;
 		active = true;
+		cancreate = true;
 		timer = System.currentTimeMillis();
 	}
 	public void stop(){init(0,0);}
 	public void canCreate(boolean can){cancreate = can;}
+	public boolean getCan(){return cancreate;}
 	public int getNum(){return counter;}
 	
-	public void update(float delta,OrthographicCamera camera){
+	public void setAngleDecoy(int a){
+		this.angleDecoy = a;
+	}
+	
+	public void update(float delta,OrthographicCamera camera,float time_mod){
 		if(active){
 			if(sent != -1 && cancreate){
 				if(System.currentTimeMillis() - timer > delay){
@@ -92,7 +106,7 @@ public class Particle {
 					iy[sent] = origin_y;
 					
 					speed[sent] = average_speed + (System.currentTimeMillis()%16 - 8)*0.01f*average_speed;
-					angle[sent] = average_angle + System.currentTimeMillis()%16 - 8;
+					angle[sent] = average_angle + (System.currentTimeMillis()%angleDecoy - (angleDecoy/2));
 					counter++;
 					
 					boolean found = false;
@@ -104,8 +118,8 @@ public class Particle {
 			}
 			for(int i = 0; i < x.length; i++){
 				if(speed[i] != 0){
-					x[i] += delta*speed[i]*Math.cos(Math.toRadians(angle[i]));
-					y[i] += delta*speed[i]*Math.sin(Math.toRadians(angle[i]));
+					x[i] += delta*speed[i]*Math.cos(Math.toRadians(angle[i]))*time_mod;
+					y[i] += delta*speed[i]*Math.sin(Math.toRadians(angle[i]))*time_mod;
 					
 					if(x[i] > ix[i] + dist || x[i] < ix[i] - dist ||
 							y[i] > iy[i] + dist || y[i] < iy[i] -dist){

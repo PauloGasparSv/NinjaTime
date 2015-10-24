@@ -64,7 +64,7 @@ public class Ninja {
 	private Texture idle_texture[];
 	private Texture smokebomb_texture[];
 	
-	private Particle particlefx;
+	private Particle particlefx;	
 
 	
 	public Ninja(OrthographicCamera camera){
@@ -117,7 +117,7 @@ public class Ninja {
 		position = new float[2];
 		teleport_pos = new float[2];
 		
-		particlefx = new Particle(14, smokebomb_texture[0], 55f, 90, 100, 60,2.2f);
+		particlefx = new Particle(20, smokebomb_texture[0],2.2f);
 		particles_on = true;
 		
 		init();
@@ -125,6 +125,7 @@ public class Ninja {
 	}
 	
 	public void init(){
+		particlefx = new Particle(14, smokebomb_texture[0],2.2f);
 		position[0] = 80f;
 		position[1] = 480f;
 		current_slide_sound = 0;
@@ -150,7 +151,6 @@ public class Ninja {
 		time_mod = 1;
 		
 		touching = false;
-		
 		timer = 0;
 		current_gauge = 0;
 		smoke_elapsed = 0;
@@ -188,23 +188,29 @@ public class Ninja {
 		if(y1 > map.length-1) y1 = map.length-1;
 		if(yu > map.length-1) yu = map.length-1;
 				
-		if(!particles_on && particlefx.isActive()){
-			particlefx.stop();
+		
+		if(!particles_on){
+				if(particlefx.isActive())particlefx.stop();
 		}
 		
-		if(particles_on && particlefx.isActive()){
-			particlefx.update(delta, camera);
-			if(!slide_l && !slide_r){
-				particlefx.canCreate(false);
-				if(particlefx.getNum() == 0)particlefx.stop();
+		
+		if(particles_on){			
+			if(particlefx.isActive()){
+				particlefx.update(delta, camera,time_mod);
+				if(!slide_l && !slide_r){
+					if(particlefx.getNum() == 0)particlefx.stop();
+					particlefx.canCreate(false);
+				}
 			}
+			
 		}
 		
 		if(map[y][x1] < 0 && map[y][x2] < 0)
 			grounded = false;
-		else
+		else{
 			grounded = true;
-				
+		}	
+		
 		if(grounded){
 			jump_count = 0;
 			g_mod = 1;
@@ -218,11 +224,10 @@ public class Ninja {
 		else{
 			if(slide_l || slide_r){
 				if(particles_on){
-					if(!particlefx.isActive()){
-						particlefx.start();
-						particlefx.canCreate(true);
+					if(!particlefx.isActive() || (particlefx.isActive()&&!particlefx.getCan())){
+						particlefx.start(55f, 90, 100,60);
 					}
-					if(slide_r){particlefx.setOrigin(position[0]+46, position[1]);}
+					if(slide_r)particlefx.setOrigin(position[0]+46, position[1]);
 					else particlefx.setOrigin(position[0], position[1]);
 				}
 
@@ -234,7 +239,7 @@ public class Ninja {
 					current_slide_sound = 0;
 				speed_y = g_mod;
 			}
-			else if(speed_y < 7.4f)
+			else if(speed_y < 7.5f)
 				speed_y += delta*14.75f*time_mod;
 					
 		}
@@ -296,7 +301,7 @@ public class Ninja {
 			
 			boolean naopode = true;
 			if(dx != 0 && dy != 0) naopode = Math.sqrt(dx*dx + dy*dy) > 190;
-			else naopode = dx*dx > 4000 || dy*dy > 25600;
+			else naopode = dx*dx > 40000 || dy*dy > 25600;
 			
 			if(map[ty][tx] < 0 &&!naopode){
 					teleport_pos[0] = tx*64;
@@ -491,8 +496,10 @@ public class Ninja {
 	}
 	
 	public void draw(SpriteBatch batch){
-		if(particles_on &&particlefx.isActive())
-			particlefx.draw(batch);
+		if(particles_on){
+			if(particlefx.isActive())particlefx.draw(batch);
+		}
+			
 		
 		TextureRegion frame;
 		if(!slide_l && !slide_r){
@@ -520,6 +527,8 @@ public class Ninja {
 			batch.draw(smoke_bomb.getKeyFrame(smoke_elapsed,false),position[0],position[1],64,64);
 			batch.draw(smoke_bomb.getKeyFrame(smoke_elapsed,false),teleport_pos[0],teleport_pos[1],64,64);			
 		}
+		
+		
 	
 	}
 	

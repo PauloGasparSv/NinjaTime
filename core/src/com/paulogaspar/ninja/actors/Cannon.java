@@ -26,6 +26,8 @@ public class Cannon {
 	private TextureRegion cannon;
 	private TextureRegion cannonBall;
 	
+	
+	
 	public Cannon(Texture cannon,Texture cannonBall,float posX,float posY,int direction,int type,int timer,Sound sound){
 		position = new float[2];
 		this.sound = sound;
@@ -62,6 +64,7 @@ public class Cannon {
 		
 	}
 	public void update(float delta,OrthographicCamera camera,Ninja player,float master_volume){
+		
 		int width = Gdx.graphics.getWidth();
 		int height = Gdx.graphics.getHeight();
 		if(!live){
@@ -92,6 +95,7 @@ public class Cannon {
 				sound.setPan(i, pan, volume*master_volume);
 			}
 			if(shooting){
+				
 				if(new Rectangle(ball_position[0]+27,ball_position[1]+26,10,12).overlaps(player.rect()))
 					player.die(master_volume);
 				if(direction == LEFT)
