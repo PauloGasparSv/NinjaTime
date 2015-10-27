@@ -21,7 +21,6 @@ public class Cannon {
 	private float init[];
 	private int timer;
 	private boolean live;
-	private long fx_timer;
 	private boolean particles_on;
 	
 	//DELETE REFERENCE
@@ -34,7 +33,8 @@ public class Cannon {
 	
 	public Cannon(Texture cannon,Texture cannonBall,float posX,float posY,int direction,int type,int timer,Sound sound){
 		position = new float[2];
-		fx = new Particle(6, cannonBall, 2.25f);
+		fx = new Particle(20, cannonBall, 2.5f);
+		fx.setAngleDecoy(70);
 
 		this.sound = sound;
 		position[0] = posX;
@@ -42,29 +42,26 @@ public class Cannon {
 		this.type = type;
 		this.timer = timer;
 		init = new float[2];
+		fx.init();
 
 		if(direction == LEFT){
 			init[0] = posX - 36;
 			init[1] = posY;
-			fx.init(init[0], init[1]+12);
 
 		}
 		if(direction == RIGHT){
 			init[0] = posX + 36;
 			init[1] = posY;
-			fx.init(init[0]+18, init[1]+22);
 
 		}
 		if(direction == DOWN){
 			init[0] = posX;
 			init[1] = posY-36;
-			fx.init(init[0], init[1]+12);
 
 		}
 		if(direction == UP){
 			init[0] = posX;
 			init[1] = posY+36;
-			fx.init(init[0]+24, init[1]+20);
 
 		}
 		ball_position = new float[2];
@@ -77,7 +74,6 @@ public class Cannon {
 		shooting = false;
 		live = false;
 
-		fx_timer = 0;
 		particles_on = true;
 	}
 	public void update(float delta,OrthographicCamera camera,Ninja player,float master_volume){
@@ -86,13 +82,11 @@ public class Cannon {
 		
 		if(fx.isActive() && particles_on){
 			fx.update(delta, camera, player.time_mod);
-			if(fx.getCan() && System.currentTimeMillis() - fx_timer > 500){
-				fx.canCreate(false);
-				fx_timer = 0;
-			}
+			
 			if(!fx.getCan() && fx.getNum() == 0){
 				fx.stop();
 			}
+		
 		}
 		
 		int width = Gdx.graphics.getWidth();
@@ -107,15 +101,11 @@ public class Cannon {
 			if(!new Rectangle(position[0],position[1],64,64).overlaps(new Rectangle(camera.position.x-width/2,camera.position.y-height/2,width,height))&&!shooting){
 				live = false;
 				fx.stop();
-				fx_timer = 0;
 				time = 0;
 				return;
 			}
 			if(System.currentTimeMillis() - time > this.timer && !shooting){
-				if(particles_on){
-					fx.start(35f, 90, 80, 60);
-					fx_timer = System.currentTimeMillis();
-				}
+				
 				shooting = true;
 				long i = sound.play(master_volume);
 				float pan = 0;
@@ -131,9 +121,13 @@ public class Cannon {
 				sound.setPan(i, pan, volume*master_volume);
 			}
 			if(shooting){
-				
-				if(new Rectangle(ball_position[0]+27,ball_position[1]+26,10,12).overlaps(player.rect()))
-					player.die(master_volume);
+				if(particles_on && !fx.isActive()){
+					if(direction == LEFT)fx.start(20f, 0, 40, 8);
+					else if(direction == RIGHT)fx.start(20f, 180, 40, 8);
+					else if(direction == UP)fx.start(20f, 270, 30, 8);
+					else if(direction == DOWN)fx.start(20f, 90, 30, 8);
+				}
+				if(new Rectangle(ball_position[0]+27,ball_position[1]+26,10,12).overlaps(player.rect()))player.die(master_volume);
 				if(direction == LEFT)
 					ball_position[0] -= delta * 350 * player.time_mod;
 				else if(direction == RIGHT)
@@ -142,9 +136,13 @@ public class Cannon {
 					ball_position[1] -= delta * 350 * player.time_mod;
 				else if(direction == UP)
 					ball_position[1] += delta * 350 * player.time_mod;
+				if(particles_on){
+					fx.setOrigin(ball_position[0]+24, ball_position[1]+24);
+				}
 				
 				if(ball_position[0] > camera.position.x + 450 || ball_position[0] < camera.position.x - 450 || ball_position[1] > camera.position.y+350 || ball_position[1] < camera.position.y-350){
 					shooting = false;
+					fx.stop();
 					time = System.currentTimeMillis();
 					ball_position[0] = init[0];
 					ball_position[1] = init[1];

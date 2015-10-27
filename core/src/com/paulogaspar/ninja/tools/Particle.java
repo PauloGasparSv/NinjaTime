@@ -144,8 +144,8 @@ public class Particle {
 					x[i] += delta*speed[i]*Math.cos(Math.toRadians(angle[i]))*time_mod;
 					y[i] += delta*speed[i]*Math.sin(Math.toRadians(angle[i]))*time_mod;
 					
-					if(x[i] > ix[i] + dist || x[i] < ix[i] - dist ||
-							y[i] > iy[i] + dist || y[i] < iy[i] -dist){
+					if((x[i] > ix[i] + dist) || (x[i] < ix[i] - dist) ||
+							(y[i] > iy[i] + dist) || (y[i] < iy[i] -dist)){
 						counter --;
 						x[i] = 0;
 						y[i] = 0;
@@ -168,10 +168,15 @@ public class Particle {
 
 		for(int i = 0; i < x.length; i++){
 			if(speed[i] != 0){
-				float alpha = (x[i] - ix[i])/dist;
+				float alpha = 1;
+				if((angle[i] > 45 && angle[i] < 135) || (angle[i] > 230 && angle[i] < 315))alpha = (x[i] - ix[i])/dist;
+				else alpha = (y[i] - iy[i])/dist;
+				
+				
 				if(alpha < 0) alpha = -1*alpha;
 				alpha = 1-(alpha*10);
 				if(alpha < 0) alpha = 0;
+				
 				batch.setColor(1, 1, 1,alpha);
 				batch.draw(texture,x[i],y[i],width/2,height/2,width,height,scale,scale,alpha*360);
 				batch.setColor(1,1,1,1);
