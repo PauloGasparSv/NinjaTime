@@ -11,22 +11,26 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Master {
+	private int current_message;
+	private int dumb_counter;
+
+	private boolean live;
+	private boolean facingR;
+	private boolean white_text;
 	
 	private float position[];
-	private String message[];
-	private String secret_message;
-	private boolean live;
-	private int current_message;
 	private float elapsed;
-	private boolean facingR;
-	private int dumb_counter;
-	private boolean white_text;
+	
+	private String message[];
+	private String secret_message;	
 
+	private boolean last_master;
+	
 	//DELETE REFERENCE
 	private Animation idle;
 
 	
-	public Master(Texture master[],float posX,float posY,String message[],String secret_message){
+	public Master(Texture master[],float posX,float posY,String message[],String secret_message,boolean last){
 		TextureRegion a[] = new TextureRegion[2];
 		this.secret_message = secret_message;
 		a[0] = new TextureRegion(master[0]);
@@ -42,6 +46,7 @@ public class Master {
 		live = false;
 		current_message = -1;
 		dumb_counter = 0;
+		last_master = last;
 	}
 	public void changeTextColor(){
 		white_text = !white_text;
@@ -57,15 +62,23 @@ public class Master {
 		}
 		else{
 			elapsed += delta;
-			if(player.position[0] > position[0])
+			if(player.position[0] > position[0]+30)
 				facingR = true;
-			else
+			else if(player.position[0] < position[0] - 10)
 				facingR = false;
 			if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)&&new Rectangle(position[0]-100,position[1]-64,264,192).overlaps(
 					new Rectangle(player.rect()))){
-				current_message++;
-				if(current_message > message.length-1){
-					current_message = message.length-1;
+				if(!last_master){
+					current_message++;
+					if(current_message > message.length-1){
+						current_message = message.length-1;
+						dumb_counter ++;
+					}
+				}
+				if(last_master){
+					if(player.item_counter == 3)current_message = 0;
+					else if(player.item_counter < 3)current_message = 1;
+					else if (player.item_counter > 3)current_message = 2;
 					dumb_counter ++;
 				}
 			}

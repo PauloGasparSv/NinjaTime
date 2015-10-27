@@ -17,6 +17,7 @@ public class Ninja {
 	private int current;
 	private int jump_count;
 	private int current_gauge;
+	public int item_counter;
 	
 	public float position[];
 	private float teleport_pos[];
@@ -129,6 +130,7 @@ public class Ninja {
 		position[0] = 80f;
 		position[1] = 480f;
 		current_slide_sound = 0;
+		item_counter = 0;
 		
 		clock_playing = 0;
 		teleport_pos[0] = 0;

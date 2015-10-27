@@ -38,6 +38,8 @@ The wall sliding sound effect came from Bart Kelsey. Find more of his work at ht
 
 The death sound effect came from an Anonymous person. Could not find the author (sauer2) so here is a link for the files: http://opengameart.org/content/oldschool-win-and-die-jump-and-run-sounds.
 
+The riceball sound effects came from Little Robot Sound Factory. Find more of his work at www.littlerobotsoundfactory.com.
+
 Check out their work!
 
 Special thanks for:

@@ -10,7 +10,7 @@ public class MyGame extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		setScreen(new Stage_test(this,0f));
+		setScreen(new Stage_test(this,1f));
 	}
 
 	@Override

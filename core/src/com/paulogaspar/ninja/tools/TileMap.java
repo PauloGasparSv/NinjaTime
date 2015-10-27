@@ -178,7 +178,7 @@ public class TileMap {
 			float hscale = vheight/600f;
 			float x = (camera.position.x*wscale-vwidth/2+Gdx.input.getX());
 			float y = (camera.position.y*hscale-vheight/2+(vheight-Gdx.input.getY()));
-			
+			System.out.println("X: "+x+" Y: "+y );
 			
 			if(Gdx.input.isKeyJustPressed(Input.Keys.K)){
 				if(pos_a[0] == pos_b[0] && pos_a[0] == 0){
@@ -197,7 +197,7 @@ public class TileMap {
 			if(mx > num_tiles[1]-1)mx = num_tiles[1] -1;
 			if(my > num_tiles[0]-1)my = num_tiles[0] -1;
 			
-			System.out.println("X: "+(int)mx+" Y: "+(int)my+" Tile: "+map[my][mx]);
+			System.out.println("Tile x: "+(int)mx+" Tile y: "+(int)my+" Tile: "+map[my][mx]);
 			
 			if(Gdx.input.isKeyJustPressed(Input.Keys.C))
 				ribbon = map[(int)my][(int)mx];
