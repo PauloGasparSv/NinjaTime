@@ -108,7 +108,7 @@ public class Stage_test implements Screen {
 				"Such magic"};
 		String message4[] = {"Like a ninja"};
 		masters[0] = new Master(master_texture, 605, 446, message,"You can go now... please");
-		masters[1] = new Master(master_texture, 1740, 446, message2,"Just fall off the ledge");
+		masters[1] = new Master(master_texture, 1600, 505, message2,"Just fall off the ledge");
 		masters[2] = new Master(master_texture, 1840, 1088, message3,"Or you can press space forever, who cares");
 		masters[3] = new Master(master_texture, 440, 1020, message4,"GO TO THE NEXT STAGE DAMMIT!");
 		masters[3].changeTextColor();
