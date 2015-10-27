@@ -191,10 +191,8 @@ public class Ninja {
 		
 		if(!particles_on){
 				if(particlefx.isActive())particlefx.stop();
-		}
-		
-		
-		if(particles_on){			
+		}		
+		else{			
 			if(particlefx.isActive()){
 				particlefx.update(delta, camera,time_mod);
 				if(!slide_l && !slide_r){
@@ -202,14 +200,10 @@ public class Ninja {
 					particlefx.canCreate(false);
 				}
 			}
-			
 		}
 		
-		if(map[y][x1] < 0 && map[y][x2] < 0)
-			grounded = false;
-		else{
-			grounded = true;
-		}	
+		if(map[y][x1] < 0 && map[y][x2] < 0)grounded = false;
+		else grounded = true;
 		
 		if(grounded){
 			jump_count = 0;
@@ -239,9 +233,7 @@ public class Ninja {
 					current_slide_sound = 0;
 				speed_y = g_mod;
 			}
-			else if(speed_y < 7.5f)
-				speed_y += delta*14.75f*time_mod;
-					
+			else if(speed_y < 7.5f) speed_y += delta*14.75f*time_mod;
 		}
 		
 		if(slow_time){
@@ -300,7 +292,7 @@ public class Ninja {
 			int dy =  (y1-ty)*64;
 			
 			boolean naopode = true;
-			if(dx != 0 && dy != 0) naopode = Math.sqrt(dx*dx + dy*dy) > 190;
+			if(dx != 0 && dy != 0) naopode = dx*dx + dy*dy > 36100;
 			else naopode = dx*dx > 40000 || dy*dy > 25600;
 			
 			if(map[ty][tx] < 0 &&!naopode){
@@ -363,13 +355,9 @@ public class Ninja {
 			}
 		}
 		else{
-			if(speed_x < 0.25f && speed_x > -0.25f)
-				speed_x = 0;
-			if(speed_x > 0.25f)
-				speed_x -= delta*8*time_mod;
-			if(speed_x < -0.25f)
-				speed_x += delta*8*time_mod;
-				
+			if(speed_x < 0.25f && speed_x > -0.25f)speed_x = 0;
+			if(speed_x > 0.25f)speed_x -= delta*8*time_mod;
+			if(speed_x < -0.25f)speed_x += delta*8*time_mod;
 			if(current == WALK){
 				elapsed_time = 0f;
 				current = IDLE;
@@ -379,11 +367,8 @@ public class Ninja {
 		if(Gdx.input.isKeyJustPressed(Input.Keys.W) && jump_count < 2){
 			jump_sound.play(0.2f*master_volume);
 			
-			if(!grounded)
-				jump_count = 2;
-			else
-				jump_count = 1;
-			
+			if(!grounded){jump_count = 2;speed_y = -5.4f*jump_mod;}
+			else {jump_count = 1;speed_y = -8*jump_mod;}
 			grounded = false;
 			
 			if(slide_l){
@@ -401,11 +386,6 @@ public class Ninja {
 				slide_sound.stop();
 				current_slide_sound = 0;
 			}
-			
-			if(jump_count == 1)
-				speed_y = -8*jump_mod;
-			else
-				speed_y = -5.4f*jump_mod;
 		}
 		
 		
@@ -414,7 +394,7 @@ public class Ninja {
 				if(grounded){
 					speed_x = -0.5f;
 				}
-				if(!grounded){
+				else{
 					speed_x = 0f;
 					if(speed_y > 0.5f){
 						slide_r = true;
@@ -434,7 +414,7 @@ public class Ninja {
 				if(grounded){
 					speed_x = 0.5f;
 				}
-				if(!grounded){
+				else{
 					speed_x = 0f;
 					if(speed_y > 0.5f){
 						slide_l = true;

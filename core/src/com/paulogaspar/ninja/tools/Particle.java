@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Particle {
-
 	//REALLY BAD
 	private float x[];
 	private float y[];
@@ -61,19 +60,35 @@ public class Particle {
 	}
 	
 	public void init(float origin_x,float origin_y){
-		x = new float[x.length];
-		y = new float[y.length];
-		ix = new float[ix.length];
-		iy = new float[iy.length];
-		angle = new float[angle.length];
-		speed = new float[speed.length];
+		for(int i = 0; i < x.length; i++){
+			x[i] = 0;
+			y[i] = 0;
+			ix[i] = 0;
+			iy[i] = 0;
+			angle[i] = 0;
+			speed[i] = 0;
+		}
 		this.origin_x = origin_x;
 		this.origin_y = origin_y;
 		counter = 0;
 		timer = -1;
 		sent = 0;
 		active = false;
+	}
+	public void init(){
+		for(int i = 0; i < x.length; i++){
+			x[i] = 0;
+			y[i] = 0;
+			ix[i] = 0;
+			iy[i] = 0;
+			angle[i] = 0;
+			speed[i] = 0;
+		}
 		
+		counter = 0;
+		timer = -1;
+		sent = 0;
+		active = false;
 	}
 
 	
@@ -85,8 +100,15 @@ public class Particle {
 		active = true;
 		cancreate = true;
 		timer = System.currentTimeMillis();
+		for(int i = 0; i < x.length; i++){
+			if(speed[i]==0){
+				sent = i;
+				break;
+			}
+		}
 	}
-	public void stop(){init(0,0);}
+	public void stop(){init();}
+	public void stop(float x, float y){init(x,y);}
 	public void canCreate(boolean can){cancreate = can;}
 	public boolean getCan(){return cancreate;}
 	public int getNum(){return counter;}
@@ -118,6 +140,7 @@ public class Particle {
 			}
 			for(int i = 0; i < x.length; i++){
 				if(speed[i] != 0){
+
 					x[i] += delta*speed[i]*Math.cos(Math.toRadians(angle[i]))*time_mod;
 					y[i] += delta*speed[i]*Math.sin(Math.toRadians(angle[i]))*time_mod;
 					
