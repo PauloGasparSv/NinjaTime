@@ -2,7 +2,7 @@ package com.paulogaspar.ninja;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.paulogaspar.ninja.screens.Stage_test;
+import com.paulogaspar.ninja.screens.*;
 
 public class MyGame extends Game {
 	public SpriteBatch batch;
@@ -10,7 +10,8 @@ public class MyGame extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		setScreen(new Stage_test(this,1f));
+		//setScreen(new Stage_test(this,1f));
+		setScreen(new Zone1Act1(this,1f));
 	}
 
 	@Override

@@ -20,6 +20,7 @@ public class Ninja {
 	public int item_counter;
 	
 	public float position[];
+	public float spawn_position[];
 	private float teleport_pos[];
 	public float camera_start_pos[];
 	private float elapsed_time;
@@ -68,11 +69,12 @@ public class Ninja {
 	private Particle particlefx;	
 
 	
-	public Ninja(OrthographicCamera camera){
+	public Ninja(OrthographicCamera camera,float x, float y){
 		this.camera = camera;
+		
 		camera_start_pos = new float[2];
-		camera_start_pos[0] = 0;
-		camera_start_pos[1] = 0;
+		camera_start_pos[0] = camera.position.x;
+		camera_start_pos[1] = camera.position.y;
 		
 		wallslide_texture = new Texture(Gdx.files.internal("Ninja/wallslide.png"));
 		wallslide = new TextureRegion(wallslide_texture);
@@ -113,22 +115,23 @@ public class Ninja {
 		slide_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/hiss.wav"));
 		clock_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/clock.wav"));
 		teleport_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/skill_hit.mp3"));
-		death_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/death.wav"));
+		death_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/death.wav"));	
 		
-		position = new float[2];
-		teleport_pos = new float[2];
-		
-		particlefx = new Particle(20, smokebomb_texture[0],2.2f);
-		particles_on = true;
-		
-		init();
-	
+		particlefx = new Particle(20, smokebomb_texture[0],2.2f);		
+		init(x,y);
 	}
 	
-	public void init(){
+	public void init(float x, float y){
+		particles_on = true;
 		particlefx = new Particle(14, smokebomb_texture[0],2.2f);
-		position[0] = 80f;
-		position[1] = 480f;
+		position = new float[2];
+		teleport_pos = new float[2];
+		spawn_position = new float[2];
+		position[0] = x;
+		position[1] = y;
+		spawn_position[0] = x;
+		spawn_position[1] = y;
+		
 		current_slide_sound = 0;
 		item_counter = 0;
 		
@@ -471,10 +474,8 @@ public class Ninja {
 		teleport_sound.stop();
 		current_slide_sound = 0;
 		slide_sound.stop();
-		init();//
-		float vwidth = Gdx.graphics.getWidth();
-		float wscale = vwidth/800f;
-		camera.translate((camera_start_pos[0]*wscale - camera.position.x*wscale + vwidth/2)/wscale,camera_start_pos[1]);
+		init(spawn_position[0],spawn_position[1]);
+		camera.translate(camera_start_pos[0] - camera.position.x,camera_start_pos[1] - camera.position.y);
 	}
 	
 	public void draw(SpriteBatch batch){

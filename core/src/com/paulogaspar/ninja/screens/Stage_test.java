@@ -26,9 +26,11 @@ public class Stage_test implements Screen {
 	private int item_counter;
 	private int vwidth;
 	private int vheight;
-	private float item_alpha;
+	//private int checkpoint;
 	
+	private float item_alpha;
 	private float master_volume;
+
 	
 	private boolean options;
 	private boolean volume;
@@ -86,7 +88,7 @@ public class Stage_test implements Screen {
 		main_theme = Gdx.audio.newMusic(Gdx.files.internal("Music/main_theme.mp3"));
 		
 		tilemap = new TileMap("mapa.mapa");
-		player = new Ninja(camera);
+		player = new Ninja(camera,80,480);
 		
 		bomb_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/8bit_bomb_explosion.wav"));
 		item_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/Collect_Point_00.mp3"));
@@ -108,7 +110,7 @@ public class Stage_test implements Screen {
 		item_texture[2] = new Texture(Gdx.files.internal("Riceball/sushi3.png"));
 		item_texture[3] = new Texture(Gdx.files.internal("Riceball/sushi4.png"));
 		
-		masters = new Master[4];
+		masters = new Master[4];	
 		
 		//I create multiple strins so i don't have to edit every single argument everytime i do a message=new string[something]
 		String message[] = {"The training you must continue",
@@ -171,7 +173,7 @@ public class Stage_test implements Screen {
 
 	private void update(float delta){
 		camera.update();
-		tilemap.update(camera,player,master_volume);
+		tilemap.update(camera,player,delta,master_volume);
 		
 		vwidth = Gdx.graphics.getWidth();
 		vheight = Gdx.graphics.getHeight();
@@ -195,78 +197,7 @@ public class Stage_test implements Screen {
 			volume = false;
 		}
 		else{
-			if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !volume){
-				options = !options;
-			}
-			if(options){
-				if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN) || Gdx.input.isKeyJustPressed(Input.Keys.S))
-					current_option++;
-				if(Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W))
-					current_option--;
-				if(current_option > 3) current_option = 3;
-				if(current_option < 0) current_option = 0;
-				if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) ||
-						Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
-					if(current_option == 0){
-						options = false;
-						current_option = 0;					
-	
-					}
-					if(current_option == 1){
-						options = false;
-						volume = true;
-						current_option = 0;					
-					}
-					if(current_option == 2){
-						player.particles_on = !player.particles_on;
-					}
-					if(current_option == 3){
-						int a = JOptionPane.showConfirmDialog(null, "Are you sure you wanna quit?");
-						if(a == JOptionPane.YES_OPTION){
-							Gdx.app.exit();
-							return;
-							
-						}
-					}
-				}
-				
-			}
-			if(volume){
-				if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
-					volume = false;
-					options = true;
-				}
-				if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN) || Gdx.input.isKeyJustPressed(Input.Keys.S))
-					current_option++;
-				if(Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W))
-					current_option--;
-				if(current_option > 2) current_option = 2;
-				if(current_option < 0) current_option = 0;
-				if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) ||
-						Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
-					if(current_option == 1){
-						master_volume = 0;
-						main_theme.setVolume(master_volume);
-	
-					}
-					if(current_option == 2){
-						options = true;
-						volume = false;
-						current_option = 0;		
-					}			
-				}
-				if(current_option == 0){
-					if((Gdx.input.isKeyPressed(Input.Keys.RIGHT)||Gdx.input.isKeyPressed(Input.Keys.D))&&master_volume <= 1)
-						master_volume += delta * 0.4f;
-					if((Gdx.input.isKeyPressed(Input.Keys.LEFT)||Gdx.input.isKeyPressed(Input.Keys.A))&&master_volume >= 0)
-						master_volume -= delta * 0.4f;
-					if(master_volume > 1) master_volume = 1;
-					if(master_volume < 0) master_volume = 0;
-					main_theme.setVolume(master_volume);
-				}
-				
-				
-			}
+			updateMenu(delta);
 		}
 		if(!options && !volume){
 			if(!tilemap.edit_mode){
@@ -287,42 +218,91 @@ public class Stage_test implements Screen {
 					camera.translate(player.position[0] - camera.position.x + 100, 0);
 			}
 			else{
-				if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && camera.position.x - 400 < tilemap.width-808)
-					camera.translate(350*delta, 0);
-				if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && camera.position.x - 400 > 8)
-					camera.translate(-350*delta, 0);
-				if(Gdx.input.isKeyPressed(Input.Keys.UP) && camera.position.y - 300 < tilemap.height-608)
-					camera.translate(0,350*delta);
-				if(Gdx.input.isKeyPressed(Input.Keys.DOWN) && camera.position.y - 300 > 8)
-					camera.translate(0,-350*delta);
-				
 				if(Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)){
 					player.position[0] = (Gdx.input.getX() + camera.position.x*wscale - vwidth/2)/wscale;
 					player.position[1] = ((vheight-Gdx.input.getY()) + camera.position.y*hscale - vheight/2)/hscale;
 				}
 					
 			}
-		}
-		//on end
-		//this.dispose();
-		
-		
-		//DEATH
-		
-		
+		}		
 		
 	}
 	
-	private void draw(){
-		batch.setProjectionMatrix(camera.combined);
-		batch.begin();
-		
-		tilemap.draw(batch,camera.position.x - 400,camera.position.y-300,camera);
-		for(Cannon c:cannons)c.draw(batch);
-		for(Master m:masters)m.draw(batch,font_16);
-		for(Item i:itens)i.draw(batch);
-		player.draw(batch);
-	
+	private void updateMenu(float delta){
+		if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !volume){
+			options = !options;
+		}
+		if(options){
+			if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN) || Gdx.input.isKeyJustPressed(Input.Keys.S))
+				current_option++;
+			if(Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W))
+				current_option--;
+			if(current_option > 3) current_option = 3;
+			if(current_option < 0) current_option = 0;
+			if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) ||
+					Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
+				if(current_option == 0){
+					options = false;
+					current_option = 0;					
+
+				}
+				if(current_option == 1){
+					options = false;
+					volume = true;
+					current_option = 0;					
+				}
+				if(current_option == 2){
+					player.particles_on = !player.particles_on;
+				}
+				if(current_option == 3){
+					int a = JOptionPane.showConfirmDialog(null, "Are you sure you wanna quit?");
+					if(a == JOptionPane.YES_OPTION){
+						Gdx.app.exit();
+						return;
+						
+					}
+				}
+			}
+			
+		}
+		if(volume){
+			if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+				volume = false;
+				options = true;
+			}
+			if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN) || Gdx.input.isKeyJustPressed(Input.Keys.S))
+				current_option++;
+			if(Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W))
+				current_option--;
+			if(current_option > 2) current_option = 2;
+			if(current_option < 0) current_option = 0;
+			if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) ||
+					Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
+				if(current_option == 1){
+					master_volume = 0;
+					main_theme.setVolume(master_volume);
+
+				}
+				if(current_option == 2){
+					options = true;
+					volume = false;
+					current_option = 0;		
+				}			
+			}
+			if(current_option == 0){
+				if((Gdx.input.isKeyPressed(Input.Keys.RIGHT)||Gdx.input.isKeyPressed(Input.Keys.D))&&master_volume <= 1)
+					master_volume += delta * 0.4f;
+				if((Gdx.input.isKeyPressed(Input.Keys.LEFT)||Gdx.input.isKeyPressed(Input.Keys.A))&&master_volume >= 0)
+					master_volume -= delta * 0.4f;
+				if(master_volume > 1) master_volume = 1;
+				if(master_volume < 0) master_volume = 0;
+				main_theme.setVolume(master_volume);
+			}
+			
+			
+		}
+	}
+	private void drawMenu(){
 		if(options){
 			font_32.draw(batch, "Options", camera.position.x-110, camera.position.y+265);
 			batch.draw(ninja_star,camera.position.x - 260, camera.position.y+90-68*current_option,64,64);
@@ -358,6 +338,20 @@ public class Stage_test implements Screen {
 			else
 				font_16.draw(batch,"GO BACK",camera.position.x-60, camera.position.y-75);
 		}
+	}
+	
+	private void draw(){
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+		
+		tilemap.draw(batch,camera.position.x - 400,camera.position.y-300,camera);
+		for(Cannon c:cannons)c.draw(batch);
+		for(Master m:masters)m.draw(batch,font_16);
+		for(Item i:itens)i.draw(batch);
+		player.draw(batch);
+		
+		drawMenu();
+		
 		//font.draw(batch,i , 20, 400);
 		if(item_counter != 0){
 			batch.setColor(new Color(1, 1, 1, item_alpha));
@@ -396,10 +390,7 @@ public class Stage_test implements Screen {
 
 	@Override
 	public void dispose() {		
-		game = null;
-		batch.dispose();
-		tilemap.dispose();
-		player.init();
+		minorDipose();
 		for(int i = 0; i < cannons.length; i++)cannons[i].dispose();
 		for(int i = 0; i < masters.length; i++)masters[i].dispose();
 		for(int i = 0; i < itens.length; i++)itens[i].dispose();
@@ -417,4 +408,12 @@ public class Stage_test implements Screen {
 		item3_sound.dispose();
 		main_theme.dispose();
 	}
+	
+	public void minorDipose(){
+		game = null;
+		batch.dispose();
+		tilemap.dispose();
+		player.init(0,0);
+	}
+	
 }

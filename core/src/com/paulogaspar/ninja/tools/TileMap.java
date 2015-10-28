@@ -28,7 +28,7 @@ public class TileMap {
 	private Rectangle death_blocks[];
 
 	//DELETE REFERENCE
-	private TextureRegion tiles[];
+	public TextureRegion tiles[];
 
 	//DISPOSE
 	private Texture tileset;
@@ -158,15 +158,23 @@ public class TileMap {
 		
 	}
 	
-	public void update(OrthographicCamera camera,Ninja player,float master_volume){
+	public void update(OrthographicCamera camera,Ninja player,float delta,float master_volume){
 		for(Rectangle block:death_blocks)
 			if(new Rectangle(player.rect()).overlaps(block))
 				player.die(master_volume);
-		edit(camera);
+		edit(camera,delta);
 	}
 	
-	public void edit(OrthographicCamera camera){
+	public void edit(OrthographicCamera camera,float delta){
 		if(edit_mode){	
+			if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && camera.position.x - 400 < width-808)
+				camera.translate(350*delta, 0);
+			if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && camera.position.x - 400 > 8)
+				camera.translate(-350*delta, 0);
+			if(Gdx.input.isKeyPressed(Input.Keys.UP) && camera.position.y - 300 < height-608)
+				camera.translate(0,350*delta);
+			if(Gdx.input.isKeyPressed(Input.Keys.DOWN) && camera.position.y - 300 > 8)
+				camera.translate(0,-350*delta);
 			if(Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_RIGHT)){
 				saveMap();
 				return;

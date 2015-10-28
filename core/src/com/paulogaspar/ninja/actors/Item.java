@@ -17,7 +17,6 @@ public class Item {
 			
 	//DELETE REFERENCE
 	private Sound sound;
-	private Sound sound2;
 	private Animation animation;
 	
 	public Item(Texture master[],float posX,float posY, Sound sound,Sound sound2){
@@ -28,7 +27,6 @@ public class Item {
 		animation = new Animation(1f,a);
 		elapsed = 0f;
 		this.sound = sound;
-		this.sound2 = sound2;
 		position = new float[2];
 		position[0] = posX;
 		position[1] = posY;
@@ -73,7 +71,6 @@ public class Item {
 	public void dispose(){
 		animation = null;
 		sound = null;
-		sound2 = null;
 	}
 
 }
