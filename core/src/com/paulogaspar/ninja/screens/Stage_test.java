@@ -74,6 +74,7 @@ public class Stage_test implements Screen {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false,800,600);
 		camera.translate(0, 192);
+		
 		this.master_volume = master_volume;
 		
 		
@@ -147,7 +148,7 @@ public class Stage_test implements Screen {
 
 		
 		
-		main_theme.play();
+		//main_theme.play();
 		main_theme.setVolume(master_volume);
 		main_theme.setLooping(true);
 		options = false;

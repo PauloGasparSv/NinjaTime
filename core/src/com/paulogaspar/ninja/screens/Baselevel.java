@@ -7,6 +7,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -28,6 +29,7 @@ public class Baselevel implements Screen{
 	
 	private float master_volume;
 	private float stage_transition_alpha;
+	private float transition_angle;
 
 	
 	private boolean next_stage;
@@ -99,6 +101,7 @@ public class Baselevel implements Screen{
 			Texture cannonL,Texture cannonBall, Texture ninja_star, BitmapFont font_32,BitmapFont font_16, Music main_theme,
 			Sound bomb_sound,Sound item_sound){
 		master_volume = volume;
+		batch = new SpriteBatch();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false,800,600);
 		this.player = player;
@@ -121,9 +124,7 @@ public class Baselevel implements Screen{
 	public void init(){
 		//camera.translate(0, 0);
 		main_theme.play();
-		main_theme.setVolume(master_volume);
 		main_theme.setLooping(true);
-		player = new Ninja(camera,80,140);
 		tilemap = new TileMap("zone1_act1.mapa");
 		options = false;
 		volume = false;
@@ -135,6 +136,7 @@ public class Baselevel implements Screen{
 		itens = new Item[0];
 		masters = new Master[0];
 		changed_screen = false;
+		transition_angle = 0f;
 		stage_transition_alpha = 1;
 	}
 	
@@ -157,7 +159,7 @@ public class Baselevel implements Screen{
 			updateMenu(delta);
 		}
 		if(!options && !volume){
-			if(!tilemap.edit_mode && can_control)player.update(delta,tilemap.map,tilemap.width,tilemap.height,master_volume);		
+			if(can_control)player.update(delta,tilemap.map,tilemap.width,tilemap.height,master_volume);		
 			for(Cannon c:cannons)c.update(delta, camera,player,master_volume);
 			for(Master m:masters)m.update(delta, camera, player);
 			for(Item i:itens)i.update(player, delta,master_volume);
@@ -179,6 +181,29 @@ public class Baselevel implements Screen{
 				}		
 			}
 			
+			if(next_stage){
+				//CHANGE THIS PART IF THE VOLUME IS ALREADY DOWN! JUST PUT A *master_volume
+				stage_transition_alpha += delta*0.5f;
+				transition_angle -= 0.2f*delta;
+				camera.zoom += transition_angle*0.05f;
+				camera.rotate(transition_angle*0.75f);
+				main_theme.setVolume((1-stage_transition_alpha)*master_volume);
+				if(camera.zoom < 0)camera.zoom = 0.01f;
+				if(stage_transition_alpha > 1){
+					stage_transition_alpha = 1;
+					main_theme.stop();
+					//game.setScreen(new Zone());
+					//minorDipose(); or dipose();
+					changed_screen = true;
+					return;
+				}
+			}
+			else if(stage_transition_alpha > 0 ){
+				stage_transition_alpha -= delta * 0.5f;
+				if(stage_transition_alpha < 0)stage_transition_alpha = 0;
+				main_theme.setVolume((1-stage_transition_alpha)*master_volume);
+			}
+			
 		}
 	}
 	private void draw(){
@@ -191,6 +216,11 @@ public class Baselevel implements Screen{
 		for(Item i:itens)i.draw(batch);
 		player.draw(batch);
 		drawMenu();
+		if(stage_transition_alpha > 0){
+			batch.setColor(new Color(0,0,0,stage_transition_alpha));
+			batch.draw(tilemap.tiles[0],camera.position.x - 450, camera.position.y -350, 1200,700);
+			batch.setColor(Color.WHITE);
+		}
 		
 		batch.end();
 	}

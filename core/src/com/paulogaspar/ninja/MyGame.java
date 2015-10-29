@@ -11,7 +11,7 @@ public class MyGame extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 		//setScreen(new Stage_test(this,1f));
-		setScreen(new Zone1Act1(this,1f));
+		setScreen(new Zone1Act2(this,1f));
 	}
 
 	@Override

@@ -97,9 +97,9 @@ public class Master {
 		if(live){
 			if(current_message > -1){
 				if(dumb_counter < 32)
-					font.draw(batch, message[current_message], position[0]-message[current_message].length()*9f, position[1]+100);
+					font.draw(batch, message[current_message], position[0]-message[current_message].length()*7.5f, position[1]+100);
 				else
-					font.draw(batch,secret_message, position[0]-145, position[1]+100);
+					font.draw(batch,secret_message, position[0]-secret_message.length()*7.5f, position[1]+100);
 			}
 			TextureRegion frame = idle.getKeyFrame(elapsed,true);
 			if(facingR == frame.isFlipX())
