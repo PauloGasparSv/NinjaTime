@@ -142,7 +142,7 @@ public class Zone1Act1 implements Screen{
 		String message[] = {"Welcome student","You have proved yourself so far...",
 				"Now the real question is...","Do you have what it takes to be a real ninja?","...",
 				"Haha of course you dont but...","who cares right?","Go Through that door","Go now"};
-		masters[0] = new Master(master_texture,480, 124, message, "Sweet jesus, stop it!", false);
+		masters[0] = new Master(master_texture,480, 124, message, "Sweet jesus, stop it!", 40,false);
 		next_stage_door = new Rectangle(830,130,300,200);
 	}
 	

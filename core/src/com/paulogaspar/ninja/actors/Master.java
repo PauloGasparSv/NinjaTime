@@ -13,7 +13,9 @@ import com.badlogic.gdx.math.Rectangle;
 public class Master {
 	private int current_message;
 	private int dumb_counter;
-
+	private int current_char;
+	
+	
 	private boolean live;
 	private boolean facingR;
 	private boolean white_text;
@@ -21,8 +23,12 @@ public class Master {
 	private float position[];
 	private float elapsed;
 	
+	private long timer;
+	private long delay;
+	
 	private String message[];
-	private String secret_message;	
+	private String secret_message;
+	private String display_message;
 
 	private boolean last_master;
 	
@@ -30,7 +36,7 @@ public class Master {
 	private Animation idle;
 
 	
-	public Master(Texture master[],float posX,float posY,String message[],String secret_message,boolean last){
+	public Master(Texture master[],float posX,float posY,String message[],String secret_message,long delay,boolean last){
 		TextureRegion a[] = new TextureRegion[2];
 		this.secret_message = secret_message;
 		a[0] = new TextureRegion(master[0]);
@@ -42,6 +48,10 @@ public class Master {
 		position = new float[2];
 		position[0] = posX;
 		position[1] = posY;
+		this.timer = 0;
+		this.delay = delay;
+		current_char = 0;
+		display_message = "";
 		this.message = message;
 		live = false;
 		current_message = -1;
@@ -61,6 +71,19 @@ public class Master {
 				live = true;
 		}
 		else{
+			if(current_message!=-1){
+				if(dumb_counter < 32 && current_char < message[current_message].length() && System.currentTimeMillis() - timer > delay){
+					timer = System.currentTimeMillis();
+					display_message += message[current_message].charAt(current_char);
+					current_char++;
+				}
+				if(dumb_counter >= 32 && current_char < secret_message.length() && System.currentTimeMillis() - timer > delay/2){
+					timer = System.currentTimeMillis();
+					display_message += secret_message.charAt(current_char);
+					current_char ++;
+				}
+			}
+			
 			elapsed += delta;
 			if(player.position[0] > position[0]+30)
 				facingR = true;
@@ -69,6 +92,9 @@ public class Master {
 			if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)&&new Rectangle(position[0]-100,position[1]-64,264,192).overlaps(
 					new Rectangle(player.rect()))){
 				if(!last_master){
+					display_message = "";
+					current_char = 0;
+					timer = System.currentTimeMillis();
 					current_message++;
 					if(current_message > message.length-1){
 						current_message = message.length-1;
@@ -76,9 +102,18 @@ public class Master {
 					}
 				}
 				if(last_master){
-					if(player.item_counter == 3)current_message = 0;
-					else if(player.item_counter < 3)current_message = 1;
-					else if (player.item_counter > 3)current_message = 2;
+					display_message = "";
+					current_char = 0;
+					timer = System.currentTimeMillis();
+					if(player.item_counter == 3){
+						current_message = 0;
+					}
+					else if(player.item_counter < 3){
+						current_message = 1;
+					}
+					else if (player.item_counter > 3){
+						current_message = 2;
+					}
 					dumb_counter ++;
 				}
 			}
@@ -97,9 +132,9 @@ public class Master {
 		if(live){
 			if(current_message > -1){
 				if(dumb_counter < 32)
-					font.draw(batch, message[current_message], position[0]-message[current_message].length()*7.5f, position[1]+100);
+					font.draw(batch, display_message, position[0]-message[current_message].length()*7.5f, position[1]+100);
 				else
-					font.draw(batch,secret_message, position[0]-secret_message.length()*7.5f, position[1]+100);
+					font.draw(batch,display_message, position[0]-secret_message.length()*7.5f, position[1]+100);
 			}
 			TextureRegion frame = idle.getKeyFrame(elapsed,true);
 			if(facingR == frame.isFlipX())

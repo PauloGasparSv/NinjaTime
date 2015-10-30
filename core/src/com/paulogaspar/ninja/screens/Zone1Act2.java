@@ -151,7 +151,7 @@ public class Zone1Act2 implements Screen{
 		String message1[] = {"Now it is time...","FOR you fat ass to remember...","pretty basic stuff that...",
 				"Everyone knows how to do","Like jumping over that bump","With your tiny legs","And brains"
 				,"Just go up to jump!"};
-		masters[0] = new Master(master_texture, 300, 124, message1, "JUMP FATTY!", false);
+		masters[0] = new Master(master_texture, 300, 124, message1, "JUMP FATTY!",40, false);
 	
 	}
 	

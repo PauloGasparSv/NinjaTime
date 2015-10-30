@@ -133,10 +133,10 @@ public class Stage_test implements Screen {
 		String message4[] = {"Like a true ninja",
 				"What! Where is my lunch!?",
 				"You cheating bastard"};
-		masters[0] = new Master(master_texture, 605, 446, message,"You can go now... please",false);
-		masters[1] = new Master(master_texture, 1600, 505, message2,"Just fall off the ledge",false);
-		masters[2] = new Master(master_texture, 1840, 1088, message3,"Or you can press space forever, who cares",false);
-		masters[3] = new Master(master_texture, 440, 1020, message4,"GO TO THE NEXT STAGE DAMMIT!",true);
+		masters[0] = new Master(master_texture, 605, 446, message,"You can go now... please",50,false);
+		masters[1] = new Master(master_texture, 1600, 505, message2,"Just fall off the ledge",50,false);
+		masters[2] = new Master(master_texture, 1840, 1088, message3,"Or you can press space forever, who cares",50,false);
+		masters[3] = new Master(master_texture, 440, 1020, message4,"GO TO THE NEXT STAGE DAMMIT!",50,true);
 		masters[3].changeTextColor();
 	
 		itens = new Item[3];
