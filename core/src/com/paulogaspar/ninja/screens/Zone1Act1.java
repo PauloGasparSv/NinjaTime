@@ -76,8 +76,7 @@ public class Zone1Act1 implements Screen{
 		master_volume = volume;
 		this.game = game;
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false,800,600);
-		batch = new SpriteBatch();
+
 		ninja_star = new Texture(Gdx.files.internal("Misc/spr_star_0.png"));
 		cannonD = new Texture(Gdx.files.internal("Misc/spr_cannondown_0.png"));
 		cannonL = new Texture(Gdx.files.internal("Misc/spr_cannonright_0.png"));
@@ -103,10 +102,10 @@ public class Zone1Act1 implements Screen{
 			Texture cannonL,Texture cannonBall, Texture ninja_star, BitmapFont font_32,BitmapFont font_16, Music main_theme,
 			Sound bomb_sound,Sound item_sound){
 		master_volume = volume;
-		this.player = player;
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false,800,600);
-		player.init(80, 140);
+
+		this.player = player;
+		player.init(80, 140,camera);
 		this.game = game;
 		this.ninja_star = ninja_star;
 		this.cannonD = cannonD;
@@ -124,6 +123,8 @@ public class Zone1Act1 implements Screen{
 	}
 	
 	public void init(){
+		camera.setToOrtho(false,800,600);
+		batch = new SpriteBatch();
 		changed_screen = false;
 		main_theme.play();
 		main_theme.setLooping(true);
@@ -140,8 +141,8 @@ public class Zone1Act1 implements Screen{
 		masters = new Master[1];
 		transition_angle = 0f;
 		String message[] = {"Welcome student","You have proved yourself so far...",
-				"Now the real question is...","Do you have what it takes to be a real ninja?","...",
-				"Haha of course you dont but...","who cares right?","Go Through that door","Go now"};
+				"Now the real question is...","Are you ready for the final test?","...",
+				"Haha maybe you are not but...","who cares right?","Go Through that door","Go now"};
 		masters[0] = new Master(master_texture,480, 124, message, "Sweet jesus, stop it!", 40,false);
 		next_stage_door = new Rectangle(830,130,300,200);
 	}

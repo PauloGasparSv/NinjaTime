@@ -11,7 +11,7 @@ public class DesktopLauncher {
 		config.useGL30 = false;
 		config.width = 800;
 		config.height = 600;
-		config.resizable = true;
+		config.resizable = true;  
 		new LwjglApplication(new MyGame(), config);
 	}
 }

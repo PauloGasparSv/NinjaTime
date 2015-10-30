@@ -28,6 +28,8 @@ public class Zone1Act2 implements Screen{
 	private int vwidth;
 	private int vheight;
 	
+	private long start_time;
+	
 	private float item_alpha;
 	private float master_volume;
 	private float stage_transition_alpha;
@@ -39,6 +41,7 @@ public class Zone1Act2 implements Screen{
 	private boolean can_control;
 	private boolean changed_screen;
 
+	
 	private Rectangle next_stage_door;
 	
 	private OrthographicCamera camera;
@@ -106,7 +109,7 @@ public class Zone1Act2 implements Screen{
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false,800,600);
 		this.player = player;
-		player.init(80,140);
+		player.init(80,140,camera);
 		this.game = game;
 		this.ninja_star = ninja_star;
 		this.cannonD = cannonD;
@@ -125,6 +128,7 @@ public class Zone1Act2 implements Screen{
 	}
 	public void init(){
 		//camera.translate(0, 0);
+		main_theme.setVolume(master_volume);
 		main_theme.play();
 		main_theme.setLooping(true);
 		tilemap = new TileMap("zone1_act2.mapa");
@@ -152,7 +156,7 @@ public class Zone1Act2 implements Screen{
 				"Everyone knows how to do","Like jumping over that bump","With your tiny legs","And brains"
 				,"Just go up to jump!"};
 		masters[0] = new Master(master_texture, 300, 124, message1, "JUMP FATTY!",40, false);
-	
+		start_time = System.currentTimeMillis();
 	}
 	
 		
@@ -221,8 +225,10 @@ public class Zone1Act2 implements Screen{
 				if(stage_transition_alpha > 1){
 					stage_transition_alpha = 1;
 					main_theme.stop();
-					//game.setScreen(new Zone());
-					//minorDipose(); or dipose();
+					game.setScreen(new Points_state(game, player, master_volume, master_texture, item_texture, cannonD, 
+							cannonR, cannonL, cannonBall, ninja_star, font_32, font_16, main_theme, bomb_sound, 
+							item_sound,0,1,item_counter,1,System.currentTimeMillis()-start_time,90000 ,true,2,"Keep going"));
+					minorDipose();
 					changed_screen = true;
 					return;
 				}
@@ -283,9 +289,6 @@ public class Zone1Act2 implements Screen{
 	@Override
 	public void dispose() {
 		minorDipose();
-		for(int i = 0; i < cannons.length; i++)cannons[i].dispose();
-		for(int i = 0; i < masters.length; i++)masters[i].dispose();
-		for(int i = 0; i < itens.length; i++)itens[i].dispose();
 		font_32.dispose();
 		font_16.dispose();
 		for(int i = 0; i < master_texture.length; i++)master_texture[i].dispose();
@@ -303,7 +306,9 @@ public class Zone1Act2 implements Screen{
 		game = null;
 		batch.dispose();
 		tilemap.dispose();
-		player.init(0,0);
+		for(int i = 0; i < cannons.length; i++)cannons[i].dispose();
+		for(int i = 0; i < masters.length; i++)masters[i].dispose();
+		for(int i = 0; i < itens.length; i++)itens[i].dispose();
 	}
 	
 

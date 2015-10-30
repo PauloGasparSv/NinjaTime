@@ -165,6 +165,51 @@ public class Ninja {
 		slide_r = false;
 	}
 	
+	public void init(float x, float y,OrthographicCamera camera){
+		particles_on = true;
+		this.camera = camera;
+		particlefx = new Particle(14, smokebomb_texture[0],2.2f);
+		position = new float[2];
+		teleport_pos = new float[2];
+		spawn_position = new float[2];
+		position[0] = x;
+		position[1] = y;
+		spawn_position[0] = x;
+		spawn_position[1] = y;
+		
+		current_slide_sound = 0;
+		item_counter = 0;
+		
+		clock_playing = 0;
+		teleport_pos[0] = 0;
+		teleport_pos[1] = 0;
+		
+		elapsed_time = 0f;
+		
+		facing_right = true;
+		
+		current = 0;
+		speed_x = 0;
+		speed_y = 0;
+		
+		jump_count = 0;
+		
+		grounded = false;
+		
+		slow_time = false;
+		stop_time = false;
+		time_mod = 1;
+		
+		touching = false;
+		timer = 0;
+		current_gauge = 0;
+		smoke_elapsed = 0;
+		jump_mod = 1;
+		g_mod = 1;
+		slide_l = false;
+		slide_r = false;
+	}
+	
 	public void update(float delta,int map[][],int width,int height,float master_volume){
 		float vwidth = Gdx.graphics.getWidth();
 		float vheight = Gdx.graphics.getHeight();

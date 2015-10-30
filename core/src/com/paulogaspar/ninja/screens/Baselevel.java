@@ -27,6 +27,8 @@ public class Baselevel implements Screen{
 	private int vwidth;
 	private int vheight;
 	
+	private long start_time;
+	
 	private float master_volume;
 	private float stage_transition_alpha;
 	private float transition_angle;

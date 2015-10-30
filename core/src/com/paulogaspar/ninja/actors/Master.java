@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Master {
-	private int current_message;
+	public int current_message;
 	private int dumb_counter;
 	private int current_char;
 	
@@ -132,9 +132,9 @@ public class Master {
 		if(live){
 			if(current_message > -1){
 				if(dumb_counter < 32)
-					font.draw(batch, display_message, position[0]-message[current_message].length()*7.5f, position[1]+100);
+					font.draw(batch, display_message, position[0]-message[current_message].length()*7f, position[1]+100);
 				else
-					font.draw(batch,display_message, position[0]-secret_message.length()*7.5f, position[1]+100);
+					font.draw(batch,display_message, position[0]-secret_message.length()*7f, position[1]+100);
 			}
 			TextureRegion frame = idle.getKeyFrame(elapsed,true);
 			if(facingR == frame.isFlipX())
