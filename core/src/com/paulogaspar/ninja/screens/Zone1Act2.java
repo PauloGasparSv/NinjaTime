@@ -29,6 +29,7 @@ public class Zone1Act2 implements Screen{
 	private int vheight;
 	
 	private long start_time;
+	private long timer;
 	
 	private float item_alpha;
 	private float master_volume;
@@ -157,6 +158,7 @@ public class Zone1Act2 implements Screen{
 				,"Just go up to jump!"};
 		masters[0] = new Master(master_texture, 300, 124, message1, "JUMP FATTY!",40, false);
 		start_time = System.currentTimeMillis();
+		timer = 0;
 	}
 	
 		
@@ -183,10 +185,13 @@ public class Zone1Act2 implements Screen{
 			options = false;
 			volume = false;
 		}
-		else{
+		else if(!next_stage){
 			updateMenu(delta);
 		}
+		if(options || volume)start_time = System.currentTimeMillis();
 		if(!options && !volume){
+			timer += System.currentTimeMillis() - start_time;
+			start_time =System.currentTimeMillis();
 			if(can_control)player.update(delta,tilemap.map,tilemap.width,tilemap.height,master_volume);		
 			for(Cannon c:cannons)c.update(delta, camera,player,master_volume);
 			for(Master m:masters)m.update(delta, camera, player);
@@ -227,7 +232,7 @@ public class Zone1Act2 implements Screen{
 					main_theme.stop();
 					game.setScreen(new Points_state(game, player, master_volume, master_texture, item_texture, cannonD, 
 							cannonR, cannonL, cannonBall, ninja_star, font_32, font_16, main_theme, bomb_sound, 
-							item_sound,0,1,item_counter,1,System.currentTimeMillis()-start_time,90000 ,true,2,"Keep going"));
+							item_sound,0,1,item_counter,1,timer,90000 ,true,2,"Keep going"));
 					minorDipose();
 					changed_screen = true;
 					return;
@@ -252,7 +257,6 @@ public class Zone1Act2 implements Screen{
 		for(Item i:itens)i.draw(batch);
 		
 		player.draw(batch);
-		drawMenu();
 		
 		if(item_counter != 0){
 			batch.setColor(new Color(1, 1, 1, item_alpha));
@@ -264,13 +268,17 @@ public class Zone1Act2 implements Screen{
 			batch.draw(item_texture[0],camera.position.x - 370 + 50,camera.position.y+180,96,96,0,0,32,32,false,false);
 			batch.setColor(Color.WHITE);
 		}
-		
+		font_32.draw(batch,""+timer/1000 ,camera.position.x+310,camera.position.y+270);
+
 		
 		if(stage_transition_alpha > 0){
 			batch.setColor(new Color(0,0,0,stage_transition_alpha));
 			batch.draw(tilemap.tiles[0],camera.position.x - 450, camera.position.y -350, 1200,700);
 			batch.setColor(Color.WHITE);
 		}
+		
+		drawMenu();
+
 		
 		batch.end();
 	}
@@ -387,43 +395,47 @@ public class Zone1Act2 implements Screen{
 		}
 	}
 	private void drawMenu(){
+		if(options || volume){
+			batch.setColor(new Color(0,0,0,0.6f));
+			batch.draw(tilemap.tiles[10],camera.position.x-420,camera.position.y-320,840,640);
+			batch.setColor(Color.WHITE);
+		}
 		if(options){
-			font_32.draw(batch, "Options", camera.position.x-110, camera.position.y+265);
-			batch.draw(ninja_star,camera.position.x - 260, camera.position.y+90-68*current_option,64,64);
+			font_32.draw(batch, "Options", camera.position.x-110, camera.position.y+215);
+			batch.draw(ninja_star,camera.position.x - 260, camera.position.y+40-68*current_option,64,64);
 			if(current_option == 0)
-				font_32.draw(batch,"RESUME",camera.position.x-96, camera.position.y+150);
+				font_32.draw(batch,"RESUME",camera.position.x-96, camera.position.y+100);
 			else
-				font_16.draw(batch,"RESUME",camera.position.x-50, camera.position.y+125);
+				font_16.draw(batch,"RESUME",camera.position.x-50, camera.position.y+75);
 			if(current_option == 1)
-				font_32.draw(batch,"VOLUME",camera.position.x-100, camera.position.y+85);
+				font_32.draw(batch,"VOLUME",camera.position.x-100, camera.position.y+35);
 			else
-				font_16.draw(batch,"VOLUME",camera.position.x-45, camera.position.y+55);
+				font_16.draw(batch,"VOLUME",camera.position.x-45, camera.position.y+5);
 			if(current_option == 2)
-				font_32.draw(batch,"PARTICLES "+(player.particles_on?"ON":"OFF"),camera.position.x-180, camera.position.y+15);
+				font_32.draw(batch,"PARTICLES "+(player.particles_on?"ON":"OFF"),camera.position.x-180, camera.position.y-35);
 			else
-				font_16.draw(batch,"PARTICLES "+(player.particles_on?"ON":"OFF"),camera.position.x-100, camera.position.y-10);
+				font_16.draw(batch,"PARTICLES "+(player.particles_on?"ON":"OFF"),camera.position.x-100, camera.position.y-60);
 			if(current_option == 3)
-				font_32.draw(batch,"QUIT GAME",camera.position.x-140, camera.position.y-50);
+				font_32.draw(batch,"QUIT GAME",camera.position.x-140, camera.position.y-100);
 			else
-				font_16.draw(batch,"QUIT GAME",camera.position.x-70, camera.position.y-75);				
+				font_16.draw(batch,"QUIT GAME",camera.position.x-70, camera.position.y-125);				
 		}
 		if(volume){
-			font_32.draw(batch, "Volume", camera.position.x-98, camera.position.y+265);
-			batch.draw(ninja_star,camera.position.x - 360, camera.position.y+90-100*current_option,64,64);
+			font_32.draw(batch, "Volume", camera.position.x-98, camera.position.y+215);
+			batch.draw(ninja_star,camera.position.x - 360, camera.position.y+40-100*current_option,64,64);
 			
-			font_16.draw(batch,"MIN ------------------------ MAX",camera.position.x-250, camera.position.y+120);
-			font_32.draw(batch,"|",camera.position.x-190+master_volume*375, camera.position.y+142);
+			font_16.draw(batch,"MIN ------------------------ MAX",camera.position.x-250, camera.position.y+70);
+			font_32.draw(batch,"|",camera.position.x-190+master_volume*375, camera.position.y+92);
 			if(current_option == 1)
-				font_32.draw(batch,"MUTE",camera.position.x-75, camera.position.y+50);
+				font_32.draw(batch,"MUTE",camera.position.x-75, camera.position.y);
 			else
-				font_16.draw(batch,"MUTE",camera.position.x-40, camera.position.y+25);
+				font_16.draw(batch,"MUTE",camera.position.x-40, camera.position.y-25);
 			if(current_option == 2)
-				font_32.draw(batch,"GO BACK",camera.position.x-120, camera.position.y-50);
+				font_32.draw(batch,"GO BACK",camera.position.x-120, camera.position.y-100);
 			else
-				font_16.draw(batch,"GO BACK",camera.position.x-60, camera.position.y-75);
+				font_16.draw(batch,"GO BACK",camera.position.x-60, camera.position.y-125);
 		}
 	}
-	
 	
 	
 	@Override
