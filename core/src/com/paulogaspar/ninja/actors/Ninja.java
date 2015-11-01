@@ -18,6 +18,7 @@ public class Ninja {
 	private int jump_count;
 	private int current_gauge;
 	public int item_counter;
+	public int death_counter;
 	
 	public float position[];
 	public float spawn_position[];
@@ -122,6 +123,7 @@ public class Ninja {
 	}
 	
 	public void init(float x, float y){
+		death_counter = 0;
 		particles_on = true;
 		particlefx = new Particle(14, smokebomb_texture[0],2.2f);
 		position = new float[2];
@@ -166,6 +168,7 @@ public class Ninja {
 	}
 	
 	public void init(float x, float y,OrthographicCamera camera){
+		death_counter = 0;
 		particles_on = true;
 		this.camera = camera;
 		particlefx = new Particle(14, smokebomb_texture[0],2.2f);
@@ -519,7 +522,9 @@ public class Ninja {
 		teleport_sound.stop();
 		current_slide_sound = 0;
 		slide_sound.stop();
+		int temp = death_counter;
 		init(spawn_position[0],spawn_position[1]);
+		death_counter = temp + 1;
 		camera.translate(camera_start_pos[0] - camera.position.x,camera_start_pos[1] - camera.position.y);
 	}
 	

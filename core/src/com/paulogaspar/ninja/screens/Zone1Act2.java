@@ -25,6 +25,7 @@ public class Zone1Act2 implements Screen{
 
 	private int current_option;
 	private int item_counter;
+	private int num_itens;
 	private int vwidth;
 	private int vheight;
 	
@@ -153,7 +154,10 @@ public class Zone1Act2 implements Screen{
 		
 		itens[0] = new Item(item_texture,1700,470,item_sound,item_sound);
 		
-		String message1[] = {"Now it is time...","FOR you fat ass to remember...","pretty basic stuff that...",
+		num_itens = itens.length;
+		
+		
+		String message1[] = {"Now it is time...","FOR you fat ass to remember...","Pretty basic stuff that...",
 				"Everyone knows how to do","Like jumping over that bump","With your tiny legs","And brains"
 				,"Just go up to jump!"};
 		masters[0] = new Master(master_texture, 300, 124, message1, "JUMP FATTY!",40, false);
@@ -232,7 +236,7 @@ public class Zone1Act2 implements Screen{
 					main_theme.stop();
 					game.setScreen(new Points_state(game, player, master_volume, master_texture, item_texture, cannonD, 
 							cannonR, cannonL, cannonBall, ninja_star, font_32, font_16, main_theme, bomb_sound, 
-							item_sound,0,1,item_counter,1,timer,90000 ,true,2,"Keep going"));
+							item_sound,player.death_counter,1,item_counter,num_itens,timer,90000 ,true,2,"Keep going"));
 					minorDipose();
 					changed_screen = true;
 					return;
