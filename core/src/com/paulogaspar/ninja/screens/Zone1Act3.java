@@ -22,7 +22,7 @@ import com.paulogaspar.ninja.actors.Ninja;
 import com.paulogaspar.ninja.tools.TileMap;
 
 public class Zone1Act3 implements Screen{
-
+		
 	private int current_option;
 	private int item_counter;
 	private int vwidth;
@@ -298,7 +298,7 @@ public class Zone1Act3 implements Screen{
 		}	
 		
 		
-		font_32.draw(batch,""+timer/1000 ,camera.position.x+310,camera.position.y+270);
+		font_32.draw(batch,""+timer/1000 ,camera.position.x+300,camera.position.y+270);
 
 		
 		if(stage_transition_alpha > 0){

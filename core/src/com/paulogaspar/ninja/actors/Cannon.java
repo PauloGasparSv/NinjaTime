@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.paulogaspar.ninja.tools.Particle;
 
 public class Cannon {
-	public static final int UP_DOWN = 2, DOWN_LEFT = 1, DOWN_RIGHT = 0,LEFT_RIGHT = 3,DOWN_UP = 4,UP_LEFT = 5,UP_RIGHT = 6;
+	public static final int UP_DOWN = 2, DOWN_LEFT = 1, DOWN_RIGHT = 0,LEFT_RIGHT = 3,DOWN_UP = 4,UP_LEFT = 5,UP_RIGHT = 6,RIGHT_LEFT = 7;
 	public static final int UP = 3,DOWN = 2,LEFT = 1,RIGHT = 0;
 	private int type;
 	private int direction;
@@ -157,6 +157,8 @@ public class Cannon {
 				batch.draw(cannon,position[0],position[1],64,64);
 			else if(type == LEFT_RIGHT)
 				batch.draw(cannon,position[0],position[1],32,32,64,64,1,1,90);
+			else if(type == RIGHT_LEFT)
+				batch.draw(cannon,position[0],position[1],32,32,64,64,1,1,270);
 			else if(type == DOWN_UP || type == UP_LEFT || type == UP_RIGHT)
 				batch.draw(cannon,position[0],position[1],32,32,64,64,1,1,180);
 			if(shooting)

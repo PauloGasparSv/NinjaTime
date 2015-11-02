@@ -272,7 +272,7 @@ public class Zone1Act2 implements Screen{
 			batch.draw(item_texture[0],camera.position.x - 370 + 50,camera.position.y+180,96,96,0,0,32,32,false,false);
 			batch.setColor(Color.WHITE);
 		}
-		font_32.draw(batch,""+timer/1000 ,camera.position.x+310,camera.position.y+270);
+		font_32.draw(batch,""+timer/1000 ,camera.position.x+300,camera.position.y+270);
 
 		
 		if(stage_transition_alpha > 0){

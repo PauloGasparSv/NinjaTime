@@ -236,7 +236,7 @@ public class Zone1Act1 implements Screen{
 		for(Master m:masters)m.draw(batch,font_16);
 		player.draw(batch);
 		
-		font_32.draw(batch,""+timer/1000 ,camera.position.x+310,camera.position.y+270);
+		font_32.draw(batch,""+timer/1000 ,camera.position.x+300,camera.position.y+270);
 		if(stage_transition_alpha > 0){
 			batch.setColor(new Color(0,0,0,stage_transition_alpha));
 			batch.draw(tilemap.tiles[0],camera.position.x - 450, camera.position.y -350, 1200,700);
