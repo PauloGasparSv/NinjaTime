@@ -74,8 +74,7 @@ public class Ninja {
 		this.camera = camera;
 		
 		camera_start_pos = new float[2];
-		camera_start_pos[0] = camera.position.x;
-		camera_start_pos[1] = camera.position.y;
+		
 		
 		wallslide_texture = new Texture(Gdx.files.internal("Ninja/wallslide.png"));
 		wallslide = new TextureRegion(wallslide_texture);
@@ -120,6 +119,8 @@ public class Ninja {
 		
 		particlefx = new Particle(20, smokebomb_texture[0],2.2f);		
 		init(x,y);
+		camera_start_pos[0] = camera.position.x;
+		camera_start_pos[1] = camera.position.y;
 	}
 	
 	public void init(float x, float y){
@@ -133,6 +134,7 @@ public class Ninja {
 		position[1] = y;
 		spawn_position[0] = x;
 		spawn_position[1] = y;
+		
 		
 		current_slide_sound = 0;
 		item_counter = 0;

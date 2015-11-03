@@ -102,6 +102,8 @@ public class Zone1Act3 implements Screen{
 		item_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/Collect_Point_00.mp3"));
 		player = new Ninja(camera,80,600);
 		init();
+		player.camera_start_pos[0] = camera.position.x;
+		player.camera_start_pos[1] = camera.position.y;
 	}
 	public Zone1Act3(MyGame game,Ninja player,float volume,Texture master_texture[], Texture item_texture[],Texture cannonD,Texture cannonR,
 			Texture cannonL,Texture cannonBall, Texture ninja_star, BitmapFont font_32,BitmapFont font_16, Music main_theme,
@@ -160,10 +162,10 @@ public class Zone1Act3 implements Screen{
 		
 		String message1[] = {"Look at you all jumpy and stuff","Think you can jump off this ledge?",
 				"Well what am i saying off course you can","You just passed the jumping level",
-				"The question is...","How will you get out and up again?","Go on..."};
+				"The question is...","How will you get up again?","Go on..."};
 		masters[0] = new Master(master_texture, 650, 504, message1, "GET DOWN BOE!",40, false);
 		
-		String message2[] = {"Really good, i am impressed","On how long it took you","I bet you can't even find the exit","Haha"};
+		String message2[] = {"Really good, I am impressed","On how long it took you","I bet you can't even find the exit","Haha"};
 		masters[1] = new Master(master_texture, 1875, 126, message2, "GEEZ LOUIS MAN, GO UP!",40, false);
 		
 		start_time = System.currentTimeMillis();

@@ -101,6 +101,8 @@ public class Zone1Act4 implements Screen{
 		item_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/Collect_Point_00.mp3"));
 		player = new Ninja(camera,80,400);
 		init();
+		player.camera_start_pos[0] = camera.position.x;
+		player.camera_start_pos[1] = camera.position.y;
 	}
 	public Zone1Act4(MyGame game,Ninja player,float volume,Texture master_texture[], Texture item_texture[],Texture cannonD,Texture cannonR,
 			Texture cannonL,Texture cannonBall, Texture ninja_star, BitmapFont font_32,BitmapFont font_16, Music main_theme,
