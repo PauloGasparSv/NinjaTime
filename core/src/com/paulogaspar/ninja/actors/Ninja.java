@@ -36,10 +36,10 @@ public class Ninja {
 	boolean facing_right;
 	private boolean stop_time;
 	private boolean slow_time;
-	private boolean touching;
 	private boolean slide_l,slide_r;	
 	private boolean grounded;
 	public boolean particles_on;
+	private boolean pressing_c;
 	
 	private long current_slide_sound;
 	private long clock_playing;	
@@ -134,7 +134,7 @@ public class Ninja {
 		position[1] = y;
 		spawn_position[0] = x;
 		spawn_position[1] = y;
-		
+		pressing_c = false;
 		
 		current_slide_sound = 0;
 		item_counter = 0;
@@ -159,7 +159,6 @@ public class Ninja {
 		stop_time = false;
 		time_mod = 1;
 		
-		touching = false;
 		timer = 0;
 		current_gauge = 0;
 		smoke_elapsed = 0;
@@ -205,7 +204,6 @@ public class Ninja {
 		stop_time = false;
 		time_mod = 1;
 		
-		touching = false;
 		timer = 0;
 		current_gauge = 0;
 		smoke_elapsed = 0;
@@ -216,11 +214,6 @@ public class Ninja {
 	}
 	
 	public void update(float delta,int map[][],int width,int height,float master_volume){
-		float vwidth = Gdx.graphics.getWidth();
-		float vheight = Gdx.graphics.getHeight();
-		float wscale = vwidth/800f;
-		float hscale = vheight/600f;
-		
 		elapsed_time += delta * time_mod;
 		
 		//I Know this part looks horrible
@@ -322,7 +315,7 @@ public class Ninja {
 			}
 		}
 		
-		if(Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT) && !slow_time && !stop_time && !touching){
+		if(Gdx.input.isKeyJustPressed(Input.Keys.X) && !slow_time && !stop_time){
 			slow_time = true;
 			time_mod = 0.5f;
 			timer = delta;
@@ -330,57 +323,68 @@ public class Ninja {
 			clock_sound.setLooping(clock_playing,true);
 		}
 		
-		if(Gdx.input.isTouched() && !slow_time && !stop_time){
-			touching = true;
+		if(Gdx.input.isKeyPressed(Input.Keys.C) && !slow_time && !stop_time && !slide_l && !slide_r && current_gauge == 0){
+			pressing_c = true;
+						
+			float tx = position[0];
+			tx += facing_right ? 128:-128;
+			
+			float ty = position[1];
+			if(Gdx.input.isKeyPressed(Input.Keys.UP))ty += 64;
+			if(Gdx.input.isKeyPressed(Input.Keys.DOWN))ty -= 64;
+			
+
+			if(ty/64 > map.length-1)ty = (map.length-1)*64;
+			if(ty < 0)ty = 0;
+			
+			if(ty != position[1] && !Gdx.input.isKeyPressed(Input.Keys.LEFT) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT))tx= position[0];
+
+			
+			//int ty = 
+			if(tx < 0)tx = 0;
+			if(tx/64 > map[0].length-1)tx = (map[0].length-1)*64;
+
+			
+			
+			//int dy =  (y1-ty)*64;
+			
+			teleport_pos[0] = tx;
+			teleport_pos[1] = ty;
+			
+			
+		}
+		
+		if(pressing_c && !Gdx.input.isKeyPressed(Input.Keys.C)){
+			pressing_c = false;
 			smoke_elapsed = 0;
 			
-			teleport_pos[0] = position[0];
-			teleport_pos[1] = position[1];
 			
-			int tx = (int)((camera.position.x*wscale-vwidth/2+Gdx.input.getX())/(64*wscale));
-			int ty =  (int)((camera.position.y*hscale-vheight/2+(vheight-Gdx.input.getY()))/(64*hscale));
-		
-			if(tx > map[0].length-1)tx = map[0].length-1;
-			if(ty > map.length-1)ty = map.length-1;
 			
-			int dx = (x1-tx)*64;
-			int dy =  (y1-ty)*64;
+			int px = (int)teleport_pos[0]/64;
+			int py = (int)teleport_pos[1]/64;
 			
-			boolean naopode = true;
-			if(dx != 0 && dy != 0) naopode = dx*dx + dy*dy > 36100;
-			else naopode = dx*dx > 40000 || dy*dy > 25600;
-			
-			if(map[ty][tx] < 0 &&!naopode){
-					teleport_pos[0] = tx*64;
-					teleport_pos[1] = ty*64;
+			if(map[py][px] < 0){
+					teleport_pos[0] = teleport_pos[0];
+					teleport_sound.play(0.5f*master_volume);
+					stop_time = true;
+					timer = delta;
+					current_gauge = 4;
+					float tx = position[0];
+					float ty = position[1];
+					position[0] = teleport_pos[0];
+					position[1] = teleport_pos[1];
+					jump_count = 0;
+					teleport_pos[0] = tx;
+					teleport_pos[1] = ty;
 			}
 			else{
-				touching = false;
 				teleport_pos[0] = 0;
 				teleport_pos[1] = 0;
 			}
+			
 		}
 		
-		if(!Gdx.input.isTouched()&& !slow_time && !stop_time && touching){
-			teleport_sound.play(0.5f*master_volume);
-			stop_time = true;
-			touching = false;
-			timer = delta;
-			current_gauge = 4;
-			float tx = position[0];
-			float ty = position[1];
-			position[0] = teleport_pos[0];
-			position[1] = teleport_pos[1];
-			slide_l = false;
-			slide_r = false;
-			current_slide_sound = 0;
-			slide_sound.stop();
-			jump_count = 0;
-			teleport_pos[0] = tx;
-			teleport_pos[1] = ty;
-		}
-		
-		if(Gdx.input.isKeyPressed(Input.Keys.D)){
+		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
 			facing_right = true;
 			slide_l = false;
 			
@@ -395,7 +399,7 @@ public class Ninja {
 			}
 			
 		}
-		else if(Gdx.input.isKeyPressed(Input.Keys.A)){
+		else if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
 			facing_right = false;
 			slide_r = false;
 			
@@ -419,7 +423,7 @@ public class Ninja {
 			}
 		}
 		
-		if(Gdx.input.isKeyJustPressed(Input.Keys.W) && jump_count < 2){
+		if(Gdx.input.isKeyJustPressed(Input.Keys.Z) && jump_count < 2){
 			jump_sound.play(0.2f*master_volume);
 			
 			if(!grounded){jump_count = 2;speed_y = -5.4f*jump_mod;}
@@ -434,7 +438,7 @@ public class Ninja {
 				slide_sound.stop();
 				
 			}
-			if(slide_r){
+			else if(slide_r){
 				speed_x -= 1f;
 				position[0] -= 4;
 				slide_r = false;
@@ -542,6 +546,9 @@ public class Ninja {
 			if(facing_right == frame.isFlipX())
 				frame.flip(true, false);
 		}else{
+			teleport_pos[0] = 0;
+			teleport_pos[1] = 0;
+			pressing_c = false;
 			frame = wallslide;
 			if(facing_right == frame.isFlipX())
 				frame.flip(true, false);
@@ -552,7 +559,7 @@ public class Ninja {
 		if(slow_time || stop_time)
 			batch.draw(gauge[current_gauge],position[0]+5,position[1]+70);
 		
-		if(touching){
+		if(pressing_c){
 			batch.setColor(0, 0, 0, 0.5f);
 			batch.draw(frame,teleport_pos[0],teleport_pos[1],64,64);
 			batch.setColor(1, 1, 1, 1);
