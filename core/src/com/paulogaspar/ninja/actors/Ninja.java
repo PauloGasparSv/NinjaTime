@@ -329,7 +329,7 @@ public class Ninja {
 			float tx = position[0];
 			tx += facing_right ? 128:-128;
 			
-			float ty = position[1];
+			float ty = position[1]+12;
 			if(Gdx.input.isKeyPressed(Input.Keys.UP))ty += 64;
 			if(Gdx.input.isKeyPressed(Input.Keys.DOWN))ty -= 64;
 			
@@ -364,7 +364,6 @@ public class Ninja {
 			int py = (int)teleport_pos[1]/64;
 			
 			if(map[py][px] < 0){
-					teleport_pos[0] = teleport_pos[0];
 					teleport_sound.play(0.5f*master_volume);
 					stop_time = true;
 					timer = delta;
@@ -372,7 +371,7 @@ public class Ninja {
 					float tx = position[0];
 					float ty = position[1];
 					position[0] = teleport_pos[0];
-					position[1] = teleport_pos[1];
+					position[1] = teleport_pos[1] - 6;
 					jump_count = 0;
 					teleport_pos[0] = tx;
 					teleport_pos[1] = ty;
@@ -561,7 +560,7 @@ public class Ninja {
 		
 		if(pressing_c){
 			batch.setColor(0, 0, 0, 0.5f);
-			batch.draw(frame,teleport_pos[0],teleport_pos[1],64,64);
+			batch.draw(frame,teleport_pos[0],teleport_pos[1]-12,64,64);
 			batch.setColor(1, 1, 1, 1);
 		}
 		
