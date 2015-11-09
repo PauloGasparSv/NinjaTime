@@ -167,6 +167,11 @@ public class Points_state implements Screen{
 						cannonR, cannonL, cannonBall, ninja_star, font_32, font_16, main_theme, bomb_sound,
 						item_sound));
 				break;
+			case 4:
+				game.setScreen(new Zone1Act4(game, player, master_volume, master_texture, item_texture, cannonD,
+						cannonR, cannonL, cannonBall, ninja_star, font_32, font_16, main_theme, bomb_sound,
+						item_sound));
+				break;
 		
 		}
 	}
