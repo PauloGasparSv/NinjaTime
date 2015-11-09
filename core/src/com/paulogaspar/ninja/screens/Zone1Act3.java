@@ -233,7 +233,6 @@ public class Zone1Act3 implements Screen{
 			}
 			
 			if(next_stage){
-				//CHANGE THIS PART IF THE VOLUME IS ALREADY DOWN! JUST PUT A *master_volume
 				stage_transition_alpha += delta*0.5f;
 				transition_angle -= 0.2f*delta;
 				camera.zoom += transition_angle*0.05f;

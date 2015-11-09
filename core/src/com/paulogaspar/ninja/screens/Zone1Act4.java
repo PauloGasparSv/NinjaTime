@@ -150,7 +150,7 @@ public class Zone1Act4 implements Screen{
 		next_stage_door = new Rectangle(2035,334,180,150);
 
 		cannons = new Cannon[12];
-		itens = new Item[0];
+		itens = new Item[2];
 		masters = new Master[2];
 
 		cannons[0] = new Cannon(cannonD, cannonBall, 10*64, 8*64, Cannon.DOWN, Cannon.UP_DOWN, 400, bomb_sound);
@@ -166,14 +166,14 @@ public class Zone1Act4 implements Screen{
 		cannons[10] = new Cannon(cannonD, cannonBall, 28*64, 8*64, Cannon.DOWN, Cannon.UP_DOWN, 500, bomb_sound);
 		cannons[11] = new Cannon(cannonD,cannonBall,37*64,5*64,Cannon.LEFT,Cannon.RIGHT_LEFT,500,bomb_sound);
 
-		//itens[0] = new Item(item_texture,2115,1125,item_sound,item_sound);
-		//itens[1] = new Item(item_texture,580,320,item_sound,item_sound);
+		itens[0] = new Item(item_texture,1314,132,item_sound,item_sound);
+		itens[1] = new Item(item_texture,1705,370,item_sound,item_sound);
 		
 		num_itens = itens.length;
 		
-		String message1[] = {"Time to really test you","Just take your time here","If you have any problems","Just SHIFT the time to your will",
-				"You have that power, remember?","...","Go now and remember to SHIFT if troubled"};
-		masters[0] = new Master(master_texture, 400, 188, message1, "PRESS SHIFT STUPED!",40, false);
+		String message1[] = {"Time to really test you","Just take your time here","If you have any problems","Just remember our training...",
+				"and use your ninja reflexes!"};
+		masters[0] = new Master(master_texture, 400, 188, message1, "PRESS X DUDE!",40, false);
 		
 		String message2[] = {"WAIT!","Slowly"};
 		masters[1] = new Master(master_texture, 1912, 188, message2, "Hue",40, false);

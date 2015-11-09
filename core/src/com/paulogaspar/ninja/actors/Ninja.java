@@ -75,7 +75,8 @@ public class Ninja {
 		
 		camera_start_pos = new float[2];
 		
-		
+		particles_on = true;
+
 		wallslide_texture = new Texture(Gdx.files.internal("Ninja/wallslide.png"));
 		wallslide = new TextureRegion(wallslide_texture);
 		
@@ -125,7 +126,6 @@ public class Ninja {
 	
 	public void init(float x, float y){
 		death_counter = 0;
-		particles_on = true;
 		particlefx = new Particle(14, smokebomb_texture[0],2.2f);
 		position = new float[2];
 		teleport_pos = new float[2];
@@ -285,7 +285,7 @@ public class Ninja {
 		}
 		
 		if(slow_time){
-			timer += delta*1.5f;
+			timer += delta*1.75f;
 			if(timer > 5){
 				clock_sound.setLooping(clock_playing, false);
 				clock_sound.stop(clock_playing);
@@ -305,7 +305,7 @@ public class Ninja {
 		
 	
 		if(stop_time){
-			timer += delta*0.8f;
+			timer += delta*2f;
 			smoke_elapsed += delta;
 			if(timer < 5)
 				current_gauge = 4 - (int)timer;
@@ -387,11 +387,10 @@ public class Ninja {
 			facing_right = true;
 			slide_l = false;
 			
-			if(speed_x < 4.3f)
-				speed_x += delta*6.6f*time_mod;
-			if(speed_x < 0)
-				speed_x += delta*4.6f*time_mod;
-				
+			if(speed_x < 4.6f)speed_x += delta*6.6f*time_mod;
+			else speed_x = 4.6f;
+			if(speed_x < 0)speed_x += delta*4.6f*time_mod;
+			
 			if(current == IDLE){
 				elapsed_time = 0f;
 				current = WALK;
@@ -402,10 +401,9 @@ public class Ninja {
 			facing_right = false;
 			slide_r = false;
 			
-			if(speed_x > -4.3f)
-				speed_x -= delta*6.6f*time_mod;
-			if(speed_x > 0)
-				speed_x -= delta*4.6f*time_mod;
+			if(speed_x > -4.6f)speed_x -= delta*6.6f*time_mod;
+			else speed_x = -4.6f;
+			if(speed_x > 0)speed_x -= delta*4.6f*time_mod;
 				
 			if(current == IDLE){
 				elapsed_time = 0f;
