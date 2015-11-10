@@ -186,7 +186,6 @@ public class Zone1Act4 implements Screen{
 	private void update(float delta){
 		
 		Gdx.graphics.setTitle("Ninja Time Fps: "+Gdx.graphics.getFramesPerSecond());
-		camera.update();
 		tilemap.update(camera, player,delta, master_volume);
 
 		vwidth = Gdx.graphics.getWidth();
@@ -223,14 +222,25 @@ public class Zone1Act4 implements Screen{
 				for(Item i:itens)i.update(player, delta,master_volume);
 			}
 			if(!tilemap.edit_mode){
+				float x = 0;
+				float y = 0;
+				
 				if(player.position[1] > camera.position.y+50  && camera.position.y - 300 < tilemap.height-608)
-					camera.translate(0, player.position[1] - camera.position.y -50);
-				if(player.position[1] < camera.position.y-150  && camera.position.y - 300 > 8)
-					camera.translate(0, player.position[1] - camera.position.y+150);
+					y += player.position[1] - camera.position.y -50;
+				else if(player.position[1] < camera.position.y-150  && camera.position.y - 300 > 8)
+					y += player.position[1] - camera.position.y + 150;
 				if(player.position[0] > camera.position.x + 40 && camera.position.x - 400 < tilemap.width-808)
-					camera.translate(player.position[0] - camera.position.x - 40,0);
-				if(player.position[0] < camera.position.x -100 && camera.position.x - 400 > 8)
-					camera.translate(player.position[0] - camera.position.x + 100, 0);
+					x += player.position[0] - camera.position.x - 40;
+				else if(player.position[0] < camera.position.x -100 && camera.position.x - 400 > 8)
+					x += player.position[0] - camera.position.x + 100;
+			
+				if(camera.position.x + x > tilemap.width-408)x += tilemap.width - 408 - camera.position.x - x;
+				else if(camera.position.x + x < 408) x+= 408 - camera.position.x - x;
+				if(camera.position.y + y > tilemap.height-308)y += tilemap.height-308-camera.position.y - y;
+				else if(camera.position.y + y < 308) y += 308 - camera.position.y - y;
+			
+				camera.translate(x,y);
+				if(x!= 0 || y != 0)camera.update();
 			}
 			else{
 				if(Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)){
@@ -246,9 +256,9 @@ public class Zone1Act4 implements Screen{
 			
 			if(next_stage){
 				//CHANGE THIS PART IF THE VOLUME IS ALREADY DOWN! JUST PUT A *master_volume
-				stage_transition_alpha += delta*0.5f;
+				stage_transition_alpha += delta*0.75f;
 				transition_angle -= 0.2f*delta;
-				camera.zoom += transition_angle*0.05f;
+				if(camera.zoom > 0.04)camera.zoom += transition_angle*0.05f;
 				camera.rotate(transition_angle*0.75f);
 				main_theme.setVolume((1-stage_transition_alpha)*master_volume);
 				if(camera.zoom < 0)camera.zoom = 0.01f;

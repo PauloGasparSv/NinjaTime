@@ -167,6 +167,7 @@ public class TileMap {
 	
 	public void edit(OrthographicCamera camera,float delta){
 		if(edit_mode){	
+			camera.update();
 			if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && camera.position.x - 400 < width-808)
 				camera.translate(350*delta, 0);
 			if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && camera.position.x - 400 > 8)
@@ -277,13 +278,13 @@ public class TileMap {
 	}
 	
 	public void draw(SpriteBatch batch,float camera_x,float camera_y,OrthographicCamera camera){
-		int begin_x = (int)(camera_x-20)/64;
+		int begin_x = (int)(camera_x-65)/64;
 		if(begin_x < 0)
 			begin_x = 0;
 		int end_x = (int)(camera_x+870)/64;
 		if(end_x > num_tiles[1]-1)
 			end_x = num_tiles[1]-1;
-		int begin_y = (int)(camera_y-20)/64;
+		int begin_y = (int)(camera_y-70)/64;
 		if(begin_y < 0)
 			begin_y = 0;
 		int end_y = (int)(camera_y+670)/64;

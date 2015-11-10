@@ -330,14 +330,26 @@ public class Ninja {
 			tx += facing_right ? 128:-128;
 			
 			float ty = position[1]+12;
-			if(Gdx.input.isKeyPressed(Input.Keys.UP))ty += 64;
-			if(Gdx.input.isKeyPressed(Input.Keys.DOWN))ty -= 64;
+			if(Gdx.input.isKeyPressed(Input.Keys.UP)){
+				ty += 64;
+				if(!Gdx.input.isKeyPressed(Input.Keys.LEFT) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+					ty+=64;
+					tx = position[0];
+				}
+			}
+			if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+				ty -= 64;
+				if(!Gdx.input.isKeyPressed(Input.Keys.LEFT) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+					tx = position[0];
+					ty-=64;
+				}
+			}
 			
-
+	
 			if(ty/64 > map.length-1)ty = (map.length-1)*64;
 			if(ty < 0)ty = 0;
 			
-			if(ty != position[1] && !Gdx.input.isKeyPressed(Input.Keys.LEFT) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT))tx= position[0];
+	
 
 			
 			//int ty = 
@@ -354,7 +366,7 @@ public class Ninja {
 			
 		}
 		
-		if(pressing_c && !Gdx.input.isKeyPressed(Input.Keys.C)){
+		if(pressing_c){
 			pressing_c = false;
 			smoke_elapsed = 0;
 			

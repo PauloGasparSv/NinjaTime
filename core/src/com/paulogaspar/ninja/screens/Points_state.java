@@ -30,7 +30,7 @@ public class Points_state implements Screen{
 	
 	private float master_volume;
 	private float stage_transition_alpha;
-	private float transition_angle;
+	//private float transition_angle;
 	private float x[];
 	private float y[];
 	private float dx[];
@@ -117,7 +117,7 @@ public class Points_state implements Screen{
 		tilemap = new TileMap("points.mapa");
 		next_stage = false;
 		changed_screen = false;
-		transition_angle = 0f;
+		//transition_angle = 0f;
 		stage_transition_alpha = 1;
 		if(has_master){
 			master = new Master(master_texture, 400, 124, message, "", 50, false);
@@ -213,10 +213,10 @@ public class Points_state implements Screen{
 		
 		if(next_stage){
 			//CHANGE THIS PART IF THE VOLUME IS ALREADY DOWN! JUST PUT A *master_volume
-			stage_transition_alpha += delta*0.5f;
-			transition_angle -= 0.2f*delta;
-			camera.zoom += transition_angle*0.05f;
-			camera.rotate(transition_angle*0.75f);
+			stage_transition_alpha += delta*0.9f;
+			//transition_angle -= 0.2f*delta;
+			//camera.zoom += transition_angle*0.05f;
+			//camera.rotate(transition_angle*0.75f);
 			main_theme.setVolume((1-stage_transition_alpha)*master_volume);
 			if(camera.zoom < 0)camera.zoom = 0.01f;
 			if(stage_transition_alpha > 1){
