@@ -7,6 +7,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -48,14 +50,14 @@ public class Zone1Act1 implements Screen{
 	
 	//DELETE REFERENCEf
 	private MyGame game;
-	
+	private Controller gamepad;
 	private Message messages[];
 	
 	//DISPOSE
 	private SpriteBatch batch;
 	
 	private TileMap tilemap;
-		
+
 	private Ninja player;
 		
 	private Cannon cannons[];
@@ -159,6 +161,19 @@ public class Zone1Act1 implements Screen{
 		
 		next_stage_door = new Rectangle(830,130,300,200);
 		time = System.currentTimeMillis();
+		
+		gamepad = null;
+		try{
+		gamepad = Controllers.getControllers().get(0);
+		}catch(Exception e){}
+		
+		if(player.gamepad == null && gamepad != null){
+			player.gamepad = gamepad;
+		}
+		if(player.gamepad != null && gamepad == null){
+			player.gamepad = null;
+		}
+		
 	}
 	
 		
@@ -220,7 +235,7 @@ public class Zone1Act1 implements Screen{
 			}
 			
 			
-			if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)&&!next_stage&&player.rect().overlaps(next_stage_door)){
+			if(player.interact_press&&!next_stage&&player.rect().overlaps(next_stage_door)){
 				can_control = false;
 				next_stage = true;
 			}

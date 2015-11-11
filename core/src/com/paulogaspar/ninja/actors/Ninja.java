@@ -3,6 +3,7 @@ package com.paulogaspar.ninja.actors;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -40,12 +41,17 @@ public class Ninja {
 	private boolean grounded;
 	public boolean particles_on;
 	private boolean pressing_c;
+	private boolean y_press;
+	private boolean r_press;
+	private boolean l_press;
+	public boolean interact_press;
 	
 	private long current_slide_sound;
 	private long clock_playing;	
 	
 	
 	//DELETE REFERENCE
+	public Controller gamepad;
 	private OrthographicCamera camera;
 	
 	private Animation smoke_bomb;
@@ -72,7 +78,7 @@ public class Ninja {
 	
 	public Ninja(OrthographicCamera camera,float x, float y){
 		this.camera = camera;
-		
+		gamepad = null;
 		camera_start_pos = new float[2];
 		
 		particles_on = true;
@@ -126,6 +132,9 @@ public class Ninja {
 	
 	public void init(float x, float y){
 		death_counter = 0;
+		y_press = false;
+		l_press = false;
+		r_press = false;
 		particlefx = new Particle(14, smokebomb_texture[0],2.2f);
 		position = new float[2];
 		teleport_pos = new float[2];
@@ -315,6 +324,237 @@ public class Ninja {
 			}
 		}
 		
+		if(gamepad == null)keyboardcontrol(delta,master_volume,map);
+		else gamepadcontrol(delta,master_volume,map);
+		
+		if(speed_x > 0){
+			if((map[y1][xr] > -1 || map[y2][xr] > -1)){
+				if(grounded){
+					speed_x = -0.5f;
+				}
+				else{
+					speed_x = 0f;
+					if(speed_y > 0.5f){
+						slide_r = true;
+						slide_l = false;
+						jump_count = 0;
+					}
+				}
+			}
+			if(map[y1][xr] < 0 && map[y2][xr] < 0 && slide_r){
+				slide_r = false;
+				current_slide_sound = 0;
+				slide_sound.stop();
+			}
+		}
+		if(speed_x < 0){
+			if(map[y1][xl] > -1 || map[y2][xl] > -1){
+				if(grounded){
+					speed_x = 0.5f;
+				}
+				else{
+					speed_x = 0f;
+					if(speed_y > 0.5f){
+						slide_l = true;
+						slide_r = false;
+						jump_count = 0;
+					}
+				}
+			}
+			if(map[y1][xl] < 0 && map[y2][xl] < 0 && slide_l){
+				slide_l = false;
+				current_slide_sound = 0;
+				slide_sound.stop();
+			}
+		}
+		
+		if(speed_x == 0 && ((map[y1][xl] < 0 &&
+				map[y2][xl] < 0 && slide_l)||(map[y1][xr] < 0 && map[y2][xr] < 0 && slide_r))){
+			slide_r = false;
+			slide_l = false;
+			current_slide_sound = 0;
+			slide_sound.stop();		
+		}
+		
+		if((map[yu][xl2] > -1 || map[yu][xr2] > -1) && speed_y < 0){
+			speed_y = 0;
+			slide_r = false;
+			slide_l = false;
+			current_slide_sound = 0;
+			slide_sound.stop();
+		}
+		
+		
+		if(time_mod == 1)
+			position[0] += speed_x*time_mod;
+		else if(time_mod == 0.5f)
+			position[0] += speed_x*0.75f;
+		
+		position[1] -= speed_y*time_mod;
+		
+		if(position[0] < 0)
+			position[0] = 0;
+		if(position[0] > width-72)
+			position[0] = width-72;
+		
+		
+	}
+	
+	private void gamepadcontrol(float delta,float master_volume,int [][]map){
+		if(gamepad.getButton(0) || gamepad.getButton(1))interact_press = true;
+		else interact_press = false;
+		
+		if((gamepad.getButton(6)||gamepad.getButton(7)) && !slow_time && !stop_time){
+			slow_time = true;
+			time_mod = 0.5f;
+			timer = delta;
+			clock_playing = clock_sound.play(0.9f*master_volume);
+			clock_sound.setLooping(clock_playing,true);
+		}
+		
+		if((gamepad.getButton(4)||gamepad.getButton(5))  && !slow_time && !stop_time && !slide_l && !slide_r && current_gauge == 0){
+			pressing_c = true;
+						
+			float tx = position[0];
+			tx += facing_right ? 128:-128;
+			
+			float ty = position[1]+12;
+			if(gamepad.getAxis(1) < -0.2f){
+				ty += 64;
+				if(!l_press && !r_press){
+					ty+=64;
+					tx = position[0];
+				}
+			}
+			if(gamepad.getAxis(1) > 0.2f){
+				ty -= 64;
+				if(!l_press && !r_press){
+					tx = position[0];
+					ty-=64;
+				}
+			}
+			
+	
+			if(ty/64 > map.length-1)ty = (map.length-1)*64;
+			
+			
+			if(ty < 0 || ty == 0)ty = position[1];			
+			//int ty = 
+			if(tx < 0 || tx == 0)tx = position[0];
+			if(tx/64 > map[0].length-1)tx = (map[0].length-1)*64;
+			
+			//int dy =  (y1-ty)*64;
+			
+			teleport_pos[0] = tx;
+			teleport_pos[1] = ty;
+			
+			
+		}
+		
+		if(pressing_c){
+			pressing_c = false;
+			smoke_elapsed = 0;
+			
+			
+			
+			int px = (int)teleport_pos[0]/64;
+			int py = (int)teleport_pos[1]/64;
+			
+			if(map[py][px] < 0){
+					teleport_sound.play(0.5f*master_volume);
+					stop_time = true;
+					timer = delta;
+					current_gauge = 4;
+					float tx = position[0];
+					float ty = position[1];
+					position[0] = px * 64;
+					position[1] = py * 64;
+					jump_count = 0;
+					teleport_pos[0] = tx;
+					teleport_pos[1] = ty;
+			}
+			else{
+				teleport_pos[0] = 0;
+				teleport_pos[1] = 0;
+			}
+			
+		}
+	
+		if(gamepad.getAxis(0) > 0.2f){
+			facing_right = true;
+			slide_l = false;
+			r_press = true;
+			l_press = false;
+			
+			if(speed_x < 4.6f)speed_x += delta*6.6f*time_mod;
+			else speed_x = 4.6f;
+			if(speed_x < 0)speed_x += delta*4.6f*time_mod;
+			
+			if(current == IDLE){
+				elapsed_time = 0f;
+				current = WALK;
+			}
+			
+		}
+		else if(gamepad.getAxis(0) < -0.2f){
+			facing_right = false;
+			slide_r = false;
+			r_press = false;
+			l_press = true;
+			
+			if(speed_x > -4.6f)speed_x -= delta*6.6f*time_mod;
+			else speed_x = -4.6f;
+			if(speed_x > 0)speed_x -= delta*4.6f*time_mod;
+				
+			if(current == IDLE){
+				elapsed_time = 0f;
+				current = WALK;
+			}
+		}
+		else{
+			r_press = false;
+			l_press = false;
+			if(speed_x < 0.25f && speed_x > -0.25f)speed_x = 0;
+			if(speed_x > 0.25f)speed_x -= delta*8*time_mod;
+			if(speed_x < -0.25f)speed_x += delta*8*time_mod;
+			if(current == WALK){
+				elapsed_time = 0f;
+				current = IDLE;
+			}
+		}
+		
+		if((gamepad.getButton(2) || gamepad.getButton(3)) && !y_press && jump_count < 2){
+			y_press = true;
+			jump_sound.play(0.2f*master_volume);
+			
+			if(!grounded){jump_count = 2;speed_y = -5.4f*jump_mod;}
+			else {jump_count = 1;speed_y = -8*jump_mod;}
+			grounded = false;
+			
+			if(slide_l){
+				speed_x += 1f;
+				position[0] += 4;
+				slide_l = false;
+				current_slide_sound = 0;
+				slide_sound.stop();
+				
+			}
+			else if(slide_r){
+				speed_x -= 1f;
+				position[0] -= 4;
+				slide_r = false;
+				slide_sound.stop();
+				current_slide_sound = 0;
+			}
+		}
+		if(y_press && !(gamepad.getButton(2) || gamepad.getButton(3)))
+			y_press = false;
+	}
+	
+	private void keyboardcontrol(float delta,float master_volume,int map[][]){
+		if(Gdx.input.isKeyPressed(Input.Keys.SPACE))interact_press = true;
+		else interact_press = false;
+		
 		if(Gdx.input.isKeyJustPressed(Input.Keys.X) && !slow_time && !stop_time){
 			slow_time = true;
 			time_mod = 0.5f;
@@ -453,77 +693,6 @@ public class Ninja {
 				current_slide_sound = 0;
 			}
 		}
-		
-		
-		if(speed_x > 0){
-			if((map[y1][xr] > -1 || map[y2][xr] > -1)){
-				if(grounded){
-					speed_x = -0.5f;
-				}
-				else{
-					speed_x = 0f;
-					if(speed_y > 0.5f){
-						slide_r = true;
-						slide_l = false;
-						jump_count = 0;
-					}
-				}
-			}
-			if(map[y1][xr] < 0 && map[y2][xr] < 0 && slide_r){
-				slide_r = false;
-				current_slide_sound = 0;
-				slide_sound.stop();
-			}
-		}
-		if(speed_x < 0){
-			if(map[y1][xl] > -1 || map[y2][xl] > -1){
-				if(grounded){
-					speed_x = 0.5f;
-				}
-				else{
-					speed_x = 0f;
-					if(speed_y > 0.5f){
-						slide_l = true;
-						slide_r = false;
-						jump_count = 0;
-					}
-				}
-			}
-			if(map[y1][xl] < 0 && map[y2][xl] < 0 && slide_l){
-				slide_l = false;
-				current_slide_sound = 0;
-				slide_sound.stop();
-			}
-		}
-		
-		if(speed_x == 0 && ((map[y1][xl] < 0 &&
-				map[y2][xl] < 0 && slide_l)||(map[y1][xr] < 0 && map[y2][xr] < 0 && slide_r))){
-			slide_r = false;
-			slide_l = false;
-			current_slide_sound = 0;
-			slide_sound.stop();		
-		}
-		
-		if((map[yu][xl2] > -1 || map[yu][xr2] > -1) && speed_y < 0){
-			speed_y = 0;
-			slide_r = false;
-			slide_l = false;
-			current_slide_sound = 0;
-			slide_sound.stop();
-		}
-		
-		
-		if(time_mod == 1)
-			position[0] += speed_x*time_mod;
-		else if(time_mod == 0.5f)
-			position[0] += speed_x*0.75f;
-		
-		position[1] -= speed_y*time_mod;
-		
-		if(position[0] < 0)
-			position[0] = 0;
-		if(position[0] > width-72)
-			position[0] = width-72;
 		
 		
 	}

@@ -31,6 +31,7 @@ public class Master {
 	private String display_message;
 
 	private boolean last_master;
+	private boolean pressed;
 	
 	//DELETE REFERENCE
 	private Animation idle;
@@ -57,6 +58,7 @@ public class Master {
 		current_message = -1;
 		dumb_counter = 0;
 		last_master = last;
+		pressed =false;
 	}
 	public void changeTextColor(){
 		white_text = !white_text;
@@ -89,8 +91,10 @@ public class Master {
 				facingR = true;
 			else if(player.position[0] < position[0] - 10)
 				facingR = false;
-			if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)&&new Rectangle(position[0]-100,position[1]-64,264,192).overlaps(
+			if(!player.interact_press)pressed = false;
+			if(player.interact_press&& !pressed && new Rectangle(position[0]-100,position[1]-64,264,192).overlaps(
 					new Rectangle(player.rect()))){
+				pressed = true;
 				if(!last_master){
 					display_message = "";
 					current_char = 0;

@@ -228,7 +228,7 @@ public class Zone1Act2 implements Screen{
 				}		
 			}
 			
-			if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)&&!next_stage&&player.rect().overlaps(next_stage_door)){
+			if(player.interact_press&&!next_stage&&player.rect().overlaps(next_stage_door)){
 				can_control = false;
 				next_stage = true;
 			}
