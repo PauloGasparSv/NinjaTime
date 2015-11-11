@@ -113,7 +113,7 @@ public class TileMap {
 		for(int col = 0; col < num_tiles[1]; col++){
 			for(int line = 0; line < num_tiles[0]; line++){
 				if(map[line][col] == -10){
-					death_blocks[num_death_blocks] = new Rectangle(col*64-1,line*64+8,22,46);
+					death_blocks[num_death_blocks] = new Rectangle(col*64-1,line*64+10,22,42);
 					while(line + 1 < num_tiles[1] && map[line+1][col] == -10){
 						line++;
 						death_blocks[num_death_blocks].height += 64;
@@ -121,7 +121,7 @@ public class TileMap {
 					num_death_blocks++;
 				}
 				else if(map[line][col] == -9){
-					death_blocks[num_death_blocks] = new Rectangle(col*64+40,line*64+8,24,46);
+					death_blocks[num_death_blocks] = new Rectangle(col*64+40,line*64+10,22,42);
 					while(line + 1 < num_tiles[1] && map[line+1][col] == -9){
 						line++;
 						death_blocks[num_death_blocks].height += 64;

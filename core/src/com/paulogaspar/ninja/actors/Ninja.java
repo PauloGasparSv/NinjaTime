@@ -347,13 +347,11 @@ public class Ninja {
 			
 	
 			if(ty/64 > map.length-1)ty = (map.length-1)*64;
-			if(ty < 0)ty = 0;
 			
-	
-
 			
+			if(ty < 0 || ty == 0)ty = position[1];			
 			//int ty = 
-			if(tx < 0)tx = 0;
+			if(tx < 0 || tx == 0)tx = position[0];
 			if(tx/64 > map[0].length-1)tx = (map[0].length-1)*64;
 
 			
@@ -382,8 +380,8 @@ public class Ninja {
 					current_gauge = 4;
 					float tx = position[0];
 					float ty = position[1];
-					position[0] = teleport_pos[0];
-					position[1] = teleport_pos[1] - 6;
+					position[0] = px * 64;
+					position[1] = py * 64;
 					jump_count = 0;
 					teleport_pos[0] = tx;
 					teleport_pos[1] = ty;

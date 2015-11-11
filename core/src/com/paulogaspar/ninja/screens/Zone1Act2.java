@@ -239,6 +239,7 @@ public class Zone1Act2 implements Screen{
 				transition_angle -= 0.2f*delta;
 				if(camera.zoom > 0.04)camera.zoom += transition_angle*0.05f;
 				camera.rotate(transition_angle*0.75f);
+				camera.update();
 				main_theme.setVolume((1-stage_transition_alpha)*master_volume);
 				if(camera.zoom < 0)camera.zoom = 0.01f;
 				if(stage_transition_alpha > 1){
