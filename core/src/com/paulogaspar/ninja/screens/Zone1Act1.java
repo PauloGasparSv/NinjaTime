@@ -19,6 +19,7 @@ import com.paulogaspar.ninja.actors.Cannon;
 import com.paulogaspar.ninja.actors.Item;
 import com.paulogaspar.ninja.actors.Master;
 import com.paulogaspar.ninja.actors.Ninja;
+import com.paulogaspar.ninja.tools.Message;
 import com.paulogaspar.ninja.tools.TileMap;
 
 public class Zone1Act1 implements Screen{
@@ -47,6 +48,8 @@ public class Zone1Act1 implements Screen{
 	
 	//DELETE REFERENCEf
 	private MyGame game;
+	
+	private Message messages[];
 	
 	//DISPOSE
 	private SpriteBatch batch;
@@ -148,6 +151,12 @@ public class Zone1Act1 implements Screen{
 				"Now the real question is...","Are you ready for the final test?","...",
 				"Haha maybe you are not but...","who cares right?","Go Through that door","Go now"};
 		masters[0] = new Master(master_texture,480, 124, message, "Sweet jesus, stop it!", 40,false);
+		
+		messages = new Message[2];
+		messages[0] = new Message(130,310,"Press the ARROW keys to move",8);
+		messages[1] = new Message(170,280,"And SPACE to interact",8);
+
+		
 		next_stage_door = new Rectangle(830,130,300,200);
 		time = System.currentTimeMillis();
 	}
@@ -180,6 +189,7 @@ public class Zone1Act1 implements Screen{
 			for(Cannon c:cannons)c.update(delta, camera,player,master_volume);
 			for(Master m:masters)m.update(delta, camera, player);
 			for(Item i:itens)i.update(player, delta,master_volume);
+			for(Message m:messages)m.update(delta, player);
 			
 			if(!tilemap.edit_mode){
 				float x = 0;
@@ -248,6 +258,8 @@ public class Zone1Act1 implements Screen{
 		for(Cannon c:cannons)c.draw(batch);
 		for(Item i:itens)i.draw(batch);
 		for(Master m:masters)m.draw(batch,font_16);
+		for(Message m:messages)m.draw(batch, font_16, player);
+		
 		player.draw(batch);
 		
 		font_32.draw(batch,""+timer/1000 ,camera.position.x+300,camera.position.y+270);
