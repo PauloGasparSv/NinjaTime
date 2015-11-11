@@ -154,10 +154,7 @@ public class Zone1Act1 implements Screen{
 				"Haha maybe you are not but...","who cares right?","Go Through that door","Go now"};
 		masters[0] = new Master(master_texture,480, 124, message, "Sweet jesus, stop it!", 40,false);
 		
-		messages = new Message[2];
-		messages[0] = new Message(130,310,"Press the ARROW keys to move",8);
-		messages[1] = new Message(170,280,"And SPACE to interact",8);
-
+		
 		
 		next_stage_door = new Rectangle(830,130,300,200);
 		time = System.currentTimeMillis();
@@ -173,6 +170,17 @@ public class Zone1Act1 implements Screen{
 		if(player.gamepad != null && gamepad == null){
 			player.gamepad = null;
 		}
+		
+		messages = new Message[2];
+		if(player.gamepad == null){
+			messages[0] = new Message(130,310,"Press the ARROW keys to move",8);
+			messages[1] = new Message(170,280,"And SPACE to interact",8);
+		}
+		else{
+			messages[0] = new Message(130,310,"Use the LEFT STICK to move",8);
+			messages[1] = new Message(170,280,"And B or Y to interact",8);
+		}
+		
 		
 	}
 	

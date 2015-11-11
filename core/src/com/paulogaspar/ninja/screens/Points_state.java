@@ -181,13 +181,13 @@ public class Points_state implements Screen{
 		Gdx.graphics.setTitle("Ninja Time Fps: "+Gdx.graphics.getFramesPerSecond());
 		camera.update();
 		tilemap.update(camera, player,delta, master_volume);
-
+		player.update(delta,tilemap.map, tilemap.width, tilemap.height, delta);
 		
 		if(has_master){
 			master.update(delta, camera, player);
 		}
 		
-		if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)&&!next_stage){
+		if(player.interact_press&&!next_stage){
 			next_stage = true;
 		}
 		if(!ended){
