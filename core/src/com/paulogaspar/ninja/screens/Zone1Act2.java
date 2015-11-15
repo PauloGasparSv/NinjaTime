@@ -7,6 +7,9 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.Controllers;
+import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -42,7 +45,11 @@ public class Zone1Act2 implements Screen{
 	private boolean volume;
 	private boolean can_control;
 	private boolean changed_screen;
-
+	private boolean menu_press;
+	private boolean down_press;
+	private boolean up_press;
+	private boolean ok_press;
+	private boolean cancel_press;
 	
 	private Rectangle next_stage_door;
 	
@@ -50,6 +57,7 @@ public class Zone1Act2 implements Screen{
 	
 	//DELETE REFERENCEf
 	private MyGame game;
+	private Controller gamepad;
 	
 	//DISPOSE
 	private SpriteBatch batch;
@@ -145,6 +153,12 @@ public class Zone1Act2 implements Screen{
 		stage_transition_alpha = 1;
 		item_alpha = 0f;
 		tilemap.edit_mode = false;
+		
+		menu_press = false;
+		down_press = false;
+		up_press = false;
+		ok_press = false;
+		cancel_press = false;
 	
 		next_stage_door = new Rectangle(1250,320,200,180);
 
@@ -155,6 +169,19 @@ public class Zone1Act2 implements Screen{
 		itens[0] = new Item(item_texture,1700,470,item_sound,item_sound);
 		
 		num_itens = itens.length;
+		
+		
+		gamepad = null;
+		try{
+		gamepad = Controllers.getControllers().get(0);
+		}catch(Exception e){}
+		
+		if(player.gamepad == null && gamepad != null){
+			player.gamepad = gamepad;
+		}
+		if(player.gamepad != null && gamepad == null){
+			player.gamepad = null;
+		}
 		
 		
 		String message1[] = {"Now it is time...","for you fat ass to remember...","some pretty basic stuff that...",
@@ -189,7 +216,8 @@ public class Zone1Act2 implements Screen{
 			volume = false;
 		}
 		else if(!next_stage){
-			updateMenu(delta);
+			if(gamepad == null)updateMenuKeyboard(delta);
+			else updateMenuGamepad(delta);
 		}
 		if(options || volume)start_time = System.currentTimeMillis();
 		if(!options && !volume){
@@ -335,8 +363,9 @@ public class Zone1Act2 implements Screen{
 	}
 	
 
-	private void updateMenu(float delta){
-		if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !volume){
+
+	private void updateMenuKeyboard(float delta){
+		if((Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) && !volume){
 			options = !options;
 		}
 		if(options){
@@ -409,6 +438,107 @@ public class Zone1Act2 implements Screen{
 			
 		}
 	}
+	
+	private void updateMenuGamepad(float delta){
+		if((gamepad.getButton(9) || gamepad.getButton(8)) && !volume && !menu_press){
+			options = !options;
+			menu_press = true;
+		}
+		if(menu_press && !gamepad.getButton(9) && !gamepad.getButton(8))menu_press = false;
+		if(options || volume){
+			if(ok_press && !gamepad.getButton(2))ok_press = false;
+			if(up_press &&!(gamepad.getAxis(1) < -0.2f || gamepad.getPov(0) == PovDirection.north)) up_press = false;
+			if(down_press &&!(gamepad.getAxis(1) > 0.2f || gamepad.getPov(0) == PovDirection.south)) down_press = false;
+			if(!gamepad.getButton(3) && cancel_press)cancel_press = false;
+		}
+		if(options){
+			
+			if((gamepad.getAxis(1) > 0.2f || gamepad.getPov(0) == PovDirection.south) && !down_press){
+				current_option++;
+				down_press = true;
+			}
+			else if((gamepad.getAxis(1) < -0.2f || gamepad.getPov(0) == PovDirection.north) && !up_press){
+				current_option--;
+				up_press = true;
+			}
+			
+			
+			
+			if(current_option > 3) current_option = 3;
+			if(current_option < 0) current_option = 0;
+			
+			if(gamepad.getButton(2) && !ok_press){
+				ok_press = true;
+				if(current_option == 0){
+					options = false;
+					current_option = 0;					
+
+				}
+				if(current_option == 1){
+					options = false;
+					volume = true;
+					current_option = 0;					
+				}
+				if(current_option == 2){
+					player.particles_on = !player.particles_on;
+				}
+				if(current_option == 3){
+					int a = JOptionPane.showConfirmDialog(null, "Are you sure you wanna quit?");
+					if(a == JOptionPane.YES_OPTION){
+						Gdx.app.exit();
+						return;
+						
+					}
+				}
+			}
+			
+		}
+		else if(volume){
+			if(gamepad.getButton(3) && !cancel_press){
+				volume = false;
+				options = true;
+				cancel_press = true;
+			}
+			
+			if((gamepad.getAxis(1) > 0.2f || gamepad.getPov(0) == PovDirection.south) && !down_press){
+				current_option++;
+				down_press = true;
+			}
+			else if((gamepad.getAxis(1) < -0.2f || gamepad.getPov(0) == PovDirection.north) && !up_press){
+				current_option--;
+				up_press = true;
+			}
+			
+			if(current_option > 2) current_option = 2;
+			if(current_option < 0) current_option = 0;
+			
+			if(gamepad.getButton(2) && !ok_press){
+				ok_press = true;
+				if(current_option == 1){
+					master_volume = 0;
+					main_theme.setVolume(master_volume);
+
+				}
+				if(current_option == 2){
+					options = true;
+					volume = false;
+					current_option = 0;		
+				}			
+			}
+			if(current_option == 0){
+				if((gamepad.getPov(0) == PovDirection.east || gamepad.getAxis(0) > 0.2f)&& master_volume <= 1)
+					master_volume += delta * 0.4f;
+				if((gamepad.getPov(0) == PovDirection.west || gamepad.getAxis(0) < -0.2f)&&master_volume >= 0)
+					master_volume -= delta * 0.4f;
+				if(master_volume > 1) master_volume = 1;
+				if(master_volume < 0) master_volume = 0;
+				main_theme.setVolume(master_volume);
+			}
+			
+			
+		}
+	}
+	
 	private void drawMenu(){
 		if(options || volume){
 			batch.setColor(new Color(0,0,0,0.6f));
