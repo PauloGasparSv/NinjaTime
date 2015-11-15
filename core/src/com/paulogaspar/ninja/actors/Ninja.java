@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -401,7 +402,7 @@ public class Ninja {
 	}
 	
 	private void gamepadcontrol(float delta,float master_volume,int [][]map){
-		if(gamepad.getButton(0) || gamepad.getButton(1))interact_press = true;
+		if(gamepad.getPov(0) == PovDirection.north || gamepad.getButton(0) || gamepad.getButton(1))interact_press = true;
 		else interact_press = false;
 		
 		if((gamepad.getButton(6)||gamepad.getButton(7)) && !slow_time && !stop_time){
@@ -411,12 +412,11 @@ public class Ninja {
 			clock_playing = clock_sound.play(0.9f*master_volume);
 			clock_sound.setLooping(clock_playing,true);
 		}
-		
 		if((gamepad.getButton(4)||gamepad.getButton(5))  && !slow_time && !stop_time && !slide_l && !slide_r && current_gauge == 0){
 			pressing_c = true;
 						
-			float tx = position[0];
-			tx += facing_right ? 128:-128;
+			float tx = position[0]+32;
+			tx += facing_right ? 162:-162;
 			
 			float ty = position[1]+12;
 			if(gamepad.getAxis(1) < -0.2f){
@@ -426,14 +426,24 @@ public class Ninja {
 					tx = position[0];
 				}
 			}
-			if(gamepad.getAxis(1) > 0.2f){
-				ty -= 64;
+			else if(gamepad.getAxis(1) > 0.2f){
+				ty -= 26;
 				if(!l_press && !r_press){
 					tx = position[0];
 					ty-=64;
 				}
+			} else if(gamepad.getPov(0) == PovDirection.south){
+				ty -= 128;
+				tx = position[0];
 			}
-			
+			else if(gamepad.getPov(0) == PovDirection.north){
+				ty += 128;
+				tx = position[0];
+			}
+			else if(gamepad.getPov(0) == PovDirection.southEast || gamepad.getPov(0) == PovDirection.southWest)
+				ty -= 26;		
+			else if(gamepad.getPov(0) == PovDirection.northEast || gamepad.getPov(0) == PovDirection.northWest)
+				ty += 64;		
 	
 			if(ty/64 > map.length-1)ty = (map.length-1)*64;
 			
@@ -480,7 +490,7 @@ public class Ninja {
 			
 		}
 	
-		if(gamepad.getAxis(0) > 0.2f){
+		if(gamepad.getAxis(0) > 0.2f || gamepad.getPov(0) == PovDirection.east || gamepad.getPov(0) == PovDirection.northEast || gamepad.getPov(0) == PovDirection.southEast){
 			facing_right = true;
 			slide_l = false;
 			r_press = true;
@@ -496,7 +506,8 @@ public class Ninja {
 			}
 			
 		}
-		else if(gamepad.getAxis(0) < -0.2f){
+		else if(gamepad.getAxis(0) < -0.2f || gamepad.getPov(0) == PovDirection.west 
+				|| gamepad.getPov(0) == PovDirection.northWest || gamepad.getPov(0) == PovDirection.southWest){
 			facing_right = false;
 			slide_r = false;
 			r_press = false;
@@ -578,7 +589,7 @@ public class Ninja {
 				}
 			}
 			if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-				ty -= 64;
+				ty -= 26;
 				if(!Gdx.input.isKeyPressed(Input.Keys.LEFT) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
 					tx = position[0];
 					ty-=64;
