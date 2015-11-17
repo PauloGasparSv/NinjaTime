@@ -572,10 +572,10 @@ public class Ninja {
 	}
 	
 	private void keyboardcontrol(float delta,float master_volume,int map[][]){
-		if(Gdx.input.isKeyPressed(Input.Keys.SPACE))interact_press = true;
+		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.UP))interact_press = true;
 		else interact_press = false;
 		
-		if(Gdx.input.isKeyJustPressed(Input.Keys.X) && !slow_time && !stop_time){
+		if(Gdx.input.isKeyJustPressed(Input.Keys.S) && !slow_time && !stop_time){
 			slow_time = true;
 			time_mod = 0.5f;
 			timer = delta;
@@ -713,7 +713,7 @@ public class Ninja {
 				current_slide_sound = 0;
 			}
 		}
-		
+		shuriken.update_keyboard(this, null, delta, map);
 		
 	}
 	
