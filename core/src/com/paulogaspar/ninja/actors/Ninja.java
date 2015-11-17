@@ -53,7 +53,7 @@ public class Ninja {
 	
 	//DELETE REFERENCE
 	public Controller gamepad;
-	private OrthographicCamera camera;
+	public OrthographicCamera camera;
 	
 	private Animation smoke_bomb;
 	private Animation animation[];
@@ -62,6 +62,7 @@ public class Ninja {
 	private TextureRegion gauge[];
 	
 	//DISPOSE	
+	private Shurikens shuriken;
 	private Sound jump_sound;
 	private Sound slide_sound;
 	private Sound clock_sound;
@@ -124,6 +125,10 @@ public class Ninja {
 		clock_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/clock.wav"));
 		teleport_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/skill_hit.mp3"));
 		death_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/death.wav"));	
+		
+		
+		shuriken = new Shurikens();
+		
 		
 		particlefx = new Particle(20, smokebomb_texture[0],2.2f);		
 		init(x,y);
@@ -402,6 +407,7 @@ public class Ninja {
 	}
 	
 	private void gamepadcontrol(float delta,float master_volume,int [][]map){
+		
 		if(gamepad.getPov(0) == PovDirection.north || gamepad.getButton(0) || gamepad.getButton(1))interact_press = true;
 		else interact_press = false;
 		
@@ -534,7 +540,7 @@ public class Ninja {
 			}
 		}
 		
-		if((gamepad.getButton(2) || gamepad.getButton(3)) && !y_press && jump_count < 2){
+		if((gamepad.getButton(2)) && !y_press && jump_count < 2){
 			y_press = true;
 			jump_sound.play(0.2f*master_volume);
 			
@@ -560,6 +566,9 @@ public class Ninja {
 		}
 		if(y_press && !(gamepad.getButton(2) || gamepad.getButton(3)))
 			y_press = false;
+		
+		shuriken.update_controller(this, gamepad, delta, map);
+		
 	}
 	
 	private void keyboardcontrol(float delta,float master_volume,int map[][]){
@@ -726,6 +735,7 @@ public class Ninja {
 			if(particlefx.isActive())particlefx.draw(batch);
 		}
 			
+		shuriken.draw(batch);
 		
 		TextureRegion frame;
 		if(!slide_l && !slide_r){
@@ -772,6 +782,7 @@ public class Ninja {
 		wallslide = null;;
 		gauge = null;
 		
+		shuriken.dispose();
 		particlefx.dispose();
 		jump_sound.dispose();
 		slide_sound.dispose();
