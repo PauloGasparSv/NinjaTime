@@ -50,6 +50,7 @@ public class Zone1Act2 implements Screen{
 	private boolean up_press;
 	private boolean ok_press;
 	private boolean cancel_press;
+	private boolean disposed;
 	
 	private Rectangle next_stage_door;
 	
@@ -137,6 +138,7 @@ public class Zone1Act2 implements Screen{
 		init();
 	}
 	public void init(){
+		disposed = false;
 		//camera.translate(0, 0);
 		main_theme.setVolume(master_volume);
 		main_theme.play();
@@ -290,6 +292,7 @@ public class Zone1Act2 implements Screen{
 		}
 	}
 	private void draw(){
+		if(disposed)return;
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		
@@ -339,6 +342,8 @@ public class Zone1Act2 implements Screen{
 	
 	@Override
 	public void dispose() {
+		disposed = true;
+		player.dispose();
 		minorDipose();
 		font_32.dispose();
 		font_16.dispose();
@@ -394,6 +399,7 @@ public class Zone1Act2 implements Screen{
 					int a = JOptionPane.showConfirmDialog(null, "Are you sure you wanna quit?");
 					if(a == JOptionPane.YES_OPTION){
 						Gdx.app.exit();
+						dispose();
 						return;
 						
 					}
@@ -486,6 +492,7 @@ public class Zone1Act2 implements Screen{
 					int a = JOptionPane.showConfirmDialog(null, "Are you sure you wanna quit?");
 					if(a == JOptionPane.YES_OPTION){
 						Gdx.app.exit();
+						dispose();
 						return;
 						
 					}

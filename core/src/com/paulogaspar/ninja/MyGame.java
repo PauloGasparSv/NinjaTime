@@ -2,8 +2,7 @@ package com.paulogaspar.ninja;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.paulogaspar.ninja.screens.Zone1Act1;
-import com.paulogaspar.ninja.screens.Zone1Act4;
+import com.paulogaspar.ninja.screens.*;
 
 public class MyGame extends Game {
 	public SpriteBatch batch;

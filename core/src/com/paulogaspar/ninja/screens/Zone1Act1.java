@@ -49,7 +49,8 @@ public class Zone1Act1 implements Screen{
 	private boolean up_press;
 	private boolean ok_press;
 	private boolean cancel_press;
-	
+	private boolean disposed;
+
 	private OrthographicCamera camera;
 	
 	private Rectangle next_stage_door;
@@ -138,6 +139,7 @@ public class Zone1Act1 implements Screen{
 	}
 	
 	public void init(){
+		disposed = false;
 		camera.setToOrtho(false,800,600);
 		batch = new SpriteBatch();
 		changed_screen = false;
@@ -288,6 +290,7 @@ public class Zone1Act1 implements Screen{
 		}
 	}
 	private void draw(){
+		if(disposed)return;
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		
@@ -324,7 +327,9 @@ public class Zone1Act1 implements Screen{
 	
 	@Override
 	public void dispose() {
+		disposed = true;
 		minorDipose();
+		player.dispose();
 		for(int i = 0; i < cannons.length; i++)cannons[i].dispose();
 		for(int i = 0; i < masters.length; i++)masters[i].dispose();
 		for(int i = 0; i < itens.length; i++)itens[i].dispose();
@@ -378,6 +383,7 @@ public class Zone1Act1 implements Screen{
 					int a = JOptionPane.showConfirmDialog(null, "Are you sure you wanna quit?");
 					if(a == JOptionPane.YES_OPTION){
 						Gdx.app.exit();
+						dispose();
 						return;
 						
 					}
@@ -470,6 +476,7 @@ public class Zone1Act1 implements Screen{
 					int a = JOptionPane.showConfirmDialog(null, "Are you sure you wanna quit?");
 					if(a == JOptionPane.YES_OPTION){
 						Gdx.app.exit();
+						dispose();
 						return;
 						
 					}
