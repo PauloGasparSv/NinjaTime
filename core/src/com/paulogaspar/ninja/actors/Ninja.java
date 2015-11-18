@@ -47,9 +47,11 @@ public class Ninja {
 	private boolean l_press;
 	public boolean interact_press;
 	
+	private boolean death_anim;
+	private float death_alpha;
+	
 	private long current_slide_sound;
 	private long clock_playing;	
-	
 	
 	//DELETE REFERENCE
 	public Controller gamepad;
@@ -77,6 +79,8 @@ public class Ninja {
 	
 	private Particle particlefx;	
 
+	
+	
 	
 	public Ninja(OrthographicCamera camera,float x, float y){
 		this.camera = camera;
@@ -140,6 +144,8 @@ public class Ninja {
 		death_counter = 0;
 		shuriken.init();
 		y_press = false;
+		death_anim = false;
+		death_alpha = 1;
 		l_press = false;
 		r_press = false;
 		particlefx = new Particle(14, smokebomb_texture[0],2.2f);
@@ -231,180 +237,197 @@ public class Ninja {
 	}
 	
 	public void update(float delta,int map[][],int width,int height,float master_volume){
-		elapsed_time += delta * time_mod;
-		
-		//I Know this part looks horrible
-		//But that's the way i started it :(
-		
-		int x1 = ((int)(position[0]+10)/64);
-		int x2 = ((int)(position[0]+54)/64);
-		int xr = ((int)(position[0]+64)/64);
-		int xl = ((int)(position[0])/64);
-		int xl2 = ((int)(position[0]+16)/64);
-		int xr2 = ((int)(position[0]+48)/64);
-		
-		int y = ((int)(position[1]+4)/64);
-		int y2 = ((int)(position[1]+48)/64);
-		int y1 = ((int)(position[1]+12)/64);
-		int yu = ((int)(position[1]+54)/64);
-
-		if(y > map.length-1) y = map.length-1;
-		if(y2 > map.length-1) y2 = map.length-1;
-		if(y1 > map.length-1) y1 = map.length-1;
-		if(yu > map.length-1) yu = map.length-1;
-				
-		
-		if(!particles_on){
-				if(particlefx.isActive())particlefx.stop();
-		}		
-		else{			
-			if(particlefx.isActive()){
-				particlefx.update(delta, camera,time_mod);
-				if(!slide_l && !slide_r){
-					if(particlefx.getNum() == 0)particlefx.stop();
-					particlefx.canCreate(false);
-				}
-			}
-		}
-		
-		if(map[y][x1] < 0 && map[y][x2] < 0)grounded = false;
-		else grounded = true;
-		
-		if(grounded){
-			jump_count = 0;
-			g_mod = 1;
-			slide_l = false;
-			slide_r = false;
-			if(System.currentTimeMillis() - current_slide_sound > 500)
-				slide_sound.stop();
-			current_slide_sound = 0;
-			speed_y = 0;
-		}	
-		else{
-			if(slide_l || slide_r){
-				if(particles_on){
-					if(!particlefx.isActive() || (particlefx.isActive()&&!particlefx.getCan())){
-						particlefx.start(55f, 90, 100,60);
-					}
-					if(slide_r)particlefx.setOrigin(position[0]+46, position[1]);
-					else particlefx.setOrigin(position[0], position[1]);
-				}
-
-				if(current_slide_sound == 0){
-					slide_sound.play(0.8f*master_volume);
-					current_slide_sound = System.currentTimeMillis();
-				}
-				if(System.currentTimeMillis() - current_slide_sound > 650)
-					current_slide_sound = 0;
-				speed_y = g_mod;
-			}
-			else if(speed_y < 7.5f) speed_y += delta*14.75f*time_mod;
-		}
-		
-		if(slow_time){
-			timer += delta*1.75f;
-			if(timer > 5){
-				clock_sound.setLooping(clock_playing, false);
-				clock_sound.stop(clock_playing);
-				clock_playing = 0;
-				
-				time_mod = 1f;
-				current_gauge =9-(int)timer;
-			}
-			else
-				current_gauge = (int)timer;
-			if(timer > 10){
-				timer = 0;
-				current_gauge = 0;
-				slow_time = false;
-			}
-		}
-		
+		if(!death_anim){
+			elapsed_time += delta * time_mod;
+			
+			//I Know this part looks horrible
+			//But that's the way i started it :(
+			
+			int x1 = ((int)(position[0]+10)/64);
+			int x2 = ((int)(position[0]+54)/64);
+			int xr = ((int)(position[0]+64)/64);
+			int xl = ((int)(position[0])/64);
+			int xl2 = ((int)(position[0]+16)/64);
+			int xr2 = ((int)(position[0]+48)/64);
+			
+			int y = ((int)(position[1]+4)/64);
+			int y2 = ((int)(position[1]+48)/64);
+			int y1 = ((int)(position[1]+12)/64);
+			int yu = ((int)(position[1]+54)/64);
 	
-		if(stop_time){
-			timer += delta*2f;
-			smoke_elapsed += delta;
-			if(timer < 5)
-				current_gauge = 4 - (int)timer;
-			if(timer > 5){
-				stop_time = false;
-				timer = 0;
-			}
-		}
-		
-		if(gamepad == null)keyboardcontrol(delta,master_volume,map);
-		else gamepadcontrol(delta,master_volume,map);
-		
-		if(speed_x > 0){
-			if((map[y1][xr] > -1 || map[y2][xr] > -1)){
-				if(grounded){
-					speed_x = -0.5f;
-				}
-				else{
-					speed_x = 0f;
-					if(speed_y > 0.5f){
-						slide_r = true;
-						slide_l = false;
-						jump_count = 0;
+			if(y > map.length-1) y = map.length-1;
+			if(y2 > map.length-1) y2 = map.length-1;
+			if(y1 > map.length-1) y1 = map.length-1;
+			if(yu > map.length-1) yu = map.length-1;
+					
+			
+			if(!particles_on){
+					if(particlefx.isActive())particlefx.stop();
+			}		
+			else{			
+				if(particlefx.isActive()){
+					particlefx.update(delta, camera,time_mod);
+					if(!slide_l && !slide_r){
+						if(particlefx.getNum() == 0)particlefx.stop();
+						particlefx.canCreate(false);
 					}
 				}
 			}
-			if(map[y1][xr] < 0 && map[y2][xr] < 0 && slide_r){
+			
+			if(map[y][x1] < 0 && map[y][x2] < 0)grounded = false;
+			else grounded = true;
+			
+			if(grounded){
+				jump_count = 0;
+				g_mod = 1;
+				slide_l = false;
 				slide_r = false;
+				if(System.currentTimeMillis() - current_slide_sound > 500)
+					slide_sound.stop();
 				current_slide_sound = 0;
-				slide_sound.stop();
-			}
-		}
-		if(speed_x < 0){
-			if(map[y1][xl] > -1 || map[y2][xl] > -1){
-				if(grounded){
-					speed_x = 0.5f;
+				speed_y = 0;
+			}	
+			else{
+				if(slide_l || slide_r){
+					if(particles_on){
+						if(!particlefx.isActive() || (particlefx.isActive()&&!particlefx.getCan())){
+							particlefx.start(55f, 90, 100,60);
+						}
+						if(slide_r)particlefx.setOrigin(position[0]+46, position[1]);
+						else particlefx.setOrigin(position[0], position[1]);
+					}
+	
+					if(current_slide_sound == 0){
+						slide_sound.play(0.8f*master_volume);
+						current_slide_sound = System.currentTimeMillis();
+					}
+					if(System.currentTimeMillis() - current_slide_sound > 650)
+						current_slide_sound = 0;
+					speed_y = g_mod;
 				}
-				else{
-					speed_x = 0f;
-					if(speed_y > 0.5f){
-						slide_l = true;
-						slide_r = false;
-						jump_count = 0;
+				else if(speed_y < 7.5f) speed_y += delta*14.75f*time_mod;
+			}
+			
+			if(slow_time){
+				timer += delta*1.75f;
+				if(timer > 5){
+					clock_sound.setLooping(clock_playing, false);
+					clock_sound.stop(clock_playing);
+					clock_playing = 0;
+					
+					time_mod = 1f;
+					current_gauge =9-(int)timer;
+				}
+				else
+					current_gauge = (int)timer;
+				if(timer > 10){
+					timer = 0;
+					current_gauge = 0;
+					slow_time = false;
+				}
+			}
+			
+		
+			if(stop_time){
+				timer += delta*2f;
+				smoke_elapsed += delta;
+				if(timer < 5)
+					current_gauge = 4 - (int)timer;
+				if(timer > 5){
+					stop_time = false;
+					timer = 0;
+				}
+			}
+			
+			if(gamepad == null)keyboardcontrol(delta,master_volume,map);
+			else gamepadcontrol(delta,master_volume,map);
+			
+			if(speed_x > 0){
+				if((map[y1][xr] > -1 || map[y2][xr] > -1)){
+					if(grounded){
+						speed_x = -0.5f;
+					}
+					else{
+						speed_x = 0f;
+						if(speed_y > 0.5f){
+							slide_r = true;
+							slide_l = false;
+							jump_count = 0;
+						}
 					}
 				}
+				if(map[y1][xr] < 0 && map[y2][xr] < 0 && slide_r){
+					slide_r = false;
+					current_slide_sound = 0;
+					slide_sound.stop();
+				}
 			}
-			if(map[y1][xl] < 0 && map[y2][xl] < 0 && slide_l){
+			if(speed_x < 0){
+				if(map[y1][xl] > -1 || map[y2][xl] > -1){
+					if(grounded){
+						speed_x = 0.5f;
+					}
+					else{
+						speed_x = 0f;
+						if(speed_y > 0.5f){
+							slide_l = true;
+							slide_r = false;
+							jump_count = 0;
+						}
+					}
+				}
+				if(map[y1][xl] < 0 && map[y2][xl] < 0 && slide_l){
+					slide_l = false;
+					current_slide_sound = 0;
+					slide_sound.stop();
+				}
+			}
+			
+			if(speed_x == 0 && ((map[y1][xl] < 0 &&
+					map[y2][xl] < 0 && slide_l)||(map[y1][xr] < 0 && map[y2][xr] < 0 && slide_r))){
+				slide_r = false;
+				slide_l = false;
+				current_slide_sound = 0;
+				slide_sound.stop();		
+			}
+			
+			if((map[yu][xl2] > -1 || map[yu][xr2] > -1) && speed_y < 0){
+				speed_y = 0;
+				slide_r = false;
 				slide_l = false;
 				current_slide_sound = 0;
 				slide_sound.stop();
 			}
+			
+			
+			if(time_mod == 1)
+				position[0] += speed_x*time_mod;
+			else if(time_mod == 0.5f)
+				position[0] += speed_x*0.75f;
+			
+			position[1] -= speed_y*time_mod;
+			
+			if(position[0] < 0)
+				position[0] = 0;
+			if(position[0] > width-72)
+				position[0] = width-72;
+		}else{
+			death_alpha -= delta*2.5f;
+			if(death_alpha < 0){
+				death_alpha = 0;
+				death_anim = false;
+				death_sound.play(master_volume);
+				clock_sound.stop();
+				clock_playing = 0;
+				teleport_sound.stop();
+				current_slide_sound = 0;
+				slide_sound.stop();
+				int temp = death_counter;
+				init(spawn_position[0],spawn_position[1]);
+				death_counter = temp + 1;
+				camera.translate(camera_start_pos[0] - camera.position.x,camera_start_pos[1] - camera.position.y);
+			}
 		}
-		
-		if(speed_x == 0 && ((map[y1][xl] < 0 &&
-				map[y2][xl] < 0 && slide_l)||(map[y1][xr] < 0 && map[y2][xr] < 0 && slide_r))){
-			slide_r = false;
-			slide_l = false;
-			current_slide_sound = 0;
-			slide_sound.stop();		
-		}
-		
-		if((map[yu][xl2] > -1 || map[yu][xr2] > -1) && speed_y < 0){
-			speed_y = 0;
-			slide_r = false;
-			slide_l = false;
-			current_slide_sound = 0;
-			slide_sound.stop();
-		}
-		
-		
-		if(time_mod == 1)
-			position[0] += speed_x*time_mod;
-		else if(time_mod == 0.5f)
-			position[0] += speed_x*0.75f;
-		
-		position[1] -= speed_y*time_mod;
-		
-		if(position[0] < 0)
-			position[0] = 0;
-		if(position[0] > width-72)
-			position[0] = width-72;
-		
 		
 	}
 	
@@ -720,60 +743,70 @@ public class Ninja {
 	}
 	
 	public void die(float master_volume){
-		death_sound.play(master_volume);
-		clock_sound.stop();
-		clock_playing = 0;
-		teleport_sound.stop();
-		current_slide_sound = 0;
-		slide_sound.stop();
-		int temp = death_counter;
-		init(spawn_position[0],spawn_position[1]);
-		death_counter = temp + 1;
-		camera.translate(camera_start_pos[0] - camera.position.x,camera_start_pos[1] - camera.position.y);
+		if(!death_anim){
+			death_anim = true;
+			death_alpha = 1f;
+		}
 	}
 	
 	public void draw(SpriteBatch batch){
-		if(particles_on){
-			if(particlefx.isActive())particlefx.draw(batch);
-		}
+		if(!death_anim){
+			if(particles_on){
+				if(particlefx.isActive())particlefx.draw(batch);
+			}
 			
-		shuriken.draw(batch);
-		
-		TextureRegion frame;
-		if(!slide_l && !slide_r){
-			frame = animation[current].getKeyFrame(elapsed_time,true);
-			if(facing_right == frame.isFlipX())
-				frame.flip(true, false);
-		}else{
-			teleport_pos[0] = 0;
-			teleport_pos[1] = 0;
-			pressing_c = false;
-			frame = wallslide;
-			if(facing_right == frame.isFlipX())
-				frame.flip(true, false);
+			shuriken.draw(batch);
+			
+			TextureRegion frame;
+			if(!slide_l && !slide_r){
+				frame = animation[current].getKeyFrame(elapsed_time,true);
+				if(facing_right == frame.isFlipX())
+					frame.flip(true, false);
+			}else{
+				pressing_c = false;
+				frame = wallslide;
+				if(facing_right == frame.isFlipX())
+					frame.flip(true, false);
+			}
+			
+			batch.draw(frame,position[0],position[1],64,64);
+			
+			if(slow_time || stop_time)
+				batch.draw(gauge[current_gauge],position[0]+5,position[1]+70);
+			
+			if(pressing_c){
+				batch.setColor(0, 0, 0, 0.5f);
+				batch.draw(frame,teleport_pos[0],teleport_pos[1]-12,64,64);
+				batch.setColor(1, 1, 1, 1);
+			}
+			
+			if(stop_time && !smoke_bomb.isAnimationFinished(smoke_elapsed)){
+				batch.draw(smoke_bomb.getKeyFrame(smoke_elapsed,false),position[0],position[1],64,64);
+				batch.draw(smoke_bomb.getKeyFrame(smoke_elapsed,false),teleport_pos[0],teleport_pos[1],64,64);			
+			}
 		}
-		
-		batch.draw(frame,position[0],position[1],64,64);
-		
-		if(slow_time || stop_time)
-			batch.draw(gauge[current_gauge],position[0]+5,position[1]+70);
-		
-		if(pressing_c){
-			batch.setColor(0, 0, 0, 0.5f);
-			batch.draw(frame,teleport_pos[0],teleport_pos[1]-12,64,64);
-			batch.setColor(1, 1, 1, 1);
+		else{
+			TextureRegion frame;
+			if(!slide_l && !slide_r){
+				frame = animation[current].getKeyFrame(elapsed_time,true);
+				if(facing_right == frame.isFlipX())
+					frame.flip(true, false);
+			}else{
+	
+				pressing_c = false;
+				frame = wallslide;
+				if(facing_right == frame.isFlipX())
+					frame.flip(true, false);
+			}
+			batch.setColor(1,1,1,death_alpha);
+			batch.draw(frame,position[0],position[1],64,64);
+			batch.setColor(1,1,1,1);
 		}
-		
-		if(stop_time && !smoke_bomb.isAnimationFinished(smoke_elapsed)){
-			batch.draw(smoke_bomb.getKeyFrame(smoke_elapsed,false),position[0],position[1],64,64);
-			batch.draw(smoke_bomb.getKeyFrame(smoke_elapsed,false),teleport_pos[0],teleport_pos[1],64,64);			
-		}
-		
-		
 	
 	}
 	
 	public Rectangle rect(){
+		if(death_anim) return new Rectangle(-10,-10,0,0);
 		return new Rectangle(position[0]+2,position[1]+2,60,60);
 	}
 	
