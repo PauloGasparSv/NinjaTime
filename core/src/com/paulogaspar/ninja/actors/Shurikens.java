@@ -54,13 +54,33 @@ public class Shurikens {
 	}
 	
 	private void update(Ninja player, Controller gamepad, float delta, int map[][]){
+		System.out.println(current);
 		for(int i = 0; i < 3; i++){
 			if(speedx[i] != 0){
 				position[i][0] += speedx[i] * delta*400;
 				position[i][1] += speedy[i] * delta*200;
 				rotation[i] -=  speedx[i]*delta*460;
 				
-				if(position[i][0] > player.camera.position.x + 600 || position[i][0] < player.camera.position.x - 600){
+				if(position[i][0] > player.camera.position.x + 600 || position[i][0] < player.camera.position.x - 600||
+						position[i][1] > player.camera.position.y + 500 || position[i][1] < player.camera.position.y - 500){
+					sentinela = i;
+					position[i][0] = -100;
+					position[i][1] = -100;
+					rotation[i] = 0;
+					speedx[i] = 0;
+					speedy[i] = 0;
+					current --;
+					continue;
+				}
+				
+				int x = (int)(position[i][0] + 20)/64;
+				int y = (int)(position[i][1] + 20)/64;
+				if(x < 0)x = 0;
+				if(y < 0)y = 0;
+				if(x > map[0].length-1)x = map[0].length-1;
+				if(y > map.length-1)y = map.length-1;
+				
+				if(map[y][x] >= 0){
 					sentinela = i;
 					position[i][0] = -100;
 					position[i][1] = -100;
@@ -84,14 +104,14 @@ public class Shurikens {
 				if(player.facing_right){
 					position[sentinela][0] = player.position[0] + 32;
 					speedx[sentinela] = 1;
-					if(Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.RIGHT))speedy[sentinela] = 1;
-					if(Gdx.input.isKeyPressed(Input.Keys.DOWN) && Gdx.input.isKeyPressed(Input.Keys.RIGHT))speedy[sentinela] = -1;
+					if(Gdx.input.isKeyPressed(Input.Keys.UP))speedy[sentinela] = 1;
+					if(Gdx.input.isKeyPressed(Input.Keys.DOWN))speedy[sentinela] = -1;
 				}
 				else{
 					position[sentinela][0] = player.position[0]+12;
 					speedx[sentinela] = -1;
-					if(Gdx.input.isKeyPressed(Input.Keys.UP) && Gdx.input.isKeyPressed(Input.Keys.LEFT))speedy[sentinela] = 1;
-					if(Gdx.input.isKeyPressed(Input.Keys.DOWN) && Gdx.input.isKeyPressed(Input.Keys.LEFT))speedy[sentinela] = -1;
+					if(Gdx.input.isKeyPressed(Input.Keys.UP))speedy[sentinela] = 1;
+					if(Gdx.input.isKeyPressed(Input.Keys.DOWN))speedy[sentinela] = -1;
 				}
 				position[sentinela][1] = player.position[1] + 12;	
 				current++;
@@ -108,17 +128,17 @@ public class Shurikens {
 			pressing = true;
 			timer = System.currentTimeMillis();
 			if(current < 3){
-				if(player.facing_right){
+				if(player.facing_right || player.slide_l){
 					position[sentinela][0] = player.position[0] + 32;
 					speedx[sentinela] = 1;
-					if(gamepad.getAxis(0) > 0.2f && gamepad.getAxis(1)<-0.4f || gamepad.getPov(0) == PovDirection.northEast)speedy[sentinela] = 1;
-					if(gamepad.getAxis(0) > 0.2f && gamepad.getAxis(1) > 0.4f || gamepad.getPov(0) == PovDirection.southEast)speedy[sentinela] = -1;
+					if(gamepad.getAxis(1)<-0.4f || gamepad.getPov(0) == PovDirection.northEast|| gamepad.getPov(0) == PovDirection.north)speedy[sentinela] = 1;
+					if(gamepad.getAxis(1) > 0.4f || gamepad.getPov(0) == PovDirection.southEast|| gamepad.getPov(0) == PovDirection.south)speedy[sentinela] = -1;
 				}
-				else{
+				else if(!player.facing_right || player.slide_r){
 					position[sentinela][0] = player.position[0]+12;
 					speedx[sentinela] = -1;
-					if(gamepad.getAxis(0) < -0.2f && gamepad.getAxis(1)<-0.4f|| gamepad.getPov(0) == PovDirection.northWest)speedy[sentinela] = 1;
-					if(gamepad.getAxis(0) < -0.2f && gamepad.getAxis(1) > 0.4f|| gamepad.getPov(0) == PovDirection.southWest)speedy[sentinela] = -1;
+					if(gamepad.getAxis(1)<-0.4f|| gamepad.getPov(0) == PovDirection.northWest|| gamepad.getPov(0) == PovDirection.north)speedy[sentinela] = 1;
+					if(gamepad.getAxis(1) > 0.4f|| gamepad.getPov(0) == PovDirection.southWest|| gamepad.getPov(0) == PovDirection.south)speedy[sentinela] = -1;
 				}
 				position[sentinela][1] = player.position[1] + 12;	
 				current++;

@@ -38,7 +38,7 @@ public class Ninja {
 	boolean facing_right;
 	private boolean stop_time;
 	private boolean slow_time;
-	private boolean slide_l,slide_r;	
+	public boolean slide_l,slide_r;	
 	private boolean grounded;
 	public boolean particles_on;
 	private boolean pressing_c;
@@ -138,6 +138,7 @@ public class Ninja {
 	
 	public void init(float x, float y){
 		death_counter = 0;
+		shuriken.init();
 		y_press = false;
 		l_press = false;
 		r_press = false;
@@ -185,6 +186,7 @@ public class Ninja {
 	
 	public void init(float x, float y,OrthographicCamera camera){
 		death_counter = 0;
+		shuriken.init();
 		particles_on = true;
 		this.camera = camera;
 		particlefx = new Particle(14, smokebomb_texture[0],2.2f);
