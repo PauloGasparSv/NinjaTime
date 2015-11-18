@@ -23,6 +23,8 @@ public class Cannon {
 	private boolean live;
 	private boolean particles_on;
 	
+	private float end;
+	
 	//DELETE REFERENCE
 	private Sound sound;
 	private TextureRegion cannon;
@@ -31,11 +33,13 @@ public class Cannon {
 	//DISPOSE
 	private Particle fx;
 	
-	public Cannon(Texture cannon,Texture cannonBall,float posX,float posY,int direction,int type,int timer,Sound sound){
+	public Cannon(Texture cannon,Texture cannonBall,float posX,float posY,float end,int direction,int type,int timer,Sound sound){
 		position = new float[2];
 		fx = new Particle(20, cannonBall, 2.5f);
 		fx.setAngleDecoy(70);
 
+		this.end = end;
+		
 		this.sound = sound;
 		position[0] = posX;
 		position[1] = posY;
@@ -127,15 +131,60 @@ public class Cannon {
 					else if(direction == UP)fx.start(20f, 270, 30, 8);
 					else if(direction == DOWN)fx.start(20f, 90, 30, 8);
 				}
-				if(new Rectangle(ball_position[0]+27,ball_position[1]+26,10,12).overlaps(player.rect()))player.die(master_volume);
-				if(direction == LEFT)
+				if(new Rectangle(ball_position[0]+27,ball_position[1]+26,10,12).overlaps(player.rect())){
+					player.die(master_volume);
+					shooting = false;
+					fx.stop();
+					time = System.currentTimeMillis();
+					ball_position[0] = init[0];
+					ball_position[1] = init[1];
+					return;
+				}
+				if(direction == LEFT){
 					ball_position[0] -= delta * 350 * player.time_mod;
-				else if(direction == RIGHT)
+					if(ball_position[0] < end){
+						shooting = false;
+						fx.canCreate(false);
+						time = System.currentTimeMillis();
+						ball_position[0] = init[0];
+						ball_position[1] = init[1];
+						return;
+					}
+				}
+				else if(direction == RIGHT){
 					ball_position[0] += delta * 350 * player.time_mod;
-				else if(direction == DOWN)
+					if(ball_position[0] > end){
+						shooting = false;
+						fx.canCreate(false);
+						time = System.currentTimeMillis();
+						ball_position[0] = init[0];
+						ball_position[1] = init[1];
+						return;
+					}
+				}
+				else if(direction == DOWN){
 					ball_position[1] -= delta * 350 * player.time_mod;
-				else if(direction == UP)
+					if(ball_position[1] < end){
+						shooting = false;
+						fx.canCreate(false);
+						time = System.currentTimeMillis();
+						ball_position[0] = init[0];
+						ball_position[1] = init[1];
+						return;
+					}
+				}
+				else if(direction == UP){
 					ball_position[1] += delta * 350 * player.time_mod;
+					if(ball_position[1] > end){
+						shooting = false;
+						fx.canCreate(false);
+						time = System.currentTimeMillis();
+						ball_position[0] = init[0];
+						ball_position[1] = init[1];
+						return;
+					}
+				}
+				
 				if(particles_on){
 					fx.setOrigin(ball_position[0]+24, ball_position[1]+24);
 				}

@@ -168,19 +168,19 @@ public class Zone1Act4 implements Screen{
 		cannons = new Cannon[12];
 		itens = new Item[2];
 		masters = new Master[2];
-
-		cannons[0] = new Cannon(cannonD, cannonBall, 10*64, 8*64, Cannon.DOWN, Cannon.UP_DOWN, 400, bomb_sound);
-		cannons[1] = new Cannon(cannonD, cannonBall, 13*64, 2*64, Cannon.UP, Cannon.DOWN_UP, 400, bomb_sound);
-		cannons[2] = new Cannon(cannonD, cannonBall, 15*64, 8*64, Cannon.DOWN, Cannon.UP_DOWN, 400, bomb_sound);
-		cannons[3] = new Cannon(cannonD, cannonBall, 17*64, 2*64, Cannon.UP, Cannon.DOWN_UP, 400, bomb_sound);
-		cannons[4] = new Cannon(cannonD, cannonBall, 20*64, 2*64, Cannon.UP, Cannon.DOWN_UP, 400, bomb_sound);
-		cannons[5] = new Cannon(cannonD, cannonBall, 21*64, 2*64, Cannon.UP, Cannon.DOWN_UP, 400, bomb_sound);
-		cannons[6] = new Cannon(cannonD, cannonBall, 23*64, 8*64, Cannon.DOWN, Cannon.UP_DOWN, 300, bomb_sound);
-		cannons[7] = new Cannon(cannonD, cannonBall, 25*64, 2*64, Cannon.UP, Cannon.DOWN_UP, 300, bomb_sound);
-		cannons[8] = new Cannon(cannonD, cannonBall, 26*64, 2*64, Cannon.UP, Cannon.DOWN_UP, 300, bomb_sound);
-		cannons[9] = new Cannon(cannonD, cannonBall, 27*64, 8*64, Cannon.DOWN, Cannon.UP_DOWN, 500, bomb_sound);
-		cannons[10] = new Cannon(cannonD, cannonBall, 28*64, 8*64, Cannon.DOWN, Cannon.UP_DOWN, 500, bomb_sound);
-		cannons[11] = new Cannon(cannonD,cannonBall,37*64,5*64,Cannon.LEFT,Cannon.RIGHT_LEFT,500,bomb_sound);
+		
+		cannons[1] = new Cannon(cannonD, cannonBall, 13*64, 2*64,476, Cannon.UP, Cannon.DOWN_UP, 400, bomb_sound);
+		cannons[3] = new Cannon(cannonD, cannonBall, 17*64, 2*64,476, Cannon.UP, Cannon.DOWN_UP, 400, bomb_sound);
+		cannons[4] = new Cannon(cannonD, cannonBall, 20*64, 2*64,476, Cannon.UP, Cannon.DOWN_UP, 400, bomb_sound);
+		cannons[5] = new Cannon(cannonD, cannonBall, 21*64, 2*64,476, Cannon.UP, Cannon.DOWN_UP, 400, bomb_sound);
+		cannons[7] = new Cannon(cannonD, cannonBall, 25*64, 2*64,476, Cannon.UP, Cannon.DOWN_UP, 300, bomb_sound);
+		cannons[8] = new Cannon(cannonD, cannonBall, 26*64, 2*64,476, Cannon.UP, Cannon.DOWN_UP, 300, bomb_sound);
+		cannons[0] = new Cannon(cannonD, cannonBall, 10*64, 8*64,156, Cannon.DOWN, Cannon.UP_DOWN, 400, bomb_sound);
+		cannons[2] = new Cannon(cannonD, cannonBall, 15*64, 8*64,156, Cannon.DOWN, Cannon.UP_DOWN, 400, bomb_sound);		
+		cannons[6] = new Cannon(cannonD, cannonBall, 23*64, 8*64,156, Cannon.DOWN, Cannon.UP_DOWN, 300, bomb_sound);
+		cannons[9] = new Cannon(cannonD, cannonBall, 27*64, 8*64,156, Cannon.DOWN, Cannon.UP_DOWN, 500, bomb_sound);
+		cannons[10] = new Cannon(cannonD, cannonBall, 28*64, 8*64,156, Cannon.DOWN, Cannon.UP_DOWN, 500, bomb_sound);
+		cannons[11] = new Cannon(cannonD,cannonBall,37*64,5*64,0,Cannon.LEFT,Cannon.RIGHT_LEFT,500,bomb_sound);
 
 		itens[0] = new Item(item_texture,1314,132,item_sound,item_sound);
 		itens[1] = new Item(item_texture,1705,370,item_sound,item_sound);
