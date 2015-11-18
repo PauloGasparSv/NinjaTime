@@ -237,6 +237,7 @@ public class Ninja {
 	}
 	
 	public void update(float delta,int map[][],int width,int height,float master_volume){
+		System.out.println(interact_press);
 		if(!death_anim){
 			elapsed_time += delta * time_mod;
 			

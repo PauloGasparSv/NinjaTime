@@ -120,7 +120,6 @@ public class Zone1Act2 implements Screen{
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false,800,600);
 		this.player = player;
-		player.init(80,140,camera);
 		this.game = game;
 		this.ninja_star = ninja_star;
 		this.cannonD = cannonD;
@@ -138,6 +137,8 @@ public class Zone1Act2 implements Screen{
 		init();
 	}
 	public void init(){
+		camera.translate(-camera.position.x,-camera.position.y);
+		player.init(80,140,camera);
 		disposed = false;
 		//camera.translate(0, 0);
 		main_theme.setVolume(master_volume);
@@ -368,7 +369,6 @@ public class Zone1Act2 implements Screen{
 	}
 	
 
-
 	private void updateMenuKeyboard(float delta){
 		if((Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) && !volume){
 			options = !options;
@@ -378,7 +378,7 @@ public class Zone1Act2 implements Screen{
 				current_option++;
 			if(Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W))
 				current_option--;
-			if(current_option > 3) current_option = 3;
+			if(current_option > 4) current_option = 4;
 			if(current_option < 0) current_option = 0;
 			if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) ||
 					Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
@@ -396,6 +396,11 @@ public class Zone1Act2 implements Screen{
 					player.particles_on = !player.particles_on;
 				}
 				if(current_option == 3){
+					options = false;
+					current_option = 0;	
+					init();
+				}
+				if(current_option == 4){
 					int a = JOptionPane.showConfirmDialog(null, "Are you sure you wanna quit?");
 					if(a == JOptionPane.YES_OPTION){
 						Gdx.app.exit();
@@ -470,7 +475,7 @@ public class Zone1Act2 implements Screen{
 			
 			
 			
-			if(current_option > 3) current_option = 3;
+			if(current_option > 4) current_option = 4;
 			if(current_option < 0) current_option = 0;
 			
 			if(gamepad.getButton(2) && !ok_press){
@@ -489,6 +494,11 @@ public class Zone1Act2 implements Screen{
 					player.particles_on = !player.particles_on;
 				}
 				if(current_option == 3){
+					options = false;
+					current_option = 0;	
+					init();
+				}
+				if(current_option == 4){
 					int a = JOptionPane.showConfirmDialog(null, "Are you sure you wanna quit?");
 					if(a == JOptionPane.YES_OPTION){
 						Gdx.app.exit();
@@ -546,6 +556,7 @@ public class Zone1Act2 implements Screen{
 		}
 	}
 	
+	
 	private void drawMenu(){
 		if(options || volume){
 			batch.setColor(new Color(0,0,0,0.6f));
@@ -568,9 +579,13 @@ public class Zone1Act2 implements Screen{
 			else
 				font_16.draw(batch,"PARTICLES "+(player.particles_on?"ON":"OFF"),camera.position.x-100, camera.position.y-60);
 			if(current_option == 3)
-				font_32.draw(batch,"QUIT GAME",camera.position.x-140, camera.position.y-100);
+				font_32.draw(batch,"RETRY STAGE",camera.position.x-165, camera.position.y-100);
 			else
-				font_16.draw(batch,"QUIT GAME",camera.position.x-70, camera.position.y-125);				
+				font_16.draw(batch,"RETRY STAGE",camera.position.x-95, camera.position.y-125);	
+			if(current_option == 4)
+				font_32.draw(batch,"QUIT GAME",camera.position.x-140, camera.position.y-175);
+			else
+				font_16.draw(batch,"QUIT GAME",camera.position.x-70, camera.position.y-200);	
 		}
 		if(volume){
 			font_32.draw(batch, "Volume", camera.position.x-98, camera.position.y+215);

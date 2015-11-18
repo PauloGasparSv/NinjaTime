@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.paulogaspar.ninja.MyGame;
 import com.paulogaspar.ninja.actors.Cannon;
 import com.paulogaspar.ninja.actors.Item;
@@ -111,8 +112,7 @@ public class Zone1Act1 implements Screen{
 		item_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/Collect_Point_00.mp3"));
 		player = new Ninja(camera,80,140);
 		init();
-		player.camera_start_pos[0] = camera.position.x;
-		player.camera_start_pos[1] = camera.position.y;
+		
 	}
 	public Zone1Act1(MyGame game,Ninja player,float volume,Texture master_texture[], Texture item_texture[],Texture cannonD,Texture cannonR,
 			Texture cannonL,Texture cannonBall, Texture ninja_star, BitmapFont font_32,BitmapFont font_16, Music main_theme,
@@ -121,7 +121,6 @@ public class Zone1Act1 implements Screen{
 		camera = new OrthographicCamera();
 
 		this.player = player;
-		player.init(80, 140,camera);
 		this.game = game;
 		this.ninja_star = ninja_star;
 		this.cannonD = cannonD;
@@ -139,6 +138,12 @@ public class Zone1Act1 implements Screen{
 	}
 	
 	public void init(){
+		camera.translate(-camera.position.x,-camera.position.y);
+		player.init(80, 140,camera);
+		player.camera_start_pos[0] = camera.position.x;
+		player.camera_start_pos[1] = camera.position.y;
+		time = 0;
+		timer = 0;
 		disposed = false;
 		camera.setToOrtho(false,800,600);
 		batch = new SpriteBatch();
@@ -362,7 +367,7 @@ public class Zone1Act1 implements Screen{
 				current_option++;
 			if(Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W))
 				current_option--;
-			if(current_option > 3) current_option = 3;
+			if(current_option > 4) current_option = 4;
 			if(current_option < 0) current_option = 0;
 			if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) ||
 					Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
@@ -380,6 +385,11 @@ public class Zone1Act1 implements Screen{
 					player.particles_on = !player.particles_on;
 				}
 				if(current_option == 3){
+					options = false;
+					current_option = 0;	
+					init();
+				}
+				if(current_option == 4){
 					int a = JOptionPane.showConfirmDialog(null, "Are you sure you wanna quit?");
 					if(a == JOptionPane.YES_OPTION){
 						Gdx.app.exit();
@@ -454,7 +464,7 @@ public class Zone1Act1 implements Screen{
 			
 			
 			
-			if(current_option > 3) current_option = 3;
+			if(current_option > 4) current_option = 4;
 			if(current_option < 0) current_option = 0;
 			
 			if(gamepad.getButton(2) && !ok_press){
@@ -473,6 +483,11 @@ public class Zone1Act1 implements Screen{
 					player.particles_on = !player.particles_on;
 				}
 				if(current_option == 3){
+					options = false;
+					current_option = 0;	
+					init();
+				}
+				if(current_option == 4){
 					int a = JOptionPane.showConfirmDialog(null, "Are you sure you wanna quit?");
 					if(a == JOptionPane.YES_OPTION){
 						Gdx.app.exit();
@@ -530,6 +545,7 @@ public class Zone1Act1 implements Screen{
 		}
 	}
 	
+	
 	private void drawMenu(){
 		if(options || volume){
 			batch.setColor(new Color(0,0,0,0.6f));
@@ -552,9 +568,13 @@ public class Zone1Act1 implements Screen{
 			else
 				font_16.draw(batch,"PARTICLES "+(player.particles_on?"ON":"OFF"),camera.position.x-100, camera.position.y-60);
 			if(current_option == 3)
-				font_32.draw(batch,"QUIT GAME",camera.position.x-140, camera.position.y-100);
+				font_32.draw(batch,"RETRY STAGE",camera.position.x-165, camera.position.y-100);
 			else
-				font_16.draw(batch,"QUIT GAME",camera.position.x-70, camera.position.y-125);				
+				font_16.draw(batch,"RETRY STAGE",camera.position.x-95, camera.position.y-125);	
+			if(current_option == 4)
+				font_32.draw(batch,"QUIT GAME",camera.position.x-140, camera.position.y-175);
+			else
+				font_16.draw(batch,"QUIT GAME",camera.position.x-70, camera.position.y-200);	
 		}
 		if(volume){
 			font_32.draw(batch, "Volume", camera.position.x-98, camera.position.y+215);
@@ -572,7 +592,6 @@ public class Zone1Act1 implements Screen{
 				font_16.draw(batch,"GO BACK",camera.position.x-60, camera.position.y-125);
 		}
 	}
-	
 	
 	
 	@Override
