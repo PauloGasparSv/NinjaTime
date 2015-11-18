@@ -185,12 +185,12 @@ public class Zone1Act1 implements Screen{
 		
 		messages = new Message[2];
 		if(player.gamepad == null){
-			messages[0] = new Message(130,310,"Press the ARROW keys to move",8);
-			messages[1] = new Message(170,280,"And SPACE to interact",8);
+			messages[0] = new Message(130,310,"Press the ARROW keys to move",16);
+			messages[1] = new Message(170,280,"And SPACE or UP to interact",16);
 		}
 		else{
-			messages[0] = new Message(130,310,"Use the LEFT STICK or DPAD to move",8);
-			messages[1] = new Message(170,280,"And B, Y or UP to interact",8);
+			messages[0] = new Message(130,310,"Use the LEFT STICK or DPAD to move",16);
+			messages[1] = new Message(170,280,"And B, Y or UP to interact",16);
 		}
 		
 		

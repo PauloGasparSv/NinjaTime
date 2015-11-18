@@ -6,6 +6,7 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 
 public class Shurikens {
 	private Texture spr_star;
@@ -54,12 +55,11 @@ public class Shurikens {
 	}
 	
 	private void update(Ninja player, Controller gamepad, float delta, int map[][]){
-		System.out.println(current);
 		for(int i = 0; i < 3; i++){
 			if(speedx[i] != 0){
-				position[i][0] += speedx[i] * delta*400;
-				position[i][1] += speedy[i] * delta*200;
-				rotation[i] -=  speedx[i]*delta*460;
+				position[i][0] += speedx[i] * delta*400 * player.time_mod;
+				position[i][1] += speedy[i] * delta*200 * player.time_mod;
+				rotation[i] -=  speedx[i]*delta*460 * player.time_mod;
 				
 				if(position[i][0] > player.camera.position.x + 600 || position[i][0] < player.camera.position.x - 600||
 						position[i][1] > player.camera.position.y + 500 || position[i][1] < player.camera.position.y - 500){
@@ -101,7 +101,7 @@ public class Shurikens {
 			pressing = true;
 			timer = System.currentTimeMillis();
 			if(current < 3){
-				if(player.facing_right){
+				if((player.facing_right && !player.slide_r) || player.slide_l){
 					position[sentinela][0] = player.position[0] + 32;
 					speedx[sentinela] = 1;
 					if(Gdx.input.isKeyPressed(Input.Keys.UP))speedy[sentinela] = 1;
@@ -128,13 +128,13 @@ public class Shurikens {
 			pressing = true;
 			timer = System.currentTimeMillis();
 			if(current < 3){
-				if(player.facing_right || player.slide_l){
+				if((player.facing_right && !player.slide_r) || player.slide_l){
 					position[sentinela][0] = player.position[0] + 32;
 					speedx[sentinela] = 1;
 					if(gamepad.getAxis(1)<-0.4f || gamepad.getPov(0) == PovDirection.northEast|| gamepad.getPov(0) == PovDirection.north)speedy[sentinela] = 1;
 					if(gamepad.getAxis(1) > 0.4f || gamepad.getPov(0) == PovDirection.southEast|| gamepad.getPov(0) == PovDirection.south)speedy[sentinela] = -1;
 				}
-				else if(!player.facing_right || player.slide_r){
+				else{
 					position[sentinela][0] = player.position[0]+12;
 					speedx[sentinela] = -1;
 					if(gamepad.getAxis(1)<-0.4f|| gamepad.getPov(0) == PovDirection.northWest|| gamepad.getPov(0) == PovDirection.north)speedy[sentinela] = 1;
@@ -155,8 +155,27 @@ public class Shurikens {
 			if(speedx[i] != 0){
 				batch.draw(spr_star,position[i][0],position[i][1],20,20,40,40,1,1,rotation[i],0,0,16,16,false,false);
 			}
+		}	
+	}
+	
+	public boolean isThereShuriken(){
+		return current > 0;
+	}
+	
+	public boolean hitTest(Rectangle rect){
+		for(int i = 0; i < 3; i++){
+			if(speedx[i] != 0 && rect.overlaps(new Rectangle(position[i][0],position[i][1],40,40))){
+				sentinela = i;
+				position[i][0] = -100;
+				position[i][1] = -100;
+				rotation[i] = 0;
+				speedx[i] = 0;
+				speedy[i] = 0;
+				current --;
+				return true;
+			}
 		}
-		
+		return false;
 	}
 	
 	public void dispose(){

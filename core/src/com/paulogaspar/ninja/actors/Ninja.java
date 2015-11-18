@@ -62,7 +62,7 @@ public class Ninja {
 	private TextureRegion gauge[];
 	
 	//DISPOSE	
-	private Shurikens shuriken;
+	public Shurikens shuriken;
 	private Sound jump_sound;
 	private Sound slide_sound;
 	private Sound clock_sound;

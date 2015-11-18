@@ -18,8 +18,11 @@ public class Master {
 	private boolean live;
 	private boolean facingR;
 	private boolean white_text;
+	private boolean jump;
 	
 	private float position[];
+	private float jump_position;
+	private float acy;
 	private float elapsed;
 	
 	private long timer;
@@ -38,9 +41,12 @@ public class Master {
 	
 	public Master(Texture master[],float posX,float posY,String message[],String secret_message,long delay,boolean last){
 		TextureRegion a[] = new TextureRegion[2];
+		jump_position= posY;
 		this.secret_message = secret_message;
 		a[0] = new TextureRegion(master[0]);
 		a[1] = new TextureRegion(master[1]);
+		acy = 0;
+		jump = false;
 		idle = new Animation(0.75f,a);
 		white_text = false;
 		elapsed = 0f;
@@ -90,6 +96,7 @@ public class Master {
 				facingR = true;
 			else if(player.position[0] < position[0] - 10)
 				facingR = false;
+			
 			if(!player.interact_press)pressed = false;
 			if(player.interact_press&& !pressed && new Rectangle(position[0]-100,position[1]-64,264,192).overlaps(
 					new Rectangle(player.rect()))){
@@ -127,6 +134,23 @@ public class Master {
 				elapsed = 0 ;
 				dumb_counter = 0;
 				current_message = -1;
+			}
+			
+			if(player.shuriken.isThereShuriken() && player.shuriken.hitTest(new Rectangle(position[0]+17,position[1],30,35))){
+				//display_message += " OUCH! ";
+				acy = 5;
+				jump = true;
+				position[1] += 5;
+			}
+			if(jump){
+				position[1] += acy;
+				acy -= delta*40;
+				if(acy < -5)acy = -5;
+			}
+			if(position[1] <= jump_position){ 
+				jump = false;
+				acy = 0;
+				position[1] = jump_position;
 			}
 			
 		}
