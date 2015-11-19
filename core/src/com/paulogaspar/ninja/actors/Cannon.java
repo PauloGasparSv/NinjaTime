@@ -189,9 +189,11 @@ public class Cannon {
 					fx.setOrigin(ball_position[0]+24, ball_position[1]+24);
 				}
 				
-				if(ball_position[0] > camera.position.x + 450 || ball_position[0] < camera.position.x - 450 || ball_position[1] > camera.position.y+350 || ball_position[1] < camera.position.y-350){
+				if(player.shuriken.hitTest(new Rectangle(ball_position[0]+27,ball_position[1]+26,10,12)) || ball_position[0] > camera.position.x + 450 || 
+						ball_position[0] < camera.position.x - 450 || ball_position[1] > camera.position.y+350 ||
+						ball_position[1] < camera.position.y-350){
 					shooting = false;
-					fx.stop();
+					fx.canCreate(false);
 					time = System.currentTimeMillis();
 					ball_position[0] = init[0];
 					ball_position[1] = init[1];

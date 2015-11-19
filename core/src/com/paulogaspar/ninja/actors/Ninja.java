@@ -193,7 +193,7 @@ public class Ninja {
 	public void init(float x, float y,OrthographicCamera camera){
 		death_counter = 0;
 		shuriken.init();
-		particles_on = true;
+		
 		this.camera = camera;
 		particlefx = new Particle(14, smokebomb_texture[0],2.2f);
 		position = new float[2];
