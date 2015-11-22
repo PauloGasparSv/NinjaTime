@@ -85,7 +85,6 @@ public class Ninja {
 		DataManager dm = new DataManager();
 		particles_on = dm.getParticles();
 		master_volume = dm.getVolume();		
-		
 		this.camera = camera;
 		gamepad = null;
 		camera_start_pos = new float[2];

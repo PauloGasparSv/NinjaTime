@@ -1,6 +1,5 @@
 package com.paulogaspar.ninja.actors;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -93,16 +92,17 @@ public class Cannon {
 		
 		}
 		
-		int width = Gdx.graphics.getWidth();
-		int height = Gdx.graphics.getHeight();
+		float dx = player.position[0] - position[0];
+		float dy = player.position[1] - position[1];
+		
 		if(!live){
-			if(new Rectangle(position[0],position[1],64,64).overlaps(new Rectangle(camera.position.x-width/2,camera.position.y-height/2,width,height))){
+			if(dx*dx < 620000 && dy*dy < 340000){
 				live = true;
 				time = System.currentTimeMillis();
 			}
 		}
 		else{
-			if(!new Rectangle(position[0],position[1],64,64).overlaps(new Rectangle(camera.position.x-width/2,camera.position.y-height/2,width,height))&&!shooting){
+			if(!(dx*dx < 620000 && dy*dy < 340000)&&!shooting){
 				live = false;
 				fx.stop();
 				time = 0;

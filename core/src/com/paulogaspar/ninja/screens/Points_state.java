@@ -163,7 +163,7 @@ public class Points_state implements Screen{
 	}
 	
 	private void setScreen(){
-		dm.savePoints(""+(next_stage_id),grade);
+		//dm.savePoints(""+(next_stage_id),grade);
 		switch(next_stage_id){
 			case 2:
 				game.setScreen(new Zone1Act3(game, player, master_texture, item_texture, cannonD,
