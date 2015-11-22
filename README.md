@@ -26,7 +26,7 @@ LEFT or RIGHT MOUSE BUTTON ------------	TELEPORT
 
 Huge thanks for Kenney (http://www.kenney.nl/) for the ninja sprites and for David (http://opengameart.org/users/littlesadnerd) for all the other sprites used in the game.
 
-The incredible Dire Times main theme comes from Eric-Christian Alexander (deadEarth), you can find him at https://www.facebook.com/ericchristian.alexander and his work at http://opengameart.org/users/deadearth and support him on Patreon at http://www.patreon.com/deadearth.
+The incredible "Dire Times" main theme e the boss theme "A Fight" came from Eric-Christian Alexander (deadEarth), you can find him at https://www.facebook.com/ericchristian.alexander and his work at http://opengameart.org/users/deadearth and support him on Patreon at http://www.patreon.com/deadearth.
 
 The cannon ball explosion sound effect came from Luke (Rust Ltd). Find more of his work at http://rustltd.com/ or http://opengameart.org/users/lukerustltd.
 
@@ -38,7 +38,8 @@ The wall sliding sound effect came from Bart Kelsey. Find more of his work at ht
 
 The death sound effect came from an Anonymous person. Could not find the author (sauer2) so here is a link for the files: http://opengameart.org/content/oldschool-win-and-die-jump-and-run-sounds.
 
-The riceball sound effects came from Little Robot Sound Factory. Find more of his work at www.littlerobotsoundfactory.com.
+The riceball sound effect and the victory jingle came from Little Robot Sound Factory. Find more of his work at www.littlerobotsoundfactory.com.
+
 
 Check out their work!
 

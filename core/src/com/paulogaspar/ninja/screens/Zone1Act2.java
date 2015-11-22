@@ -138,9 +138,17 @@ public class Zone1Act2 implements Screen{
 		player.init(80,140,camera);
 		disposed = false;
 		//camera.translate(0, 0);
-		main_theme.setVolume(player.master_volume);
-		main_theme.play();
-		main_theme.setLooping(true);
+		
+		int counter = 0;
+		while(!main_theme.isPlaying()){
+			main_theme.play();
+			main_theme.setVolume(player.master_volume);
+			main_theme.setLooping(true);	
+			counter ++;
+		}
+		System.out.println("TOOK ME "+counter+" TIMES TO ACTUALLY PLAY THE MUSIC!");
+		
+		
 		tilemap = new TileMap("zone1_act2.mapa");
 		options = false;
 		volume = false;

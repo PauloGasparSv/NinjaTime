@@ -144,9 +144,18 @@ public class Zone1Act1 implements Screen{
 		camera.setToOrtho(false,800,600);
 		batch = new SpriteBatch();
 		changed_screen = false;
-		main_theme.play();
-		main_theme.setVolume(player.master_volume);
-		main_theme.setLooping(true);
+		
+
+		int counter = 0;
+		while(!main_theme.isPlaying()){
+			main_theme.play();
+			main_theme.setVolume(player.master_volume);
+			main_theme.setLooping(true);	
+			counter ++;
+		}
+		System.out.println("TOOK ME "+counter+" TIMES TO ACTUALLY PLAY THE MUSIC!");
+		
+		
 		tilemap = new TileMap("zone1_act1.mapa");
 		options = false;
 		volume = false;

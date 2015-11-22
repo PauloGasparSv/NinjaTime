@@ -140,9 +140,16 @@ public class Zone1Act4 implements Screen{
 		camera.translate(-camera.position.x,-camera.position.y);
 		player.init(80,400,camera);
 
-		main_theme.setVolume(player.master_volume);
-		main_theme.play();
-		main_theme.setLooping(true);
+		int counter = 0;
+		while(!main_theme.isPlaying()){
+			main_theme.play();
+			main_theme.setVolume(player.master_volume);
+			main_theme.setLooping(true);	
+			counter ++;
+		}
+		System.out.println("TOOK ME "+counter+" TIMES TO ACTUALLY PLAY THE MUSIC!");
+
+		
 		tilemap = new TileMap("zone1_act4.mapa");
 		options = false;
 		volume = false;

@@ -68,10 +68,12 @@ public class Points_state implements Screen{
 	private Texture item_texture[];
 	private Texture cannonD,cannonR,cannonL,cannonBall;
 	private Texture ninja_star;
+	
 		
 	private Sound bomb_sound;
 	private Sound item_sound;
-		
+	private Sound jingle;
+	
 	private Music main_theme;
 	
 	private DataManager dm;
@@ -108,6 +110,8 @@ public class Points_state implements Screen{
 		this.message[0] = message;
 		this.time = time;
 		this.max_time = max_time;
+		jingle = Gdx.audio.newSound(Gdx.files.internal("Sfx/Jingle_Achievement_01.mp3"));
+		
 		init();
 	}
 	public void init(){
@@ -208,7 +212,10 @@ public class Points_state implements Screen{
 						if(x[z] != dx[z])f = false;
 					}
 					ended = f;
-					if(ended)break;
+					if(ended){
+						if(grade == 5)jingle.play(player.master_volume);
+						break;
+					}
 				}
 				
 			}
@@ -221,11 +228,11 @@ public class Points_state implements Screen{
 			//transition_angle -= 0.2f*delta;
 			//camera.zoom += transition_angle*0.05f;
 			//camera.rotate(transition_angle*0.75f);
-			main_theme.setVolume((1-stage_transition_alpha)*master_volume);
+			
 			if(camera.zoom < 0)camera.zoom = 0.01f;
 			if(stage_transition_alpha > 1){
 				stage_transition_alpha = 1;
-				main_theme.stop();
+				
 				setScreen();
 				//game.setScreen(new Zone());
 				minorDipose();
@@ -236,7 +243,7 @@ public class Points_state implements Screen{
 		else if(stage_transition_alpha > 0 ){
 			stage_transition_alpha -= delta * 0.5f;
 			if(stage_transition_alpha < 0){stage_transition_alpha = 0;}
-			main_theme.setVolume((1-stage_transition_alpha)*master_volume);
+			
 		}
 		
 	}
@@ -295,6 +302,7 @@ public class Points_state implements Screen{
 	}
 	public void minorDipose(){
 		game = null;
+		jingle.dispose();
 		batch.dispose();
 		tilemap.dispose();
 		master.dispose();
