@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.paulogaspar.ninja.tools.DataManager;
 import com.paulogaspar.ninja.tools.Particle;
 
 public class Ninja {
@@ -34,6 +35,7 @@ public class Ninja {
 	private float timer;
 	public float jump_mod;
 	public float g_mod;
+	public float master_volume;
 	
 	boolean facing_right;
 	private boolean stop_time;
@@ -78,17 +80,16 @@ public class Ninja {
 	private Texture smokebomb_texture[];
 	
 	private Particle particlefx;	
-
-	
-	
 	
 	public Ninja(OrthographicCamera camera,float x, float y){
+		DataManager dm = new DataManager();
+		particles_on = dm.getParticles();
+		master_volume = dm.getVolume();		
+		
 		this.camera = camera;
 		gamepad = null;
 		camera_start_pos = new float[2];
 		
-		particles_on = true;
-
 		wallslide_texture = new Texture(Gdx.files.internal("Ninja/wallslide.png"));
 		wallslide = new TextureRegion(wallslide_texture);
 		
@@ -138,6 +139,10 @@ public class Ninja {
 		init(x,y);
 		camera_start_pos[0] = camera.position.x;
 		camera_start_pos[1] = camera.position.y;
+		
+		
+		
+		
 	}
 	
 	public void init(float x, float y){
@@ -236,8 +241,7 @@ public class Ninja {
 		slide_r = false;
 	}
 	
-	public void update(float delta,int map[][],int width,int height,float master_volume){
-		System.out.println(interact_press);
+	public void update(float delta,int map[][],int width,int height){
 		if(!death_anim){
 			elapsed_time += delta * time_mod;
 			
@@ -812,6 +816,9 @@ public class Ninja {
 	}
 	
 	public void dispose(){
+		DataManager dm = new DataManager();
+		dm.changeConfig(this);
+		
 		camera = null;
 		smoke_bomb = null;
 		animation = null;

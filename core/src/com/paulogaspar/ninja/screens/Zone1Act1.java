@@ -17,7 +17,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector3;
 import com.paulogaspar.ninja.MyGame;
 import com.paulogaspar.ninja.actors.Cannon;
 import com.paulogaspar.ninja.actors.Item;
@@ -33,7 +32,6 @@ public class Zone1Act1 implements Screen{
 	private int vwidth;
 	private int vheight;
 	
-	private float master_volume;
 	private float stage_transition_alpha;
 	private float transition_angle;
 	
@@ -87,8 +85,7 @@ public class Zone1Act1 implements Screen{
 	
 	private Music main_theme;
 	
-	public Zone1Act1(MyGame game,float volume) {
-		master_volume = volume;
+	public Zone1Act1(MyGame game) {
 		this.game = game;
 		camera = new OrthographicCamera();
 
@@ -114,10 +111,9 @@ public class Zone1Act1 implements Screen{
 		init();
 		
 	}
-	public Zone1Act1(MyGame game,Ninja player,float volume,Texture master_texture[], Texture item_texture[],Texture cannonD,Texture cannonR,
+	public Zone1Act1(MyGame game,Ninja player,Texture master_texture[], Texture item_texture[],Texture cannonD,Texture cannonR,
 			Texture cannonL,Texture cannonBall, Texture ninja_star, BitmapFont font_32,BitmapFont font_16, Music main_theme,
 			Sound bomb_sound,Sound item_sound){
-		master_volume = volume;
 		camera = new OrthographicCamera();
 
 		this.player = player;
@@ -149,6 +145,7 @@ public class Zone1Act1 implements Screen{
 		batch = new SpriteBatch();
 		changed_screen = false;
 		main_theme.play();
+		main_theme.setVolume(player.master_volume);
 		main_theme.setLooping(true);
 		tilemap = new TileMap("zone1_act1.mapa");
 		options = false;
@@ -200,14 +197,13 @@ public class Zone1Act1 implements Screen{
 			messages[1] = new Message(170,280,"And B, Y or UP to interact",16);
 		}
 		
-		
 	}
 	
 		
 	private void update(float delta){
 		Gdx.graphics.setTitle("Ninja Time Fps: "+Gdx.graphics.getFramesPerSecond());
 		
-		tilemap.update(camera, player,delta, master_volume);
+		tilemap.update(camera, player,delta, player.master_volume);
 
 		vwidth = Gdx.graphics.getWidth();
 		vheight = Gdx.graphics.getHeight();
@@ -229,10 +225,10 @@ public class Zone1Act1 implements Screen{
 			timer += System.currentTimeMillis() - time;
 			time  = System.currentTimeMillis();
 			
-			if(!tilemap.edit_mode && can_control)player.update(delta,tilemap.map,tilemap.width,tilemap.height,master_volume);		
-			for(Cannon c:cannons)c.update(delta, camera,player,master_volume);
+			if(!tilemap.edit_mode && can_control)player.update(delta,tilemap.map,tilemap.width,tilemap.height);		
+			for(Cannon c:cannons)c.update(delta, camera,player,player.master_volume);
 			for(Master m:masters)m.update(delta, camera, player);
-			for(Item i:itens)i.update(player, delta,master_volume);
+			for(Item i:itens)i.update(player, delta,player.master_volume);
 			for(Message m:messages)m.update(delta, player);
 			
 			if(!tilemap.edit_mode){
@@ -276,11 +272,11 @@ public class Zone1Act1 implements Screen{
 				if(camera.zoom > 0.04)camera.zoom += transition_angle*0.05f;
 				camera.rotate(transition_angle*0.75f);
 				camera.update();
-				main_theme.setVolume((1-stage_transition_alpha)*master_volume);
+				main_theme.setVolume((1-stage_transition_alpha)*player.master_volume);
 				if(camera.zoom < 0)camera.zoom = 0.01f;
 				if(stage_transition_alpha > 1){
 					stage_transition_alpha = 1;
-					game.setScreen(new Zone1Act2(game, player, master_volume, master_texture, item_texture, cannonD, cannonR, cannonL, cannonBall, ninja_star, font_32, font_16, main_theme, bomb_sound, item_sound));
+					game.setScreen(new Zone1Act2(game, player, master_texture, item_texture, cannonD, cannonR, cannonL, cannonBall, ninja_star, font_32, font_16, main_theme, bomb_sound, item_sound));
 					minorDipose();
 					changed_screen = true;
 					return;
@@ -289,7 +285,7 @@ public class Zone1Act1 implements Screen{
 			else if(stage_transition_alpha > 0 ){
 				stage_transition_alpha -= delta * 0.5f;
 				if(stage_transition_alpha < 0)stage_transition_alpha = 0;
-				main_theme.setVolume((1-stage_transition_alpha)*master_volume);
+				main_theme.setVolume((1-stage_transition_alpha)*player.master_volume);
 			}
 			
 		}
@@ -415,8 +411,8 @@ public class Zone1Act1 implements Screen{
 			if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) ||
 					Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
 				if(current_option == 1){
-					master_volume = 0;
-					main_theme.setVolume(master_volume);
+					player.master_volume = 0;
+					main_theme.setVolume(player.master_volume);
 
 				}
 				if(current_option == 2){
@@ -426,13 +422,13 @@ public class Zone1Act1 implements Screen{
 				}			
 			}
 			if(current_option == 0){
-				if((Gdx.input.isKeyPressed(Input.Keys.RIGHT)||Gdx.input.isKeyPressed(Input.Keys.D))&&master_volume <= 1)
-					master_volume += delta * 0.4f;
-				if((Gdx.input.isKeyPressed(Input.Keys.LEFT)||Gdx.input.isKeyPressed(Input.Keys.A))&&master_volume >= 0)
-					master_volume -= delta * 0.4f;
-				if(master_volume > 1) master_volume = 1;
-				if(master_volume < 0) master_volume = 0;
-				main_theme.setVolume(master_volume);
+				if((Gdx.input.isKeyPressed(Input.Keys.RIGHT)||Gdx.input.isKeyPressed(Input.Keys.D))&&player.master_volume <= 1)
+					player.master_volume += delta * 0.4f;
+				if((Gdx.input.isKeyPressed(Input.Keys.LEFT)||Gdx.input.isKeyPressed(Input.Keys.A))&&player.master_volume >= 0)
+					player.master_volume -= delta * 0.4f;
+				if(player.master_volume > 1) player.master_volume = 1;
+				if(player.master_volume < 0) player.master_volume = 0;
+				main_theme.setVolume(player.master_volume);
 			}
 			
 			
@@ -521,8 +517,8 @@ public class Zone1Act1 implements Screen{
 			if(gamepad.getButton(2) && !ok_press){
 				ok_press = true;
 				if(current_option == 1){
-					master_volume = 0;
-					main_theme.setVolume(master_volume);
+					player.master_volume = 0;
+					main_theme.setVolume(player.master_volume);
 
 				}
 				if(current_option == 2){
@@ -532,13 +528,13 @@ public class Zone1Act1 implements Screen{
 				}			
 			}
 			if(current_option == 0){
-				if((gamepad.getPov(0) == PovDirection.east || gamepad.getAxis(0) > 0.2f)&& master_volume <= 1)
-					master_volume += delta * 0.4f;
-				if((gamepad.getPov(0) == PovDirection.west || gamepad.getAxis(0) < -0.2f)&&master_volume >= 0)
-					master_volume -= delta * 0.4f;
-				if(master_volume > 1) master_volume = 1;
-				if(master_volume < 0) master_volume = 0;
-				main_theme.setVolume(master_volume);
+				if((gamepad.getPov(0) == PovDirection.east || gamepad.getAxis(0) > 0.2f)&& player.master_volume <= 1)
+					player.master_volume += delta * 0.4f;
+				if((gamepad.getPov(0) == PovDirection.west || gamepad.getAxis(0) < -0.2f)&&player.master_volume >= 0)
+					player.master_volume -= delta * 0.4f;
+				if(player.master_volume > 1) player.master_volume = 1;
+				if(player.master_volume < 0) player.master_volume = 0;
+				main_theme.setVolume(player.master_volume);
 			}
 			
 			
@@ -581,7 +577,7 @@ public class Zone1Act1 implements Screen{
 			batch.draw(ninja_star,camera.position.x - 360, camera.position.y+40-100*current_option,64,64);
 			
 			font_16.draw(batch,"MIN ------------------------ MAX",camera.position.x-250, camera.position.y+70);
-			font_32.draw(batch,"|",camera.position.x-190+master_volume*375, camera.position.y+92);
+			font_32.draw(batch,"|",camera.position.x-190+player.master_volume*375, camera.position.y+92);
 			if(current_option == 1)
 				font_32.draw(batch,"MUTE",camera.position.x-75, camera.position.y);
 			else
