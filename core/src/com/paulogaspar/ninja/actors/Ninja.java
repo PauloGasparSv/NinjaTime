@@ -506,17 +506,18 @@ public class Ninja {
 			int py = (int)teleport_pos[1]/64;
 			
 			if(map[py][px] < 0){
-					teleport_sound.play(0.5f*master_volume);
-					stop_time = true;
-					timer = delta;
-					current_gauge = 4;
-					float tx = position[0];
-					float ty = position[1];
-					position[0] = px * 64;
-					position[1] = py * 64;
-					jump_count = 0;
-					teleport_pos[0] = tx;
-					teleport_pos[1] = ty;
+				if(speed_y > 1)speed_y = 1;
+				teleport_sound.play(0.5f*master_volume);
+				stop_time = true;
+				timer = delta;
+				current_gauge = 4;
+				float tx = position[0];
+				float ty = position[1];
+				position[0] = px * 64;
+				position[1] = py * 64;
+				jump_count = 0;
+				teleport_pos[0] = tx;
+				teleport_pos[1] = ty;
 			}
 			else{
 				teleport_pos[0] = 0;
@@ -663,17 +664,18 @@ public class Ninja {
 			int py = (int)teleport_pos[1]/64;
 			
 			if(map[py][px] < 0){
-					teleport_sound.play(0.5f*master_volume);
-					stop_time = true;
-					timer = delta;
-					current_gauge = 4;
-					float tx = position[0];
-					float ty = position[1];
-					position[0] = px * 64;
-					position[1] = py * 64;
-					jump_count = 0;
-					teleport_pos[0] = tx;
-					teleport_pos[1] = ty;
+				if(speed_y > 1)speed_y = 1;
+				teleport_sound.play(0.5f*master_volume);
+				stop_time = true;
+				timer = delta;
+				current_gauge = 4;
+				float tx = position[0];
+				float ty = position[1];
+				position[0] = px * 64;
+				position[1] = py * 64;
+				jump_count = 0;
+				teleport_pos[0] = tx;
+				teleport_pos[1] = ty;
 			}
 			else{
 				teleport_pos[0] = 0;

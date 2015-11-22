@@ -72,7 +72,7 @@ public class Zone1Act1 extends Stage implements Screen{
 	}
 	
 	public void init(){
-		camera.translate(-camera.position.x,-camera.position.y);
+		camera.translate(400-camera.position.x,300-camera.position.y);
 		player.init(80, 140,camera);
 		player.camera_start_pos[0] = camera.position.x;
 		player.camera_start_pos[1] = camera.position.y;

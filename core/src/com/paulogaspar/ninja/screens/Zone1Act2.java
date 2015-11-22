@@ -72,7 +72,7 @@ public class Zone1Act2 extends Stage implements Screen{
 		init();
 	}
 	public void init(){
-		camera.translate(-camera.position.x,-camera.position.y);
+		camera.translate(400-camera.position.x,300-camera.position.y);
 		player.init(80,140,camera);
 		disposed = false;
 		//camera.translate(0, 0);
@@ -221,7 +221,7 @@ public class Zone1Act2 extends Stage implements Screen{
 					main_theme.stop();
 					game.setScreen(new Points_state(game, player, player.master_volume, master_texture, item_texture, cannonD, 
 							cannonR, cannonL, cannonBall, ninja_star, font_32, font_16, main_theme, bomb_sound, 
-							item_sound,player.death_counter,1,item_counter,num_itens,timer,90000 ,true,2,"Keep going"));
+							item_sound,player.death_counter,1,item_counter,num_itens,timer,30000 ,true,2,"Keep going"));
 					minorDipose();
 					changed_screen = true;
 					return;

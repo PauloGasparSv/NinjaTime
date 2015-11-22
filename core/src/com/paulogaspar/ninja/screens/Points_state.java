@@ -27,7 +27,6 @@ public class Points_state implements Screen{
 	private int grade;
 	private int next_stage_id;
 	
-	
 	private float master_volume;
 	private float stage_transition_alpha;
 	//private float transition_angle;
@@ -163,7 +162,7 @@ public class Points_state implements Screen{
 	}
 	
 	private void setScreen(){
-		//dm.savePoints(""+(next_stage_id),grade);
+		dm.savePoints(""+(next_stage_id),grade);
 		switch(next_stage_id){
 			case 2:
 				game.setScreen(new Zone1Act3(game, player, master_texture, item_texture, cannonD,
@@ -176,11 +175,15 @@ public class Points_state implements Screen{
 						item_sound));
 				break;
 			case 4:
-				game.setScreen(new Zone1Act4(game, player, master_texture, item_texture, cannonD,
+				game.setScreen(new Zone1Act5(game, player, master_texture, item_texture, cannonD,
 						cannonR, cannonL, cannonBall, ninja_star, font_32, font_16, main_theme, bomb_sound,
 						item_sound));
 				break;
-		
+			case 5:
+				game.setScreen(new Zone1Act1(game, player, master_texture, item_texture, cannonD,
+						cannonR, cannonL, cannonBall, ninja_star, font_32, font_16, main_theme, bomb_sound,
+						item_sound));
+				break;
 		}
 	}
 	
@@ -255,9 +258,9 @@ public class Points_state implements Screen{
 		
 		if(has_master)master.draw(batch, font_16);
 		
-		font_32.draw(batch, "Special Itens:	 "+item_counter+"/"+max_item, camera.position.x-265, camera.position.y+200);
-		font_32.draw(batch, "Total deaths: "+death_counter, camera.position.x-265, camera.position.y+120);
-		font_32.draw(batch, "Time: "+time/1000+" seconds", camera.position.x-265, camera.position.y+40);
+		font_32.draw(batch, "Special Itens:	 "+item_counter+"/"+max_item, camera.position.x-285, camera.position.y+200);
+		font_32.draw(batch, "Total deaths: "+death_counter+"/"+max_death, camera.position.x-285, camera.position.y+120);
+		font_32.draw(batch, "Time: "+time/1000+"/"+ max_time/1000+" seconds", camera.position.x-285, camera.position.y+40);
 
 		for(int i = 0; i < grade; i++){
 			batch.draw(ninja_star,x[i],y[i],40,40,80,80,1,1,2*(dx[i]-x[i]),0,0,16,16,false,false);
