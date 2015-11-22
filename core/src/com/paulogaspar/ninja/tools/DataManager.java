@@ -7,11 +7,24 @@ import com.paulogaspar.ninja.actors.Ninja;
 public class DataManager {
 	
 	private Preferences cfgprefs;
+	private Preferences stageprefs;
 	
 	public DataManager(){
 		cfgprefs = Gdx.app.getPreferences("config");
-		
-		
+		stageprefs = Gdx.app.getPreferences("stage");	
+	}
+	
+	public void clearAll(){
+		cfgprefs.clear();
+		stageprefs.clear();
+	}
+	
+	public void savePoints(String stage_id,int points){
+		stageprefs.putInteger(stage_id, points);
+		stageprefs.flush();
+	}
+	public int getPoints(String stage_id){
+		return stageprefs.getInteger(stage_id, -1);
 	}
 	
 	public void changeConfig(Ninja player){

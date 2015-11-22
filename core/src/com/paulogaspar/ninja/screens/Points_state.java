@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.paulogaspar.ninja.MyGame;
 import com.paulogaspar.ninja.actors.Master;
 import com.paulogaspar.ninja.actors.Ninja;
+import com.paulogaspar.ninja.tools.DataManager;
 import com.paulogaspar.ninja.tools.TileMap;
 
 public class Points_state implements Screen{
@@ -73,6 +74,8 @@ public class Points_state implements Screen{
 		
 	private Music main_theme;
 	
+	private DataManager dm;
+	
 	public Points_state(MyGame game,Ninja player,float volume,Texture master_texture[], Texture item_texture[],Texture cannonD,Texture cannonR,
 			Texture cannonL,Texture cannonBall, Texture ninja_star, BitmapFont font_32,BitmapFont font_16, Music main_theme,
 			Sound bomb_sound,Sound item_sound,int death_counter,int max_death, int item_counter, int max_item,long time,long max_time,
@@ -108,6 +111,7 @@ public class Points_state implements Screen{
 		init();
 	}
 	public void init(){
+		dm = new DataManager();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false,800,600);
 		camera.translate(24, 80);
@@ -155,6 +159,7 @@ public class Points_state implements Screen{
 	}
 	
 	private void setScreen(){
+		dm.savePoints(""+(next_stage_id),grade);
 		switch(next_stage_id){
 			case 2:
 				game.setScreen(new Zone1Act3(game, player, master_texture, item_texture, cannonD,

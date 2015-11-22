@@ -22,6 +22,7 @@ import com.paulogaspar.ninja.actors.Cannon;
 import com.paulogaspar.ninja.actors.Item;
 import com.paulogaspar.ninja.actors.Master;
 import com.paulogaspar.ninja.actors.Ninja;
+import com.paulogaspar.ninja.tools.DataManager;
 import com.paulogaspar.ninja.tools.Message;
 import com.paulogaspar.ninja.tools.TileMap;
 
@@ -71,7 +72,6 @@ public class Zone1Act1 implements Screen{
 	private Master masters[];
 		
 	private Item itens[];
-	
 		
 	private BitmapFont font_32,font_16;
 		
@@ -196,6 +196,11 @@ public class Zone1Act1 implements Screen{
 			messages[0] = new Message(130,310,"Use the LEFT STICK or DPAD to move",16);
 			messages[1] = new Message(170,280,"And B, Y or UP to interact",16);
 		}
+		
+		DataManager dm =  new DataManager();
+		if(dm.getPoints("1") != -1){
+			System.out.println("YOU PLAYED THIS STAGE!");
+		}else System.out.println("FIRST TIMER");
 		
 	}
 	
