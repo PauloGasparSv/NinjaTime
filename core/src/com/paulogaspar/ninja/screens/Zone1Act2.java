@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.paulogaspar.ninja.MyGame;
 import com.paulogaspar.ninja.actors.Cannon;
+import com.paulogaspar.ninja.actors.Enemy;
 import com.paulogaspar.ninja.actors.Item;
 import com.paulogaspar.ninja.actors.Master;
 import com.paulogaspar.ninja.actors.Ninja;
@@ -139,6 +140,10 @@ public class Zone1Act2 extends Stage implements Screen{
 			messages[1] = new Message(230, 320, "Press Z again to double jump", 8);
 		}
 		
+		goons = new Enemy[1];
+		goons[0] = new Enemy(400, 116, 150,player);
+		
+		
 		String message1[] = {"Now it is time...","for you fat ass to remember...","some pretty basic stuff that...",
 				"everyone knows like...","Like how to.... how to...","Like how to jump over that bump","Use your tiny legs and brains"
 				,"Just jump!"};
@@ -183,7 +188,7 @@ public class Zone1Act2 extends Stage implements Screen{
 			for(Master m:masters)m.update(delta, camera, player);
 			for(Item i:itens)i.update(player, delta,player.master_volume);
 			for(Message m:messages)m.update(delta, player);
-
+			for(Enemy e:goons)e.update(delta, player);
 			
 			if(!tilemap.edit_mode){
 				float x = 0;
@@ -257,6 +262,7 @@ public class Zone1Act2 extends Stage implements Screen{
 		for(Master m:masters)m.draw(batch,font_16);
 		for(Item i:itens)i.draw(batch);
 		for(Message m:messages)m.draw(batch, font_16, player);
+		for(Enemy e:goons)e.draw(batch, player);
 
 		
 		player.draw(batch);

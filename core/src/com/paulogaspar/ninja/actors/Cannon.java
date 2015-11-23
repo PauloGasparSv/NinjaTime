@@ -132,7 +132,7 @@ public class Cannon {
 					else if(direction == DOWN)fx.start(20f, 90, 30, 8);
 				}
 				if(new Rectangle(ball_position[0]+27,ball_position[1]+26,10,12).overlaps(player.rect())){
-					player.die(master_volume);
+					player.die();
 					shooting = false;
 					fx.stop();
 					time = System.currentTimeMillis();

@@ -12,7 +12,7 @@ public class MyGame extends Game {
 		batch = new SpriteBatch();
 		//setScreen(new Stage_test(this,1f));
 		
-		setScreen(new Zone1Act4(this));
+		setScreen(new Zone1Act2(this));
 	}
 
 	@Override

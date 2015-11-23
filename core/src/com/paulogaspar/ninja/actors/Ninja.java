@@ -77,7 +77,8 @@ public class Ninja {
 	private Texture wallslide_texture;
 	private Texture walk_texture[];
 	private Texture idle_texture[];
-	private Texture smokebomb_texture[];
+	public Texture smokebomb_texture[];
+	public Texture jump_texture;
 	
 	private Particle particlefx;	
 	
@@ -102,6 +103,8 @@ public class Ninja {
 			temp[i-1] = new TextureRegion(walk_texture[i-1]);
 		}
 		animation[WALK] = new Animation(0.25f,temp);
+		
+		jump_texture = new Texture(Gdx.files.internal("Ninja/jump.png"));
 		
 		idle_texture = new Texture[2];
 		temp = new TextureRegion[2];
@@ -748,7 +751,7 @@ public class Ninja {
 		
 	}
 	
-	public void die(float master_volume){
+	public void die(){
 		if(!death_anim){
 			death_anim = true;
 			death_alpha = 1f;
@@ -826,6 +829,7 @@ public class Ninja {
 		wallslide = null;;
 		gauge = null;
 		
+		jump_texture.dispose();
 		shuriken.dispose();
 		particlefx.dispose();
 		jump_sound.dispose();

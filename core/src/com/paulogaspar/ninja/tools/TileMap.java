@@ -161,7 +161,7 @@ public class TileMap {
 	public void update(OrthographicCamera camera,Ninja player,float delta,float master_volume){
 		for(Rectangle block:death_blocks)
 			if(new Rectangle(player.rect()).overlaps(block))
-				player.die(master_volume);
+				player.die();
 		edit(camera,delta);
 	}
 	

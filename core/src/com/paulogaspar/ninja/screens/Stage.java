@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.paulogaspar.ninja.MyGame;
 import com.paulogaspar.ninja.actors.Cannon;
+import com.paulogaspar.ninja.actors.Enemy;
 import com.paulogaspar.ninja.actors.Item;
 import com.paulogaspar.ninja.actors.Master;
 import com.paulogaspar.ninja.actors.Ninja;
@@ -55,9 +56,8 @@ public class Stage {
 	//DELETE REFERENCEf
 	protected MyGame game;
 	protected Controller gamepad;
-	
-	//ESSE CARA
 	protected Message messages[];
+	protected Enemy goons[];
 	
 	//DISPOSE
 	protected SpriteBatch batch;
@@ -91,6 +91,7 @@ public class Stage {
 		for(int i = 0; i < cannons.length; i++)cannons[i].dispose();
 		for(int i = 0; i < masters.length; i++)masters[i].dispose();
 		for(int i = 0; i < itens.length; i++)itens[i].dispose();
+		for(int i = 0; i < goons.length;i++)goons[i].dispose();
 	}
 	
 
