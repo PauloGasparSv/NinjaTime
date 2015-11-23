@@ -143,8 +143,8 @@ public class Master {
 				position[1] += 5;
 			}
 			if(jump){
-				position[1] += acy;
-				acy -= delta*40;
+				position[1] += acy*player.time_mod;
+				acy -= delta*40*player.time_mod;
 				if(acy < -5)acy = -5;
 			}
 			if(position[1] <= jump_position){ 

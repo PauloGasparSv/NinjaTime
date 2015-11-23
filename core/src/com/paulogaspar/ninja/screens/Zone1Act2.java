@@ -18,6 +18,7 @@ import com.paulogaspar.ninja.actors.Cannon;
 import com.paulogaspar.ninja.actors.Item;
 import com.paulogaspar.ninja.actors.Master;
 import com.paulogaspar.ninja.actors.Ninja;
+import com.paulogaspar.ninja.tools.Message;
 import com.paulogaspar.ninja.tools.TileMap;
 
 public class Zone1Act2 extends Stage implements Screen{
@@ -129,6 +130,14 @@ public class Zone1Act2 extends Stage implements Screen{
 			player.gamepad = null;
 		}
 		
+		messages = new Message[2];
+		if(gamepad != null){
+			messages[0] = new Message(320, 350, "Press A to jump!", 8);
+			messages[1] = new Message(230, 320, "Press A again to double jump", 8);
+		}else{
+			messages[0] = new Message(320, 350, "Press Z to jump!", 8);
+			messages[1] = new Message(230, 320, "Press Z again to double jump", 8);
+		}
 		
 		String message1[] = {"Now it is time...","for you fat ass to remember...","some pretty basic stuff that...",
 				"everyone knows like...","Like how to.... how to...","Like how to jump over that bump","Use your tiny legs and brains"
@@ -173,6 +182,8 @@ public class Zone1Act2 extends Stage implements Screen{
 			for(Cannon c:cannons)c.update(delta, camera,player,player.master_volume);
 			for(Master m:masters)m.update(delta, camera, player);
 			for(Item i:itens)i.update(player, delta,player.master_volume);
+			for(Message m:messages)m.update(delta, player);
+
 			
 			if(!tilemap.edit_mode){
 				float x = 0;
@@ -245,6 +256,8 @@ public class Zone1Act2 extends Stage implements Screen{
 		for(Cannon c:cannons)c.draw(batch);
 		for(Master m:masters)m.draw(batch,font_16);
 		for(Item i:itens)i.draw(batch);
+		for(Message m:messages)m.draw(batch, font_16, player);
+
 		
 		player.draw(batch);
 		

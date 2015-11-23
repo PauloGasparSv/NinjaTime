@@ -18,6 +18,7 @@ import com.paulogaspar.ninja.actors.Cannon;
 import com.paulogaspar.ninja.actors.Item;
 import com.paulogaspar.ninja.actors.Master;
 import com.paulogaspar.ninja.actors.Ninja;
+import com.paulogaspar.ninja.tools.Message;
 import com.paulogaspar.ninja.tools.TileMap;
 
 public class Zone1Act3 extends Stage implements Screen{
@@ -136,6 +137,9 @@ public class Zone1Act3 extends Stage implements Screen{
 			player.gamepad = null;
 		}
 		
+		messages = new Message[1];
+		messages[0] = new Message(870, 400, "There are secrets everywhere",10);
+
 		
 		String message1[] = {"Look at you all jumpy and stuff","Think you can jump off this ledge?",
 				"Well what am i saying off course you can","You just passed the jumping level",
@@ -186,7 +190,8 @@ public class Zone1Act3 extends Stage implements Screen{
 			for(Cannon c:cannons)c.update(delta, camera,player,player.master_volume);
 			for(Master m:masters)m.update(delta, camera, player);
 			for(Item i:itens)i.update(player, delta,player.master_volume);
-			
+			for(Message m:messages)m.update(delta, player);
+
 			if(!tilemap.edit_mode){
 				float x = 0;
 				float y = 0;
@@ -257,7 +262,8 @@ public class Zone1Act3 extends Stage implements Screen{
 		for(Cannon c:cannons)c.draw(batch);
 		for(Master m:masters)m.draw(batch,font_16);
 		for(Item i:itens)i.draw(batch);
-		
+		for(Message m:messages)m.draw(batch, font_16, player);
+
 		player.draw(batch);
 	
 		if(camera.position.x < 1290){

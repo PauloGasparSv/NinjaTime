@@ -148,14 +148,14 @@ public class Zone1Act5 extends Stage implements Screen{
 		
 		messages = new Message[3];
 		if(player.gamepad != null){
-			messages[0] = new Message(360,775,"Use RB or LB to teleport",0);
-			messages[1] = new Message(315,745,"Point with the stick or d-pad ",0);
-			messages[2] = new Message(322,715,"to change teleport direction",0);
+			messages[0] = new Message(360,825,"Use RB or LB to teleport",0);
+			messages[1] = new Message(315,795,"Point with the stick or d-pad ",0);
+			messages[2] = new Message(322,765,"to change teleport direction",0);
 		}
 		else{
-			messages[0] = new Message(402,775,"Use C to teleport",0);
-			messages[1] = new Message(315,745,"Point with the arrow keys to",0);
-			messages[2] = new Message(340,715,"change teleport direction",0);
+			messages[0] = new Message(402,825,"Use C to teleport",0);
+			messages[1] = new Message(315,795,"Point with the arrow keys to",0);
+			messages[2] = new Message(340,765,"change teleport direction",0);
 		}
 		
 		start_time = System.currentTimeMillis();

@@ -18,6 +18,7 @@ import com.paulogaspar.ninja.actors.Cannon;
 import com.paulogaspar.ninja.actors.Item;
 import com.paulogaspar.ninja.actors.Master;
 import com.paulogaspar.ninja.actors.Ninja;
+import com.paulogaspar.ninja.tools.Message;
 import com.paulogaspar.ninja.tools.TileMap;
 
 public class Zone1Act4 extends Stage implements Screen{
@@ -141,6 +142,15 @@ public class Zone1Act4 extends Stage implements Screen{
 		}
 		if(player.gamepad != null && gamepad == null){
 			player.gamepad = null;
+		}		
+		
+		messages = new Message[2];
+		if(gamepad != null){
+			messages[0] = new Message(200, 370, "Press RT or LT to slow time!", 8);
+			messages[1] = new Message(190, 340, "All objects will react to that", 8);
+		}else{
+			messages[0] = new Message(240, 370, "Press S to slow time!", 8);
+			messages[1] = new Message(190, 340, "All objects will react to that", 8);
 		}
 		
 		String message1[] = {"Time to really test you","Just take your time here","If you have any problems","Just remember our training...",
@@ -190,6 +200,8 @@ public class Zone1Act4 extends Stage implements Screen{
 				for(Cannon c:cannons)c.update(delta, camera,player,player.master_volume);
 				for(Master m:masters)m.update(delta, camera, player);
 				for(Item i:itens)i.update(player, delta,player.master_volume);
+				for(Message m:messages)m.update(delta, player);
+
 			}
 			if(!tilemap.edit_mode){
 				float x = 0;
@@ -262,6 +274,8 @@ public class Zone1Act4 extends Stage implements Screen{
 		for(Cannon c:cannons)c.draw(batch);
 		for(Master m:masters)m.draw(batch,font_16);
 		for(Item i:itens)i.draw(batch);
+		for(Message m:messages)m.draw(batch, font_16, player);
+
 		
 		player.draw(batch);
 	
