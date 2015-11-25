@@ -88,9 +88,13 @@ public class Stage {
 		game = null;
 		batch.dispose();
 		tilemap.dispose();
+		if(cannons!=null)
 		for(int i = 0; i < cannons.length; i++)cannons[i].dispose();
+		if(masters!=null)
 		for(int i = 0; i < masters.length; i++)masters[i].dispose();
+		if(itens!=null)
 		for(int i = 0; i < itens.length; i++)itens[i].dispose();
+		if(goons!=null)
 		for(int i = 0; i < goons.length;i++)goons[i].dispose();
 	}
 	
