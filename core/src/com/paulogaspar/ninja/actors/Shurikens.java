@@ -2,6 +2,7 @@ package com.paulogaspar.ninja.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.Texture;
@@ -9,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Shurikens {
-	private Texture spr_star;
+	public Texture spr_star;
 	
 	private float position[][];
 	private int speedx[];
@@ -23,12 +24,15 @@ public class Shurikens {
 	
 	private boolean pressing;
 	
+	public Sound hit;
+	
 	public Shurikens(){
 		spr_star = new Texture(Gdx.files.internal("Misc/spr_star_0.png"));
 		position = new float[3][2];
 		speedx = new int[3];
 		speedy = new int[3];
 		rotation = new float[3];
+		hit = Gdx.audio.newSound(Gdx.files.internal("Sfx/Hit_00.mp3"));
 		init();
 	}
 	
@@ -180,6 +184,7 @@ public class Shurikens {
 	
 	public void dispose(){
 		spr_star.dispose();
+		hit.dispose();
 	}
 	
 }

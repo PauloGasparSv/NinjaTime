@@ -66,8 +66,3 @@ Nicolas Bacic (https://github.com/NickBacic) for many things.
 
 
 
-
-
-
-still not working:
-up up down down left right left right b a

@@ -249,7 +249,11 @@ public class Zone1Act3 extends Stage implements Screen{
 				if(stage_transition_alpha < 0)stage_transition_alpha = 0;
 				main_theme.setVolume((1-stage_transition_alpha)*player.master_volume);
 			}
-			
+			else if(player.clock_playing != -1){
+				main_theme.setVolume(player.master_volume*0.2f);
+			}
+			else 
+				main_theme.setVolume(player.master_volume);
 		}
 	}
 	private void draw(){
@@ -264,7 +268,7 @@ public class Zone1Act3 extends Stage implements Screen{
 		for(Item i:itens)i.draw(batch);
 		for(Message m:messages)m.draw(batch, font_16, player);
 
-		player.draw(batch);
+		player.draw(batch,font_16);
 	
 		if(camera.position.x < 1290){
 			batch.setColor(new Color(1,1,1,0.98f));

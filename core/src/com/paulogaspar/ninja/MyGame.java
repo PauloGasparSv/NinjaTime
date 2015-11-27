@@ -3,6 +3,7 @@ package com.paulogaspar.ninja;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.paulogaspar.ninja.screens.*;
+import com.paulogaspar.ninja.tools.DataManager;
 
 public class MyGame extends Game {
 	public SpriteBatch batch;
@@ -11,8 +12,9 @@ public class MyGame extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 		//setScreen(new Stage_test(this,1f));
-		
-		setScreen(new Zone1Act1(this));
+		DataManager dm = new DataManager();
+		dm.clearAll();
+		setScreen(new Zone1Act2(this));
 	}
 
 	@Override

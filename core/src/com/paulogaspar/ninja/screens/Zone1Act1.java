@@ -152,6 +152,8 @@ public class Zone1Act1 extends Stage implements Screen{
 		
 		tilemap.update(camera, player,delta, player.master_volume);
 
+		
+		
 		vwidth = Gdx.graphics.getWidth();
 		vheight = Gdx.graphics.getHeight();
 		float wscale = vwidth/800f;
@@ -234,6 +236,11 @@ public class Zone1Act1 extends Stage implements Screen{
 				if(stage_transition_alpha < 0)stage_transition_alpha = 0;
 				main_theme.setVolume((1-stage_transition_alpha)*player.master_volume);
 			}
+			else if(player.clock_playing != -1){
+				main_theme.setVolume(player.master_volume*0.2f);
+			}
+			else 
+				main_theme.setVolume(player.master_volume);
 			
 		}
 	}
@@ -248,7 +255,7 @@ public class Zone1Act1 extends Stage implements Screen{
 		for(Master m:masters)m.draw(batch,font_16);
 		for(Message m:messages)m.draw(batch, font_16, player);
 		
-		player.draw(batch);
+		player.draw(batch,font_16);
 		
 		font_32.draw(batch,""+timer/1000 ,camera.position.x+300,camera.position.y+270);
 		if(stage_transition_alpha > 0){

@@ -5,9 +5,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.PovDirection;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
@@ -27,6 +29,8 @@ public class Ninja {
 	public float spawn_position[];
 	private float teleport_pos[];
 	public float camera_start_pos[];
+	private float a_pos[];
+	
 	private float elapsed_time;
 	private float smoke_elapsed;
 	public float speed_y;
@@ -36,6 +40,7 @@ public class Ninja {
 	public float jump_mod;
 	public float g_mod;
 	public float master_volume;
+	private float death_alpha;
 	
 	boolean facing_right;
 	private boolean stop_time;
@@ -48,12 +53,14 @@ public class Ninja {
 	private boolean r_press;
 	private boolean l_press;
 	public boolean interact_press;
-	
 	private boolean death_anim;
-	private float death_alpha;
+	private boolean show_a;
+	
+	private String curr_a;
 	
 	private long current_slide_sound;
-	private long clock_playing;	
+	public long clock_playing;	
+	private long a_timer;
 	
 	//DELETE REFERENCE
 	public Controller gamepad;
@@ -72,13 +79,18 @@ public class Ninja {
 	private Sound clock_sound;
 	private Sound teleport_sound;
 	private Sound death_sound;
+	public Sound enemy_kill;
+	public Sound star_cannon;
+	public Sound master_hit;
+	public Sound master_many_hit;
 	
 	private Texture gauge_texture;
-	private Texture wallslide_texture;
+	public Texture wallslide_texture;
 	private Texture walk_texture[];
 	private Texture idle_texture[];
 	public Texture smokebomb_texture[];
 	public Texture jump_texture;
+	public Texture white_box;
 	
 	private Particle particlefx;	
 	
@@ -92,10 +104,14 @@ public class Ninja {
 		
 		wallslide_texture = new Texture(Gdx.files.internal("Ninja/wallslide.png"));
 		wallslide = new TextureRegion(wallslide_texture);
+		white_box = new Texture(Gdx.files.internal("Misc/box.jpg"));
 		
 		animation =  new Animation[2];
 
 		walk_texture = new Texture[4];
+		
+		master_hit = Gdx.audio.newSound(Gdx.files.internal("Sfx/Collect_Point_01.mp3"));
+		master_many_hit = Gdx.audio.newSound(Gdx.files.internal("Sfx/Jingle_Win_00.mp3"));
 		
 		TextureRegion[] temp = new TextureRegion[4];
 		for(int i = 1; i < 5; i++){
@@ -105,7 +121,7 @@ public class Ninja {
 		animation[WALK] = new Animation(0.25f,temp);
 		
 		jump_texture = new Texture(Gdx.files.internal("Ninja/jump.png"));
-		
+		star_cannon = Gdx.audio.newSound(Gdx.files.internal("Sfx/Explosion_04.mp3"));
 		idle_texture = new Texture[2];
 		temp = new TextureRegion[2];
 		idle_texture[0] = new Texture(Gdx.files.internal("Ninja/idle1.png"));
@@ -113,6 +129,8 @@ public class Ninja {
 		temp[0] = new TextureRegion(idle_texture[0]);
 		temp[1] = new TextureRegion(idle_texture[1]);
 		animation[IDLE] = new Animation(0.75f,temp);
+		
+		enemy_kill = Gdx.audio.newSound(Gdx.files.internal("Sfx/vosh.mp3"));
 		
 		smokebomb_texture = new Texture[4];
 		temp = new TextureRegion[4];
@@ -141,13 +159,14 @@ public class Ninja {
 		init(x,y);
 		camera_start_pos[0] = camera.position.x;
 		camera_start_pos[1] = camera.position.y;
-		
-		
-		
+	
 		
 	}
 	
 	public void init(float x, float y){
+		a_pos = new float[2];
+		a_pos[0] = 0;
+		a_pos[1] = 0;
 		death_counter = 0;
 		shuriken.init();
 		y_press = false;
@@ -168,7 +187,7 @@ public class Ninja {
 		current_slide_sound = 0;
 		item_counter = 0;
 		
-		clock_playing = 0;
+		clock_playing = -1;
 		teleport_pos[0] = 0;
 		teleport_pos[1] = 0;
 		
@@ -201,6 +220,10 @@ public class Ninja {
 		death_counter = 0;
 		shuriken.init();
 		
+		show_a = false;
+		curr_a = "";
+		a_timer = 0;
+		
 		this.camera = camera;
 		particlefx = new Particle(14, smokebomb_texture[0],2.2f);
 		position = new float[2];
@@ -214,7 +237,7 @@ public class Ninja {
 		current_slide_sound = 0;
 		item_counter = 0;
 		
-		clock_playing = 0;
+		clock_playing = -1;
 		teleport_pos[0] = 0;
 		teleport_pos[1] = 0;
 		
@@ -318,9 +341,8 @@ public class Ninja {
 			if(slow_time){
 				timer += delta*1.75f;
 				if(timer > 5){
-					clock_sound.setLooping(clock_playing, false);
-					clock_sound.stop(clock_playing);
-					clock_playing = 0;
+					clock_sound.stop();
+					clock_playing = -1;
 					
 					time_mod = 1f;
 					current_gauge =9-(int)timer;
@@ -425,14 +447,33 @@ public class Ninja {
 				death_anim = false;
 				death_sound.play(master_volume);
 				clock_sound.stop();
-				clock_playing = 0;
+				clock_playing = -1;
 				teleport_sound.stop();
 				current_slide_sound = 0;
 				slide_sound.stop();
 				int temp = death_counter;
 				init(spawn_position[0],spawn_position[1]);
 				death_counter = temp + 1;
+				if(death_counter > 99){
+					DataManager dm = new DataManager();
+					if(dm.markAchievement("deathlover", this))
+						showAchievement("Death Lover");
+				}
 				camera.translate(camera_start_pos[0] - camera.position.x,camera_start_pos[1] - camera.position.y);
+			}
+		}
+		
+		if(show_a){
+			if(a_pos[1] < 0 && System.currentTimeMillis() - a_timer < 1000){
+				a_pos[1] += delta*100;
+			}
+			if(a_pos[1] > -200 && System.currentTimeMillis() - a_timer > 3000 &&a_pos[1] > -200 && System.currentTimeMillis() - a_timer < 4000 ){
+				a_pos[1] -= delta*100;
+			}
+			if(System.currentTimeMillis() - a_timer > 4000){
+				show_a = false;
+				curr_a = "";
+				a_timer = 0;
 			}
 		}
 		
@@ -447,7 +488,7 @@ public class Ninja {
 			slow_time = true;
 			time_mod = 0.5f;
 			timer = delta;
-			clock_playing = clock_sound.play(0.9f*master_volume);
+			clock_playing = clock_sound.play(master_volume);
 			clock_sound.setLooping(clock_playing,true);
 		}
 		if((gamepad.getButton(4)||gamepad.getButton(5))  && !slow_time && !stop_time && !slide_l && !slide_r && current_gauge == 0){
@@ -510,7 +551,7 @@ public class Ninja {
 			
 			if(map[py][px] < 0){
 				if(speed_y > 1)speed_y = 1;
-				teleport_sound.play(0.5f*master_volume);
+				teleport_sound.play(master_volume);
 				stop_time = true;
 				timer = delta;
 				current_gauge = 4;
@@ -582,16 +623,16 @@ public class Ninja {
 			grounded = false;
 			
 			if(slide_l){
-				speed_x += 1f;
-				position[0] += 4;
+				speed_x += 1.5f;
+				position[0] += 8;
 				slide_l = false;
 				current_slide_sound = 0;
 				slide_sound.stop();
 				
 			}
 			else if(slide_r){
-				speed_x -= 1f;
-				position[0] -= 4;
+				speed_x -= 1.5f;
+				position[0] -= 8;
 				slide_r = false;
 				slide_sound.stop();
 				current_slide_sound = 0;
@@ -612,7 +653,7 @@ public class Ninja {
 			slow_time = true;
 			time_mod = 0.5f;
 			timer = delta;
-			clock_playing = clock_sound.play(0.9f*master_volume);
+			clock_playing = clock_sound.play(master_volume);
 			clock_sound.setLooping(clock_playing,true);
 		}
 		
@@ -668,7 +709,7 @@ public class Ninja {
 			
 			if(map[py][px] < 0){
 				if(speed_y > 1)speed_y = 1;
-				teleport_sound.play(0.5f*master_volume);
+				teleport_sound.play(master_volume);
 				stop_time = true;
 				timer = delta;
 				current_gauge = 4;
@@ -732,33 +773,56 @@ public class Ninja {
 			grounded = false;
 			
 			if(slide_l){
-				speed_x += 1f;
-				position[0] += 4;
+				speed_x += 1.5f;
+				position[0] += 8;
 				slide_l = false;
 				current_slide_sound = 0;
 				slide_sound.stop();
 				
 			}
 			else if(slide_r){
-				speed_x -= 1f;
-				position[0] -= 4;
+				speed_x -= 1.5f;
+				position[0] -= 8;
 				slide_r = false;
 				slide_sound.stop();
 				current_slide_sound = 0;
 			}
 		}
+		
+		
+		
 		shuriken.update_keyboard(this, null, delta, map);
 		
 	}
 	
-	public void die(){
+	public void die(){	
+		DataManager dm = new DataManager();
+		if(dm.markAchievement("firstdeath",this)){
+			showAchievement("First Blood");
+		}
 		if(!death_anim){
 			death_anim = true;
 			death_alpha = 1f;
 		}
 	}
 	
-	public void draw(SpriteBatch batch){
+	public void showAchievement(String a){
+		show_a = true;
+		curr_a = a;
+		a_timer = System.currentTimeMillis();
+		a_pos[0] = 0;
+		a_pos[1] = -50;
+	}
+	
+	
+	public void draw(SpriteBatch batch,BitmapFont font){
+		if(show_a){
+			batch.setColor(new Color(0.8f,0.8f,0.8f,0.9f));
+			batch.draw(white_box,camera.position.x-115,camera.position.y+235-a_pos[1],200,30);
+			batch.setColor(Color.WHITE);
+			font.draw(batch, curr_a, camera.position.x-100, camera.position.y+250-a_pos[1]);
+		}
+		
 		if(!death_anim){
 			if(particles_on){
 				if(particlefx.isActive())particlefx.draw(batch);
@@ -816,7 +880,7 @@ public class Ninja {
 	
 	public Rectangle rect(){
 		if(death_anim) return new Rectangle(-10,-10,0,0);
-		return new Rectangle(position[0]+2,position[1]+2,60,60);
+		return new Rectangle(position[0]+8,position[1]+2,48,54);
 	}
 	
 	public void dispose(){
@@ -829,10 +893,15 @@ public class Ninja {
 		wallslide = null;;
 		gauge = null;
 		
+		master_many_hit.dispose();
+		master_hit.dispose();
+		star_cannon.dispose();
+		enemy_kill.dispose();
 		jump_texture.dispose();
 		shuriken.dispose();
 		particlefx.dispose();
 		jump_sound.dispose();
+		white_box.dispose();
 		slide_sound.dispose();
 		clock_sound.dispose();
 		teleport_sound.dispose();

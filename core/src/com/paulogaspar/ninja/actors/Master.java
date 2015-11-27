@@ -8,22 +8,27 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.paulogaspar.ninja.tools.DataManager;
 
 public class Master {
 	public int current_message;
 	private int dumb_counter;
 	private int current_char;
-	
+	private int bad_counter;
 	
 	private boolean live;
 	private boolean facingR;
 	private boolean white_text;
 	private boolean jump;
+	private boolean killed;
+	private boolean dead;
 	
 	private float position[];
 	private float jump_position;
 	private float acy;
 	private float elapsed;
+	private float rotation;
+	private float scale;
 	
 	private long timer;
 	private long delay;
@@ -35,6 +40,7 @@ public class Master {
 	private boolean last_master;
 	private boolean pressed;
 	
+	
 	//DELETE REFERENCE
 	private Animation idle;
 
@@ -42,10 +48,12 @@ public class Master {
 	public Master(Texture master[],float posX,float posY,String message[],String secret_message,long delay,boolean last){
 		TextureRegion a[] = new TextureRegion[2];
 		jump_position= posY;
+		killed = false;
 		this.secret_message = secret_message;
 		a[0] = new TextureRegion(master[0]);
 		a[1] = new TextureRegion(master[1]);
 		acy = 0;
+		bad_counter = 0;
 		jump = false;
 		idle = new Animation(0.75f,a);
 		white_text = false;
@@ -64,6 +72,9 @@ public class Master {
 		dumb_counter = 0;
 		last_master = last;
 		pressed =false;
+		rotation = 1;
+		scale = 1;
+		dead = false;
 	}
 	public void changeTextColor(){
 		white_text = !white_text;
@@ -72,12 +83,21 @@ public class Master {
 	public void update(float delta,OrthographicCamera camera,Ninja player){
 		int width = Gdx.graphics.getWidth();
 		int height = Gdx.graphics.getHeight();
-		if(!live){
+		
+		if(killed){
+			rotation -= delta*120 - rotation*delta;
+			scale = (2000+rotation)/2000;
+			if(scale <= 0){
+				dead = true;
+			}
+		}
+		
+		if(!live && !killed){
 			if(new Rectangle(position[0],position[1],64,64).overlaps(new Rectangle
 					(camera.position.x-width/2,camera.position.y-height/2,width,height)))
 				live = true;
 		}
-		else{
+		else if(!killed){
 			if(current_message!=-1){
 				if(dumb_counter < 32 && current_char < message[current_message].length() && System.currentTimeMillis() - timer > delay){
 					timer = System.currentTimeMillis();
@@ -138,7 +158,20 @@ public class Master {
 			
 			if(player.shuriken.isThereShuriken() && player.shuriken.hitTest(new Rectangle(position[0]+17,position[1],30,35))){
 				//display_message += " OUCH! ";
+				if(bad_counter != 2){
+					player.master_hit.play(player.master_volume*0.5f);
+					
+				}
+				else{
+					DataManager dm = new DataManager();
+					if(dm.markAchievement("masterkill",player)){
+						player.showAchievement("Master Kill");
+					}
+					bad_counter = 0;
+					killed = true;
+				}
 				acy = 5;
+				bad_counter ++;
 				jump = true;
 				position[1] += 5;
 			}
@@ -156,7 +189,7 @@ public class Master {
 		}
 	}
 	public void draw(SpriteBatch batch,BitmapFont font){
-		if(live){
+		if(live && !killed){
 			if(current_message > -1){
 				if(dumb_counter < 32)
 					font.draw(batch, display_message, position[0]-message[current_message].length()*7f, position[1]+100);
@@ -168,6 +201,12 @@ public class Master {
 				frame.flip(true, false);
 		
 			batch.draw(idle.getKeyFrame(elapsed,true),position[0],position[1],64,64);
+		}
+		if(killed && !dead){
+			TextureRegion frame = idle.getKeyFrame(elapsed,true);
+			if(facingR == frame.isFlipX())
+				frame.flip(true, false);
+			batch.draw(idle.getKeyFrame(elapsed,true),position[0],position[1],32,32,64,64,scale,scale,rotation);
 		}
 	}
 	

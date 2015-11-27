@@ -118,7 +118,6 @@ public class Zone1Act2 extends Stage implements Screen{
 		
 		num_itens = itens.length;
 		
-		
 		gamepad = null;
 		try{
 		gamepad = Controllers.getControllers().get(0);
@@ -140,8 +139,8 @@ public class Zone1Act2 extends Stage implements Screen{
 			messages[1] = new Message(230, 320, "Press Z again to double jump", 8);
 		}
 		
-		goons = new Enemy[1];
-		goons[0] = new Enemy(400, 116, 150,player);
+		goons = new Enemy[0];
+		//goons[0] = new Enemy(60, 306,-1,1,player);
 		
 		
 		String message1[] = {"Now it is time...","for you fat ass to remember...","some pretty basic stuff that...",
@@ -188,7 +187,7 @@ public class Zone1Act2 extends Stage implements Screen{
 			for(Master m:masters)m.update(delta, camera, player);
 			for(Item i:itens)i.update(player, delta,player.master_volume);
 			for(Message m:messages)m.update(delta, player);
-			for(Enemy e:goons)e.update(delta, player);
+			for(Enemy e:goons)e.update(delta, player,tilemap.map);
 			
 			if(!tilemap.edit_mode){
 				float x = 0;
@@ -248,6 +247,11 @@ public class Zone1Act2 extends Stage implements Screen{
 				if(stage_transition_alpha < 0)stage_transition_alpha = 0;
 				main_theme.setVolume((1-stage_transition_alpha)*player.master_volume);
 			}
+			else if(player.clock_playing != -1){
+				main_theme.setVolume(player.master_volume*0.2f);
+			}
+			else 
+				main_theme.setVolume(player.master_volume);
 			
 		}
 	}
@@ -265,7 +269,7 @@ public class Zone1Act2 extends Stage implements Screen{
 		for(Enemy e:goons)e.draw(batch, player);
 
 		
-		player.draw(batch);
+		player.draw(batch,font_16);
 		
 		if(item_counter != 0){
 			batch.setColor(new Color(1, 1, 1, item_alpha));

@@ -8,15 +8,18 @@ public class DataManager {
 	
 	private Preferences cfgprefs;
 	private Preferences stageprefs;
+	private Preferences aprefs;
 	
 	public DataManager(){
 		cfgprefs = Gdx.app.getPreferences("config");
-		stageprefs = Gdx.app.getPreferences("stage");	
+		stageprefs = Gdx.app.getPreferences("stage");
+		aprefs = Gdx.app.getPreferences("achievements");
 	}
 	
 	public void clearAll(){
 		cfgprefs.clear();
 		stageprefs.clear();
+		aprefs.clear();
 	}
 	
 	public void savePoints(String stage_id,int points){
@@ -25,6 +28,20 @@ public class DataManager {
 	}
 	public int getPoints(String stage_id){
 		return stageprefs.getInteger(stage_id, -1);
+	}
+	
+	public boolean getAchievement(String a){
+		return aprefs.getBoolean(a);
+	}
+	
+	public boolean markAchievement(String a,Ninja player){
+		if(!getAchievement(a)){
+			player.master_many_hit.play(player.master_volume*0.8f);
+			aprefs.putBoolean(a, true);
+			aprefs.flush();
+			return true;
+		}
+		return false;
 	}
 	
 	public void changeConfig(Ninja player){

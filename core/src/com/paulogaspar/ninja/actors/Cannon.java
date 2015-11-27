@@ -111,7 +111,7 @@ public class Cannon {
 			if(System.currentTimeMillis() - time > this.timer && !shooting){
 				
 				shooting = true;
-				long i = sound.play(master_volume);
+				long i = sound.play(master_volume*0.2f);
 				float pan = 0;
 				if(position[0] < player.position[0] - 100){
 					pan = (position[0] - camera.position.x)/400;
@@ -192,6 +192,7 @@ public class Cannon {
 				if(player.shuriken.hitTest(new Rectangle(ball_position[0]+27,ball_position[1]+26,10,12)) || ball_position[0] > camera.position.x + 450 || 
 						ball_position[0] < camera.position.x - 450 || ball_position[1] > camera.position.y+350 ||
 						ball_position[1] < camera.position.y-350){
+					player.star_cannon.play(player.master_volume * 0.5f);
 					shooting = false;
 					fx.canCreate(false);
 					time = System.currentTimeMillis();
