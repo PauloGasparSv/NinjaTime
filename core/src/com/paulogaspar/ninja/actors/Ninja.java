@@ -24,6 +24,7 @@ public class Ninja {
 	private int current_gauge;
 	public int item_counter;
 	public int death_counter;
+	private int rotation_wise;
 	
 	public float position[];
 	public float spawn_position[];
@@ -41,7 +42,9 @@ public class Ninja {
 	public float g_mod;
 	public float master_volume;
 	private float death_alpha;
+	private float rotation;
 	
+	private boolean spin;
 	boolean facing_right;
 	private boolean stop_time;
 	private boolean slow_time;
@@ -164,6 +167,8 @@ public class Ninja {
 	}
 	
 	public void init(float x, float y){
+		rotation = 0;
+		spin = false;
 		a_pos = new float[2];
 		a_pos[0] = 0;
 		a_pos[1] = 0;
@@ -196,8 +201,13 @@ public class Ninja {
 		facing_right = true;
 		
 		current = 0;
+		
+		rotation_wise = 0;
+
 		speed_x = 0;
 		speed_y = 0;
+		
+		
 		
 		jump_count = 0;
 		
@@ -306,6 +316,14 @@ public class Ninja {
 			
 			if(map[y][x1] < 0 && map[y][x2] < 0)grounded = false;
 			else grounded = true;
+			
+			if(spin){
+				rotation += rotation_wise*-600*delta;
+				if((rotation_wise < 0 &&rotation > 360)||(rotation_wise > 0 &&rotation < -360)){
+					rotation = 0;
+					spin = false;
+				}					
+			}
 			
 			if(grounded){
 				jump_count = 0;
@@ -618,6 +636,12 @@ public class Ninja {
 			y_press = true;
 			jump_sound.play(0.2f*master_volume);
 			
+			if(jump_count == 1 && speed_y < -5.3){
+				spin = true;
+				if(facing_right)rotation_wise = 1;
+				else rotation_wise = -1;
+			}
+			
 			if(!grounded){jump_count = 2;speed_y = -5.4f*jump_mod;}
 			else {jump_count = 1;speed_y = -8*jump_mod;}
 			grounded = false;
@@ -767,6 +791,11 @@ public class Ninja {
 		
 		if(Gdx.input.isKeyJustPressed(Input.Keys.Z) && jump_count < 2){
 			jump_sound.play(0.2f*master_volume);
+			if(jump_count == 1 && speed_y < -5.3){
+				spin = true;
+				if(facing_right)rotation_wise = 1;
+				else rotation_wise = -1;
+			}
 			
 			if(!grounded){jump_count = 2;speed_y = -5.4f*jump_mod;}
 			else {jump_count = 1;speed_y = -8*jump_mod;}
@@ -841,9 +870,9 @@ public class Ninja {
 				if(facing_right == frame.isFlipX())
 					frame.flip(true, false);
 			}
+					
 			
-			batch.draw(frame,position[0],position[1],64,64);
-			
+			batch.draw(frame,position[0],position[1],32,32,64,64,1,1,rotation);
 			if(slow_time || stop_time)
 				batch.draw(gauge[current_gauge],position[0]+5,position[1]+70);
 			
