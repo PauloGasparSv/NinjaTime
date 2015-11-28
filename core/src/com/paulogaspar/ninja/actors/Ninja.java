@@ -594,7 +594,7 @@ public class Ninja {
 			r_press = true;
 			l_press = false;
 			
-			if(speed_x < 4.6f)speed_x += delta*6.6f*time_mod;
+			if(speed_x < 4.6f)speed_x += delta*6.7f*time_mod;
 			else speed_x = 4.6f;
 			if(speed_x < 0)speed_x += delta*4.6f*time_mod;
 			
@@ -611,7 +611,7 @@ public class Ninja {
 			r_press = false;
 			l_press = true;
 			
-			if(speed_x > -4.6f)speed_x -= delta*6.6f*time_mod;
+			if(speed_x > -4.6f)speed_x -= delta*6.7f*time_mod;
 			else speed_x = -4.6f;
 			if(speed_x > 0)speed_x -= delta*4.6f*time_mod;
 				
@@ -843,14 +843,17 @@ public class Ninja {
 		a_pos[1] = -50;
 	}
 	
-	
-	public void draw(SpriteBatch batch,BitmapFont font){
+	public void drawAch(SpriteBatch batch, BitmapFont font){
 		if(show_a){
 			batch.setColor(new Color(0.8f,0.8f,0.8f,0.9f));
 			batch.draw(white_box,camera.position.x-115,camera.position.y+235-a_pos[1],200,30);
 			batch.setColor(Color.WHITE);
 			font.draw(batch, curr_a, camera.position.x-100, camera.position.y+250-a_pos[1]);
 		}
+	}
+	
+	public void draw(SpriteBatch batch,BitmapFont font){
+		drawAch(batch, font);
 		
 		if(!death_anim){
 			if(particles_on){

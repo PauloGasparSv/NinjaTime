@@ -158,8 +158,8 @@ public class Master {
 			
 			if(player.shuriken.isThereShuriken() && player.shuriken.hitTest(new Rectangle(position[0]+17,position[1],30,35))){
 				//display_message += " OUCH! ";
-				if(bad_counter != 2){
-					player.master_hit.play(player.master_volume*0.5f);
+				if(bad_counter != 9){
+					player.master_hit.play(player.master_volume*0.2f);
 					
 				}
 				else{

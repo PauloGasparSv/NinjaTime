@@ -111,7 +111,7 @@ public class Cannon {
 			if(System.currentTimeMillis() - time > this.timer && !shooting){
 				
 				shooting = true;
-				long i = sound.play(master_volume*0.2f);
+				long i = sound.play(master_volume);
 				float pan = 0;
 				if(position[0] < player.position[0] - 100){
 					pan = (position[0] - camera.position.x)/400;
@@ -122,7 +122,7 @@ public class Cannon {
 				float volume = 1;
 				if(pan > 0.75f || pan < -0.75f)
 					volume = 0.5f;
-				sound.setPan(i, pan, volume*master_volume);
+				sound.setPan(i, pan, volume*master_volume*0.4f);
 			}
 			if(shooting){
 				if(particles_on && !fx.isActive()){

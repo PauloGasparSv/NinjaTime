@@ -12,9 +12,9 @@ public class MyGame extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 		//setScreen(new Stage_test(this,1f));
-		DataManager dm = new DataManager();
-		dm.clearAll();
-		setScreen(new Zone1Act2(this));
+		//DataManager dm = new DataManager();
+		//dm.clearAll();
+		setScreen(new Zone1Act6(this));
 	}
 
 	@Override

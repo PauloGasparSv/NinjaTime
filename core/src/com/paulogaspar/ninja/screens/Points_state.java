@@ -180,6 +180,11 @@ public class Points_state implements Screen{
 						item_sound));
 				break;
 			case 5:
+				game.setScreen(new Zone1Act6(game, player, master_texture, item_texture, cannonD,
+						cannonR, cannonL, cannonBall, ninja_star, font_32, font_16, main_theme, bomb_sound,
+						item_sound));
+				break;
+			case 6:
 				game.setScreen(new Zone1Act1(game, player, master_texture, item_texture, cannonD,
 						cannonR, cannonL, cannonBall, ninja_star, font_32, font_16, main_theme, bomb_sound,
 						item_sound));
@@ -271,6 +276,8 @@ public class Points_state implements Screen{
 			batch.draw(tilemap.tiles[0],camera.position.x - 450, camera.position.y -350, 1200,700);
 			batch.setColor(Color.WHITE);
 		}
+		
+		player.drawAch(batch, font_16);
 		
 		batch.end();
 	}

@@ -23,6 +23,7 @@ public class Enemy {
 	
 	private boolean alive;
 	private boolean active;
+	private boolean stayactive;
 	private boolean facingR;
 	private boolean ground;
 	private boolean show_smoke;
@@ -69,6 +70,7 @@ public class Enemy {
 		show_smoke = false;
 		death_position[0] = -20;
 		death_position[1] = -20;
+		stayactive = false;
 		init();
 	}
 	public void init(){
@@ -98,7 +100,7 @@ public class Enemy {
 				show_smoke = false;
 			}
 		}
-		if(!alive &&  System.currentTimeMillis() - timer > 2000){
+		if(!alive &&  System.currentTimeMillis() - timer > (type == 0?2100:3000)){
 			alive = true;
 			death_position[0] = position[0];
 			death_position[1] = position[1];
@@ -107,7 +109,7 @@ public class Enemy {
 			timer = 0;
 		}
 		if(active){
-			if(!(dx*dx < 620000 && dy*dy < 340000)){
+			if(!(dx*dx < 700000 && dy*dy < 380000) && !stayactive){
 				shooting = false;
 				init();
 			}
@@ -130,15 +132,13 @@ public class Enemy {
 				
 			}
 		}else{
-			if(dx*dx < 620000 && dy*dy < 340000){
+			if(dx*dx < 700000 && dy*dy < 380000 && !stayactive){
 				active = true;
 			}
 		}
 	}
 	
 	public void wall_update(float delta,Ninja player,int [][]map){
-		
-		
 			
 		if(alive && !shooting && System.currentTimeMillis() - shoot_timer > 900){
 			if(player.position[1] > position[1]+60)speedy = 1;
@@ -169,8 +169,8 @@ public class Enemy {
 			if(x > map[0].length-1)x = map[0].length-1;
 			if(y > map.length-1)y = map.length-1;
 			
-			if(map[y][x] >= 0 || star_position[0] > player.position[0] + 800|| star_position[0] < player.position[0] - 800
-					|| star_position[1] > player.position[1] + 600|| star_position[1] < player.position[1] - 600){
+			if(map[y][x] >= 0 || star_position[0] > player.position[0] + 600|| star_position[0] < player.position[0] - 600
+					|| star_position[1] > player.position[1] + 500|| star_position[1] < player.position[1] - 500){
 				shooting = false;
 				star_position[0] = starting_position[0];
 				star_position[1] = starting_position[1];
@@ -194,6 +194,21 @@ public class Enemy {
 		}
 	}
 	
+	public void stayActive(boolean a){
+		stayactive = a;
+	}
+	public boolean isStayActive(){
+		return stayactive;
+	}
+	public void activate(boolean a){
+		active = a;
+	}
+	public boolean isActive(){
+		return active;
+	}
+	public boolean isAlive(){
+		return alive;
+	}
 	public void jump_update(float delta,Ninja player){
 		if(ground){
 			speedy = 350;
