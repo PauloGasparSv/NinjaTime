@@ -60,6 +60,8 @@ public class Ninja {
 	private boolean show_a;
 	private boolean big_head;
 	
+	private boolean speed_code;
+	
 	private String curr_a;
 	
 	private long current_slide_sound;
@@ -114,6 +116,8 @@ public class Ninja {
 		
 		animation =  new Animation[2];
 
+		speed_code = false;
+		
 		walk_texture = new Texture[4];
 		
 		master_hit = Gdx.audio.newSound(Gdx.files.internal("Sfx/Collect_Point_01.mp3"));
@@ -457,12 +461,17 @@ public class Ninja {
 				slide_sound.stop();
 			}
 			
-			
-			if(time_mod == 1)
-				position[0] += speed_x*time_mod;
-			else if(time_mod == 0.5f)
-				position[0] += speed_x*0.75f;
-			
+			if(!speed_code){
+				if(time_mod == 1)
+					position[0] += speed_x*time_mod;
+				else if(time_mod == 0.5f)
+					position[0] += speed_x*0.75f;
+			}else{
+				if(time_mod == 1)
+					position[0] += speed_x*2.5f*time_mod;
+				else if(time_mod == 0.5f)
+					position[0] += speed_x*2.5f*0.75f;
+			}
 			position[1] -= speed_y*time_mod;
 			
 			if(position[0] < 0)
@@ -887,7 +896,7 @@ public class Ninja {
 
 		
 					
-			bigHead();
+			
 			batch.draw(frame,position[0],position[1],32,32,64,64,1,1,rotation);
 			if(big_head){
 				TextureRegion frame2 = (jump_count != 0 || shuriken.isThereShuriken())?head[1]:head[0];
@@ -936,6 +945,9 @@ public class Ninja {
 	
 	public void bigHead(){
 		big_head = true;
+	}
+	public void superSpeed(){
+		speed_code = true;
 	}
 	
 	public Rectangle rect(){

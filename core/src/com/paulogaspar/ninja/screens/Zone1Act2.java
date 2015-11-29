@@ -19,10 +19,13 @@ import com.paulogaspar.ninja.actors.Enemy;
 import com.paulogaspar.ninja.actors.Item;
 import com.paulogaspar.ninja.actors.Master;
 import com.paulogaspar.ninja.actors.Ninja;
+import com.paulogaspar.ninja.tools.KeyCombo;
 import com.paulogaspar.ninja.tools.Message;
 import com.paulogaspar.ninja.tools.TileMap;
 
 public class Zone1Act2 extends Stage implements Screen{
+	
+	private KeyCombo combo;
 	
 	public Zone1Act2(MyGame game) {
 		this.game = game;
@@ -88,6 +91,7 @@ public class Zone1Act2 extends Stage implements Screen{
 		}
 		System.out.println("TOOK ME "+counter+" TIMES TO ACTUALLY PLAY THE MUSIC!");
 		
+		combo = new KeyCombo("udlrudlra");
 		
 		tilemap = new TileMap("zone1_act2.mapa");
 		options = false;
@@ -156,6 +160,8 @@ public class Zone1Act2 extends Stage implements Screen{
 		Gdx.graphics.setTitle("Ninja Time Fps: "+Gdx.graphics.getFramesPerSecond());
 		tilemap.update(camera, player,delta, player.master_volume);
 
+		if(combo.update(gamepad))player.superSpeed();
+		
 		vwidth = Gdx.graphics.getWidth();
 		vheight = Gdx.graphics.getHeight();
 		float wscale = vwidth/800f;
