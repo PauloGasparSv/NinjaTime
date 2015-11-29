@@ -58,6 +58,7 @@ public class Ninja {
 	public boolean interact_press;
 	private boolean death_anim;
 	private boolean show_a;
+	private boolean big_head;
 	
 	private String curr_a;
 	
@@ -74,6 +75,7 @@ public class Ninja {
 	
 	private TextureRegion wallslide;
 	private TextureRegion gauge[];
+	private TextureRegion head[];
 	
 	//DISPOSE	
 	public Shurikens shuriken;
@@ -92,6 +94,7 @@ public class Ninja {
 	private Texture walk_texture[];
 	private Texture idle_texture[];
 	public Texture smokebomb_texture[];
+	private Texture secret[];
 	public Texture jump_texture;
 	public Texture white_box;
 	
@@ -123,6 +126,13 @@ public class Ninja {
 		}
 		animation[WALK] = new Animation(0.25f,temp);
 		
+		secret = new Texture[2];
+		secret[0] = new Texture(Gdx.files.internal("Misc/juliano1.png"));
+		secret[1] = new Texture(Gdx.files.internal("Misc/juliano2.png"));
+		head = new TextureRegion[2];
+		head[0] = new TextureRegion(secret[0]);
+		head[1] = new TextureRegion(secret[1]);
+		
 		jump_texture = new Texture(Gdx.files.internal("Ninja/jump.png"));
 		star_cannon = Gdx.audio.newSound(Gdx.files.internal("Sfx/Explosion_04.mp3"));
 		idle_texture = new Texture[2];
@@ -134,6 +144,7 @@ public class Ninja {
 		animation[IDLE] = new Animation(0.75f,temp);
 		
 		enemy_kill = Gdx.audio.newSound(Gdx.files.internal("Sfx/vosh.mp3"));
+		big_head = false;
 		
 		smokebomb_texture = new Texture[4];
 		temp = new TextureRegion[4];
@@ -318,7 +329,7 @@ public class Ninja {
 			else grounded = true;
 			
 			if(spin){
-				rotation += rotation_wise*-600*delta;
+				rotation += rotation_wise*-600*delta*time_mod;
 				if((rotation_wise < 0 &&rotation > 360)||(rotation_wise > 0 &&rotation < -360)){
 					rotation = 0;
 					spin = false;
@@ -873,9 +884,19 @@ public class Ninja {
 				if(facing_right == frame.isFlipX())
 					frame.flip(true, false);
 			}
+
+		
 					
-			
+			bigHead();
 			batch.draw(frame,position[0],position[1],32,32,64,64,1,1,rotation);
+			if(big_head){
+				TextureRegion frame2 = (jump_count != 0 || shuriken.isThereShuriken())?head[1]:head[0];
+				if((facing_right == frame2.isFlipX() && !slide_l && !slide_r) || (facing_right != frame2.isFlipX() && (slide_l || slide_r))){
+					frame2.flip(true, false);
+				}
+				batch.draw(frame2,position[0]+(facing_right?10:-5),position[1]+15,(facing_right?22:32),15,60,82,1,1,rotation);
+			}
+			
 			if(slow_time || stop_time)
 				batch.draw(gauge[current_gauge],position[0]+5,position[1]+70);
 			
@@ -903,11 +924,18 @@ public class Ninja {
 				if(facing_right == frame.isFlipX())
 					frame.flip(true, false);
 			}
+			
 			batch.setColor(1,1,1,death_alpha);
+			
 			batch.draw(frame,position[0],position[1],64,64);
 			batch.setColor(1,1,1,1);
+			
 		}
 	
+	}
+	
+	public void bigHead(){
+		big_head = true;
 	}
 	
 	public Rectangle rect(){
@@ -938,6 +966,8 @@ public class Ninja {
 		clock_sound.dispose();
 		teleport_sound.dispose();
 		death_sound.dispose();
+		secret[0].dispose();
+		secret[1].dispose();
 		
 		gauge_texture.dispose();
 		wallslide_texture.dispose();

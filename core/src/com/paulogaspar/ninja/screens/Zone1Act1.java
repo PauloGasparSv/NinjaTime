@@ -18,10 +18,13 @@ import com.paulogaspar.ninja.actors.Cannon;
 import com.paulogaspar.ninja.actors.Item;
 import com.paulogaspar.ninja.actors.Master;
 import com.paulogaspar.ninja.actors.Ninja;
+import com.paulogaspar.ninja.tools.KeyCombo;
 import com.paulogaspar.ninja.tools.Message;
 import com.paulogaspar.ninja.tools.TileMap;
 
 public class Zone1Act1 extends Stage implements Screen{
+	
+	private KeyCombo combo;
 	
 	public Zone1Act1(MyGame game) {
 		this.game = game;
@@ -76,6 +79,8 @@ public class Zone1Act1 extends Stage implements Screen{
 		player.init(80, 140,camera);
 		player.camera_start_pos[0] = camera.position.x;
 		player.camera_start_pos[1] = camera.position.y;
+		
+		combo = new KeyCombo("uuddlrlrba");
 		
 		disposed = false;
 		camera.setToOrtho(false,800,600);
@@ -152,7 +157,7 @@ public class Zone1Act1 extends Stage implements Screen{
 		
 		tilemap.update(camera, player,delta, player.master_volume);
 
-		
+		if(combo.update(gamepad))player.bigHead();
 		
 		vwidth = Gdx.graphics.getWidth();
 		vheight = Gdx.graphics.getHeight();
