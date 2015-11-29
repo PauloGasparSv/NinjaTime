@@ -14,7 +14,7 @@ public class MyGame extends Game {
 		//setScreen(new Stage_test(this,1f));
 		//DataManager dm = new DataManager();
 		//dm.clearAll();
-		setScreen(new Zone1Act2(this));
+		setScreen(new Zone1Act1(this));
 	}
 
 	@Override

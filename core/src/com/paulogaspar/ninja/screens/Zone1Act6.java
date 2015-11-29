@@ -150,7 +150,7 @@ public class Zone1Act6 extends Stage implements Screen{
 		
 		tilemap.edit_mode = false;
 
-		goons  = new Enemy[15];
+		goons  = new Enemy[14];
 		goons[0] = new Enemy(680, 130, 100, 0, player);
 		goons[1] = new Enemy(1170, 130, 190, 0, player);
 		goons[2] = new Enemy(1500, 130, -190, 0, player);
@@ -160,13 +160,12 @@ public class Zone1Act6 extends Stage implements Screen{
 		goons[6] = new Enemy(2645, 130, -140, 0, player);
 		goons[7] = new Enemy(2520, 194, 0, 0, player);
 		goons[8] = new Enemy(3580, 325, -190, 1, player);
-		goons[9] = new Enemy(3650, 460, 190, 1, player);
 
 		goons[10] = new Enemy(3040, 258, 0, 0, player);
 		goons[11] = new Enemy(3130, 322, 0, 0, player);
 		goons[12] = new Enemy(3193, 386, 0, 0, player);
 		goons[13] = new Enemy(3323, 514, 0, 0, player);
-		goons[14] = new Enemy(3386, 578, 0, 0, player);
+		goons[9] = new Enemy(3386, 578, 0, 0, player);
 
 		
 		goons[2].stayActive(true);

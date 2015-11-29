@@ -3,6 +3,7 @@ package com.paulogaspar.ninja.tools;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.PovDirection;
 
 public class KeyCombo {
 
@@ -67,6 +68,51 @@ public class KeyCombo {
 				len ++;
 			}			
 		}else{
+			if(c.getPov(0) == PovDirection.north && !up){
+				current += "u";
+				up = true;
+				timer = System.currentTimeMillis();
+				len ++;
+			}
+			else if(up && c.getPov(0) != PovDirection.north)up = false;
+			
+			if(c.getPov(0) == PovDirection.south && !down){
+				current += "d";
+				down = true;
+				len ++;
+				timer = System.currentTimeMillis();
+			}
+			else if(down && c.getPov(0) != PovDirection.south)down = false;
+			
+			if(c.getPov(0) == PovDirection.west&& !left){
+				current += "l";
+				left = true;
+				len ++;
+				timer = System.currentTimeMillis();
+			}
+			else if(left && c.getPov(0) != PovDirection.west)left = false;
+			
+			if(c.getPov(0) == PovDirection.east && !right){
+				current += "r";
+				right = true;
+				timer = System.currentTimeMillis();
+				len ++;
+			}
+			else if(right&&c.getPov(0) != PovDirection.east)right = false;
+			if(!b && c.getButton(3)){
+				timer = System.currentTimeMillis();
+				b = true;
+				current += "b";
+				len ++;
+			}
+			else if(!c.getButton(3) && b)b = false;
+			if(c.getButton(2) && !a){
+				current += "a";
+				a = true;
+				timer = System.currentTimeMillis();
+				len ++;
+			}else if(a && !c.getButton(2))a = false;
+			
 			
 		}
 		return false;
