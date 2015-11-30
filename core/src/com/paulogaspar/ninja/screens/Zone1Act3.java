@@ -18,11 +18,13 @@ import com.paulogaspar.ninja.actors.Cannon;
 import com.paulogaspar.ninja.actors.Item;
 import com.paulogaspar.ninja.actors.Master;
 import com.paulogaspar.ninja.actors.Ninja;
+import com.paulogaspar.ninja.tools.KeyCombo;
 import com.paulogaspar.ninja.tools.Message;
 import com.paulogaspar.ninja.tools.TileMap;
 
 public class Zone1Act3 extends Stage implements Screen{
 		
+	private KeyCombo combo;
 	
 	public Zone1Act3(MyGame game) {
 		this.game = game;
@@ -81,6 +83,7 @@ public class Zone1Act3 extends Stage implements Screen{
 		camera.translate(400-camera.position.x, 590-camera.position.y);
 		player.init(80,600,camera);
 		
+		combo = new KeyCombo("lurdlurdba");
 		int counter = 0;
 		while(!main_theme.isPlaying()){
 			main_theme.play();
@@ -155,7 +158,9 @@ public class Zone1Act3 extends Stage implements Screen{
 	
 		
 	private void update(float delta){
-		
+		if(combo.update(gamepad)){
+			player.edu();
+		}
 		Gdx.graphics.setTitle("Ninja Time Fps: "+Gdx.graphics.getFramesPerSecond());
 		tilemap.update(camera, player,delta, player.master_volume);
 

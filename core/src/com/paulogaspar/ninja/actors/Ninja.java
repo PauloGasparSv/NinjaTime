@@ -59,6 +59,7 @@ public class Ninja {
 	private boolean death_anim;
 	private boolean show_a;
 	private boolean big_head;
+	private boolean edu_head;
 	
 	private boolean speed_code;
 	
@@ -97,6 +98,7 @@ public class Ninja {
 	private Texture idle_texture[];
 	public Texture smokebomb_texture[];
 	private Texture secret[];
+	private Texture secret2;
 	public Texture jump_texture;
 	public Texture white_box;
 	
@@ -113,6 +115,8 @@ public class Ninja {
 		wallslide_texture = new Texture(Gdx.files.internal("Ninja/wallslide.png"));
 		wallslide = new TextureRegion(wallslide_texture);
 		white_box = new Texture(Gdx.files.internal("Misc/box.jpg"));
+		
+		secret2 = new Texture(Gdx.files.internal("Misc/edu.png"));
 		
 		animation =  new Animation[2];
 
@@ -463,7 +467,7 @@ public class Ninja {
 			
 			if(!speed_code){
 				if(time_mod == 1)
-					position[0] += speed_x*time_mod;
+					position[0] += speed_x*time_mod*1.1f;
 				else if(time_mod == 0.5f)
 					position[0] += speed_x*0.75f;
 			}else{
@@ -685,9 +689,11 @@ public class Ninja {
 		if(y_press && !(gamepad.getButton(2) || gamepad.getButton(3)))
 			y_press = false;
 		
-		shuriken.update_controller(this, gamepad, delta, map);
+		if(!edu_head)
+			shuriken.update_controller(this, gamepad, delta, map);
 		
 	}
+	
 	
 	private void keyboardcontrol(float delta,float master_volume,int map[][]){
 		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.UP))interact_press = true;
@@ -905,6 +911,14 @@ public class Ninja {
 				}
 				batch.draw(frame2,position[0]+(facing_right?10:-5),position[1]+15,(facing_right?22:32),15,60,82,1,1,rotation);
 			}
+			if(edu_head){
+				TextureRegion frame2 = new TextureRegion(secret2);
+				if((facing_right != frame2.isFlipX() && !slide_l && !slide_r) || (facing_right == frame2.isFlipX() && (slide_l || slide_r))){
+					frame2.flip(true, false);
+				}
+				batch.draw(frame2,position[0]+(facing_right?10:-5),position[1]+15,(facing_right?22:32),15,60,82,1,1,rotation);
+		
+			}
 			
 			if(slow_time || stop_time)
 				batch.draw(gauge[current_gauge],position[0]+5,position[1]+70);
@@ -942,7 +956,10 @@ public class Ninja {
 		}
 	
 	}
-	
+
+	public void edu(){
+		edu_head  = true;
+	}
 	public void bigHead(){
 		big_head = true;
 	}
@@ -965,6 +982,7 @@ public class Ninja {
 		wallslide = null;;
 		gauge = null;
 		
+		secret2.dispose();
 		master_many_hit.dispose();
 		master_hit.dispose();
 		star_cannon.dispose();
