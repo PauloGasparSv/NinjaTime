@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.paulogaspar.ninja.screens.*;
 import com.paulogaspar.ninja.tools.DataManager;
+import com.paulogaspar.ninja.tools.Key_config;
 
 public class MyGame extends Game {
 	public SpriteBatch batch;
@@ -12,9 +13,11 @@ public class MyGame extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 		//setScreen(new Stage_test(this,1f));
-		//DataManager dm = new DataManager();
+		DataManager dm = new DataManager();
+		dm.setControls();
+		Key_config.start();
 		//dm.clearAll();
-		setScreen(new Zone1Act3(this));
+		setScreen(new Zone1Act1(this));
 	}
 
 	@Override

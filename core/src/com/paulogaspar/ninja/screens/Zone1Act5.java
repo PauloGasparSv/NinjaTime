@@ -251,7 +251,7 @@ public class Zone1Act5 extends Stage implements Screen{
 					main_theme.stop();
 					game.setScreen(new Points_state(game, player, player.master_volume, master_texture, item_texture, cannonD, 
 							cannonR, cannonL, cannonBall, ninja_star, font_32, font_16, main_theme, bomb_sound, 
-							item_sound,player.death_counter,4,item_counter,num_itens,timer,45000 ,true,5,"Keep going"));
+							item_sound,player.death_counter,4,item_counter,num_itens,timer,45000 ,true,5,"Get ready for a hard one!"));
 					minorDipose();
 					changed_screen = true;
 					return;
@@ -274,15 +274,17 @@ public class Zone1Act5 extends Stage implements Screen{
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		
-		tilemap.draw(batch,camera.position.x - 400,camera.position.y-300,camera);
+		if(!set_buttons && !set_keys){	
+			tilemap.draw(batch,camera.position.x - 400,camera.position.y-300,camera);
+			
+			for(Cannon c:cannons)c.draw(batch);
+			for(Master m:masters)m.draw(batch,font_16);
+			for(Item i:itens)i.draw(batch);
+			for(Message m:messages)m.draw(batch, font_16, player);
+			player.draw(batch,font_16);
+		}
 		
-		for(Cannon c:cannons)c.draw(batch);
-		for(Master m:masters)m.draw(batch,font_16);
-		for(Item i:itens)i.draw(batch);
-		for(Message m:messages)m.draw(batch, font_16, player);
-
 		
-		player.draw(batch,font_16);
 	
 			
 		

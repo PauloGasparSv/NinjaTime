@@ -1,7 +1,6 @@
 package com.paulogaspar.ninja.actors;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.PovDirection;
@@ -14,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.paulogaspar.ninja.tools.DataManager;
+import com.paulogaspar.ninja.tools.Key_config;
 import com.paulogaspar.ninja.tools.Particle;
 
 public class Ninja {
@@ -102,7 +102,7 @@ public class Ninja {
 	public Texture jump_texture;
 	public Texture white_box;
 	
-	private Particle particlefx;	
+	private Particle particlefx;
 	
 	public Ninja(OrthographicCamera camera,float x, float y){
 		DataManager dm = new DataManager();
@@ -243,6 +243,10 @@ public class Ninja {
 		g_mod = 1;
 		slide_l = false;
 		slide_r = false;
+	}
+	
+	public void setButtons(Controller gamepad){
+		
 	}
 	
 	public void init(float x, float y,OrthographicCamera camera){
@@ -415,7 +419,7 @@ public class Ninja {
 					}
 					else{
 						speed_x = 0f;
-						if(speed_y > 0.5f){
+						if(!spin && speed_y > 0.5f){
 							slide_r = true;
 							slide_l = false;
 							jump_count = 0;
@@ -435,7 +439,7 @@ public class Ninja {
 					}
 					else{
 						speed_x = 0f;
-						if(speed_y > 0.5f){
+						if(!spin && speed_y > 0.5f){
 							slide_l = true;
 							slide_r = false;
 							jump_count = 0;
@@ -523,17 +527,17 @@ public class Ninja {
 	
 	private void gamepadcontrol(float delta,float master_volume,int [][]map){
 		
-		if(gamepad.getPov(0) == PovDirection.north || gamepad.getButton(0) || gamepad.getButton(1))interact_press = true;
+		if(gamepad.getPov(0) == PovDirection.north )interact_press = true;
 		else interact_press = false;
-		
-		if((gamepad.getButton(6)||gamepad.getButton(7)) && !slow_time && !stop_time){
+
+		if(gamepad.getButton(Key_config.TIME_BUTTON) && !slow_time && !stop_time){
 			slow_time = true;
 			time_mod = 0.5f;
 			timer = delta;
 			clock_playing = clock_sound.play(master_volume);
 			clock_sound.setLooping(clock_playing,true);
 		}
-		if((gamepad.getButton(4)||gamepad.getButton(5))  && !slow_time && !stop_time && !slide_l && !slide_r && current_gauge == 0){
+		if(gamepad.getButton(Key_config.TELEPORT_BUTTON)  && !slow_time && !stop_time && !slide_l && !slide_r && current_gauge == 0){
 			pressing_c = true;
 						
 			float tx = position[0]+32;
@@ -656,7 +660,7 @@ public class Ninja {
 			}
 		}
 		
-		if((gamepad.getButton(2)) && !y_press && jump_count < 2){
+		if((gamepad.getButton(Key_config.JUMP_BUTTON)) && !y_press && jump_count < 2){
 			y_press = true;
 			jump_sound.play(0.2f*master_volume);
 			
@@ -686,7 +690,7 @@ public class Ninja {
 				current_slide_sound = 0;
 			}
 		}
-		if(y_press && !(gamepad.getButton(2) || gamepad.getButton(3)))
+		if(y_press && !(gamepad.getButton(Key_config.JUMP_BUTTON)))
 			y_press = false;
 		
 		if(!edu_head)
@@ -696,10 +700,10 @@ public class Ninja {
 	
 	
 	private void keyboardcontrol(float delta,float master_volume,int map[][]){
-		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.UP))interact_press = true;
+		if(Gdx.input.isKeyPressed(Key_config.INTERACT_KEY))interact_press = true;
 		else interact_press = false;
 		
-		if(Gdx.input.isKeyJustPressed(Input.Keys.S) && !slow_time && !stop_time){
+		if(Gdx.input.isKeyJustPressed(Key_config.TIME_KEY) && !slow_time && !stop_time){
 			slow_time = true;
 			time_mod = 0.5f;
 			timer = delta;
@@ -707,23 +711,23 @@ public class Ninja {
 			clock_sound.setLooping(clock_playing,true);
 		}
 		
-		if(Gdx.input.isKeyPressed(Input.Keys.C) && !slow_time && !stop_time && !slide_l && !slide_r && current_gauge == 0){
+		if(Gdx.input.isKeyPressed(Key_config.TELEPORT_KEY) && !slow_time && !stop_time && !slide_l && !slide_r && current_gauge == 0){
 			pressing_c = true;
 						
 			float tx = position[0];
 			tx += facing_right ? 128:-128;
 			
 			float ty = position[1]+12;
-			if(Gdx.input.isKeyPressed(Input.Keys.UP)){
+			if(Gdx.input.isKeyPressed(Key_config.UP_KEY)){
 				ty += 64;
-				if(!Gdx.input.isKeyPressed(Input.Keys.LEFT) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+				if(!Gdx.input.isKeyPressed(Key_config.LEFT_KEY) && !Gdx.input.isKeyPressed(Key_config.RIGHT_KEY)){
 					ty+=64;
 					tx = position[0];
 				}
 			}
-			if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+			if(Gdx.input.isKeyPressed(Key_config.DOWN_KEY)){
 				ty -= 26;
-				if(!Gdx.input.isKeyPressed(Input.Keys.LEFT) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+				if(!Gdx.input.isKeyPressed(Key_config.LEFT_KEY) && !Gdx.input.isKeyPressed(Key_config.RIGHT_KEY)){
 					tx = position[0];
 					ty-=64;
 				}
@@ -778,7 +782,7 @@ public class Ninja {
 			
 		}
 		
-		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+		if(Gdx.input.isKeyPressed(Key_config.RIGHT_KEY)){
 			facing_right = true;
 			slide_l = false;
 			
@@ -792,7 +796,7 @@ public class Ninja {
 			}
 			
 		}
-		else if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+		else if(Gdx.input.isKeyPressed(Key_config.LEFT_KEY)){
 			facing_right = false;
 			slide_r = false;
 			
@@ -815,7 +819,7 @@ public class Ninja {
 			}
 		}
 		
-		if(Gdx.input.isKeyJustPressed(Input.Keys.Z) && jump_count < 2){
+		if(Gdx.input.isKeyJustPressed(Key_config.JUMP_KEY) && jump_count < 2){
 			jump_sound.play(0.2f*master_volume);
 			if(jump_count == 1 && speed_y < -5.3){
 				spin = true;

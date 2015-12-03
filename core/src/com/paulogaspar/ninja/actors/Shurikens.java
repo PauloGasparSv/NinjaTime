@@ -1,16 +1,19 @@
 package com.paulogaspar.ninja.actors;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.paulogaspar.ninja.tools.KeyCombo;
+import com.paulogaspar.ninja.tools.Key_config;
 
 public class Shurikens {
 	public Texture spr_star;
+	
+	private KeyCombo hadouken;
 	
 	private float position[][];
 	private int speedx[];
@@ -33,6 +36,7 @@ public class Shurikens {
 		speedy = new int[3];
 		rotation = new float[3];
 		hit = Gdx.audio.newSound(Gdx.files.internal("Sfx/Hit_00.mp3"));
+		hadouken = new KeyCombo("6");
 		init();
 	}
 	
@@ -59,6 +63,50 @@ public class Shurikens {
 	}
 	
 	private void update(Ninja player, Controller gamepad, float delta, int map[][]){
+		hadouken.update(gamepad);
+		if(current == 0 && (hadouken.atLeastContains("d1ra") || hadouken.atLeastContains("d1la"))){
+			if((player.facing_right && !player.slide_r) || player.slide_l){
+				position[sentinela][0] = player.position[0] + 32;
+				position[sentinela][1] = player.position[1] + 12;	
+				speedx[sentinela] = 1;
+				speedy[sentinela] = 0;
+				current++;
+				for(int i = 0; i < 3; i++)if(speedx[i] == 0)sentinela = i;
+				position[sentinela][0] = player.position[0] + 32;
+				position[sentinela][1] = player.position[1] + 12;	
+				speedx[sentinela] = 1;
+				speedy[sentinela] = 1;
+				current++;
+				for(int i = 0; i < 3; i++)if(speedx[i] == 0)sentinela = i;
+				position[sentinela][0] = player.position[0] + 32;
+				position[sentinela][1] = player.position[1] + 12;	
+				speedx[sentinela] = 1;
+				speedy[sentinela] = -1;
+				current++;
+				for(int i = 0; i < 3; i++)if(speedx[i] == 0)sentinela = i;
+			}
+			else{
+				position[sentinela][0] = player.position[0] + 12;
+				position[sentinela][1] = player.position[1] + 12;	
+				speedx[sentinela] = -1;
+				speedy[sentinela] = 0;
+				current++;
+				for(int i = 0; i < 3; i++)if(speedx[i] == 0)sentinela = i;
+				position[sentinela][0] = player.position[0] + 12;
+				position[sentinela][1] = player.position[1] + 12;	
+				speedx[sentinela] = -1;
+				speedy[sentinela] = 1;
+				current++;
+				for(int i = 0; i < 3; i++)if(speedx[i] == 0)sentinela = i;
+				position[sentinela][0] = player.position[0] + 12;
+				position[sentinela][1] = player.position[1] + 12;
+				speedx[sentinela] = -1;
+				speedy[sentinela] = -1;
+				current++;
+				for(int i = 0; i < 3; i++)if(speedx[i] == 0)sentinela = i;
+			}
+			
+		}
 		for(int i = 0; i < 3; i++){
 			if(speedx[i] != 0){
 				position[i][0] += speedx[i] * delta*400 * player.time_mod;
@@ -101,34 +149,35 @@ public class Shurikens {
 	
 
 	public void update_keyboard(Ninja player, Controller gamepad, float delta, int map[][]){
-		if(Gdx.input.isKeyPressed(Input.Keys.X) && !pressing){
+		update(player,gamepad,delta,map);	
+		if(Gdx.input.isKeyPressed(Key_config.SHOOT_KEY) && !pressing){
 			pressing = true;
 			timer = System.currentTimeMillis();
 			if(current < 3){
 				if((player.facing_right && !player.slide_r) || player.slide_l){
 					position[sentinela][0] = player.position[0] + 32;
 					speedx[sentinela] = 1;
-					if(Gdx.input.isKeyPressed(Input.Keys.UP))speedy[sentinela] = 1;
-					if(Gdx.input.isKeyPressed(Input.Keys.DOWN))speedy[sentinela] = -1;
+					if(Gdx.input.isKeyPressed(Key_config.UP_KEY))speedy[sentinela] = 1;
+					if(Gdx.input.isKeyPressed(Key_config.DOWN_KEY))speedy[sentinela] = -1;
 				}
 				else{
 					position[sentinela][0] = player.position[0]+12;
 					speedx[sentinela] = -1;
-					if(Gdx.input.isKeyPressed(Input.Keys.UP))speedy[sentinela] = 1;
-					if(Gdx.input.isKeyPressed(Input.Keys.DOWN))speedy[sentinela] = -1;
+					if(Gdx.input.isKeyPressed(Key_config.UP_KEY))speedy[sentinela] = 1;
+					if(Gdx.input.isKeyPressed(Key_config.DOWN_KEY))speedy[sentinela] = -1;
 				}
 				position[sentinela][1] = player.position[1] + 12;	
 				current++;
 				for(int i = 0; i < 3; i++)if(speedx[i] == 0)sentinela = i;
 			}
 		}
-		if(pressing&& !Gdx.input.isKeyPressed(Input.Keys.X)  && System.currentTimeMillis() - timer > 400)pressing = false;
-		update(player,gamepad,delta,map);	
+		if(pressing&& !Gdx.input.isKeyPressed(Key_config.SHOOT_KEY)  && System.currentTimeMillis() - timer > 400)pressing = false;
 	}
 	
 	
 	public void update_controller(Ninja player, Controller gamepad, float delta, int map[][]){
-		if(gamepad.getButton(3) && !pressing){
+		update(player,gamepad,delta,map);	
+		if(gamepad.getButton(Key_config.SHOOT_BUTTON) && !pressing){
 			pressing = true;
 			timer = System.currentTimeMillis();
 			if(current < 3){
@@ -149,8 +198,7 @@ public class Shurikens {
 				for(int i = 0; i < 3; i++)if(speedx[i] == 0)sentinela = i;
 			}
 		}
-		if(pressing&& !gamepad.getButton(3) && System.currentTimeMillis() - timer > 400)pressing = false;
-		update(player,gamepad,delta,map);	
+		if(pressing&& !gamepad.getButton(Key_config.SHOOT_BUTTON) && System.currentTimeMillis() - timer > 400)pressing = false;
 	}
 	
 	

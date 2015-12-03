@@ -100,7 +100,7 @@ public class Enemy {
 				show_smoke = false;
 			}
 		}
-		if(!alive &&  System.currentTimeMillis() - timer > (type == 0?2100:3000)){
+		if(!alive &&  System.currentTimeMillis() - timer > (type == 0?2600:3500)){
 			alive = true;
 			death_position[0] = position[0];
 			death_position[1] = position[1];

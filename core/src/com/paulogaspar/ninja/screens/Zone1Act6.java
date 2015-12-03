@@ -291,7 +291,7 @@ public class Zone1Act6 extends Stage implements Screen{
 					main_theme.stop();
 					game.setScreen(new Points_state(game, player, player.master_volume, master_texture, item_texture, cannonD, 
 							cannonR, cannonL, cannonBall, ninja_star, font_32, font_16, main_theme, bomb_sound, 
-							item_sound,player.death_counter,4,item_counter,num_itens,timer,80000 ,true,6,"Keep going"));
+							item_sound,player.death_counter,4,item_counter,num_itens,timer,80000 ,true,6,"Almost there!"));
 					minorDipose();
 					changed_screen = true;
 					return;
@@ -315,19 +315,16 @@ public class Zone1Act6 extends Stage implements Screen{
 		batch.begin();
 		
 		
-		
-		tilemap.draw(batch,camera.position.x - 400,camera.position.y-300,camera);
-		
-		for(Cannon c:cannons)c.draw(batch);
-		for(Master m:masters)m.draw(batch,font_16);
-		for(Item i:itens)i.draw(batch);
-		for(Message m:messages)m.draw(batch, font_16, player);
-		for(Enemy e:goons)e.draw(batch, player);
-		
-		
-		
-		player.draw(batch,font_16);
-	
+		if(!set_buttons && !set_keys){
+			tilemap.draw(batch,camera.position.x - 400,camera.position.y-300,camera);
+			
+			for(Cannon c:cannons)c.draw(batch);
+			for(Master m:masters)m.draw(batch,font_16);
+			for(Item i:itens)i.draw(batch);
+			for(Message m:messages)m.draw(batch, font_16, player);
+			for(Enemy e:goons)e.draw(batch, player);			
+			player.draw(batch,font_16);
+		}
 			
 		if(player.position[0] > 2800){
 			batch.setColor(new Color(1,1,1,0.97f));

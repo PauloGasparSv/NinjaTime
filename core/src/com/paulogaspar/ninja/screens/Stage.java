@@ -20,6 +20,7 @@ import com.paulogaspar.ninja.actors.Enemy;
 import com.paulogaspar.ninja.actors.Item;
 import com.paulogaspar.ninja.actors.Master;
 import com.paulogaspar.ninja.actors.Ninja;
+import com.paulogaspar.ninja.tools.Key_config;
 import com.paulogaspar.ninja.tools.Message;
 import com.paulogaspar.ninja.tools.TileMap;
 
@@ -48,6 +49,8 @@ public class Stage {
 	protected boolean ok_press;
 	protected boolean cancel_press;
 	protected boolean disposed;
+	protected boolean set_keys = false;
+	protected boolean set_buttons = false;
 
 	protected OrthographicCamera camera;
 	
@@ -100,18 +103,22 @@ public class Stage {
 	
 
 	protected void updateMenuKeyboard(float delta){
-		if((Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) && !volume){
+		if(!set_keys && (Gdx.input.isKeyJustPressed(Key_config.MENU_KEY)) && !volume){
 			options = !options;
 		}
 		if(options){
-			if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN) || Gdx.input.isKeyJustPressed(Input.Keys.S))
-				current_option++;
-			if(Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W))
-				current_option--;
-			if(current_option > 4) current_option = 4;
-			if(current_option < 0) current_option = 0;
-			if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) ||
-					Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
+			if(set_keys){
+				if(Key_config.setKey(batch, font_16, player.white_box,gamepad,camera))set_keys = false;
+			}
+			else{
+				if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN) || Gdx.input.isKeyJustPressed(Input.Keys.PAGE_DOWN))
+					current_option++;
+				if(Gdx.input.isKeyJustPressed(Input.Keys.UP) ||  Gdx.input.isKeyJustPressed(Input.Keys.PAGE_UP))
+					current_option--;
+				if(current_option > 5) current_option = 5;
+				if(current_option < 0) current_option = 0;
+			}
+			if(!set_keys && Gdx.input.isKeyJustPressed(Key_config.JUMP_KEY)){
 				if(current_option == 0){
 					options = false;
 					current_option = 0;					
@@ -123,14 +130,17 @@ public class Stage {
 					current_option = 0;					
 				}
 				if(current_option == 2){
-					player.particles_on = !player.particles_on;
+					set_keys = true;
 				}
 				if(current_option == 3){
+					player.particles_on = !player.particles_on;
+				}
+				if(current_option == 4){
 					options = false;
 					current_option = 0;	
 					init();
 				}
-				if(current_option == 4){
+				if(current_option == 5){
 					int a = JOptionPane.showConfirmDialog(null, "Are you sure you wanna quit?");
 					if(a == JOptionPane.YES_OPTION){
 						Gdx.app.exit();
@@ -143,18 +153,17 @@ public class Stage {
 			
 		}
 		if(volume){
-			if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+			if(Gdx.input.isKeyJustPressed(Key_config.MENU_KEY) || Gdx.input.isKeyJustPressed(Key_config.SHOOT_KEY)){
 				volume = false;
 				options = true;
 			}
-			if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN) || Gdx.input.isKeyJustPressed(Input.Keys.S))
+			if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)||  Gdx.input.isKeyJustPressed(Input.Keys.PAGE_DOWN))
 				current_option++;
-			if(Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W))
+			if(Gdx.input.isKeyJustPressed(Input.Keys.UP)|| Gdx.input.isKeyJustPressed(Input.Keys.PAGE_UP))
 				current_option--;
 			if(current_option > 2) current_option = 2;
 			if(current_option < 0) current_option = 0;
-			if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE) ||
-					Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT)){
+			if(Gdx.input.isKeyJustPressed(Key_config.JUMP_KEY)){
 				if(current_option == 1){
 					player.master_volume = 0;
 					main_theme.setVolume(player.master_volume);
@@ -167,9 +176,9 @@ public class Stage {
 				}			
 			}
 			if(current_option == 0){
-				if((Gdx.input.isKeyPressed(Input.Keys.RIGHT)||Gdx.input.isKeyPressed(Input.Keys.D))&&player.master_volume <= 1)
+				if((Gdx.input.isKeyPressed(Input.Keys.RIGHT))&&player.master_volume <= 1)
 					player.master_volume += delta * 0.4f;
-				if((Gdx.input.isKeyPressed(Input.Keys.LEFT)||Gdx.input.isKeyPressed(Input.Keys.A))&&player.master_volume >= 0)
+				if((Gdx.input.isKeyPressed(Input.Keys.LEFT))&&player.master_volume >= 0)
 					player.master_volume -= delta * 0.4f;
 				if(player.master_volume > 1) player.master_volume = 1;
 				if(player.master_volume < 0) player.master_volume = 0;
@@ -181,39 +190,43 @@ public class Stage {
 	}
 	
 	protected void updateMenuGamepad(float delta){
-		if((gamepad.getButton(9) || gamepad.getButton(8)) && !volume && !menu_press){
+		if((gamepad.getButton(Key_config.MENU_BUTTON)) && !volume && !menu_press && !set_buttons){
 			options = !options;
 			menu_press = true;
 		}
-		if(menu_press && !gamepad.getButton(9) && !gamepad.getButton(8))menu_press = false;
-		if(options || volume){
-			if(ok_press && !gamepad.getButton(2))ok_press = false;
+		if(menu_press && !gamepad.getButton(Key_config.MENU_BUTTON))menu_press = false;
+		if(!set_buttons && (options || volume)){
+			if(ok_press && !gamepad.getButton(Key_config.JUMP_BUTTON))ok_press = false;
 			if(up_press &&!(gamepad.getAxis(1) < -0.2f || gamepad.getPov(0) == PovDirection.north)) up_press = false;
 			if(down_press &&!(gamepad.getAxis(1) > 0.2f || gamepad.getPov(0) == PovDirection.south)) down_press = false;
-			if(!gamepad.getButton(3) && cancel_press)cancel_press = false;
+			if(!gamepad.getButton(Key_config.SHOOT_BUTTON) && cancel_press)cancel_press = false;
 		}
 		if(options){
-			
-			if((gamepad.getAxis(1) > 0.2f || gamepad.getPov(0) == PovDirection.south) && !down_press){
-				current_option++;
-				down_press = true;
+			if(set_buttons){
+				if(Key_config.setButton(batch, font_16, player.white_box,gamepad,camera))set_buttons = false;
 			}
-			else if((gamepad.getAxis(1) < -0.2f || gamepad.getPov(0) == PovDirection.north) && !up_press){
-				current_option--;
-				up_press = true;
+			else{
+				if((gamepad.getAxis(1) > 0.2f || gamepad.getPov(0) == PovDirection.south) && !down_press){
+					current_option++;
+					down_press = true;
+				}
+				else if((gamepad.getAxis(1) < -0.2f || gamepad.getPov(0) == PovDirection.north) && !up_press){
+					current_option--;
+					up_press = true;
+				}
 			}
 			
 			
 			
-			if(current_option > 4) current_option = 4;
+			if(current_option > 5) current_option = 5;
 			if(current_option < 0) current_option = 0;
 			
-			if(gamepad.getButton(2) && !ok_press){
+			if(!set_buttons && gamepad.getButton(Key_config.JUMP_BUTTON) && !ok_press){
 				ok_press = true;
+				
 				if(current_option == 0){
 					options = false;
 					current_option = 0;					
-
 				}
 				if(current_option == 1){
 					options = false;
@@ -221,14 +234,17 @@ public class Stage {
 					current_option = 0;					
 				}
 				if(current_option == 2){
-					player.particles_on = !player.particles_on;
+					set_buttons = true;
 				}
 				if(current_option == 3){
+					player.particles_on = !player.particles_on;
+				}
+				if(current_option == 4){
 					options = false;
 					current_option = 0;	
 					init();
 				}
-				if(current_option == 4){
+				if(current_option == 5){
 					int a = JOptionPane.showConfirmDialog(null, "Are you sure you wanna quit?");
 					if(a == JOptionPane.YES_OPTION){
 						Gdx.app.exit();
@@ -241,7 +257,7 @@ public class Stage {
 			
 		}
 		else if(volume){
-			if(gamepad.getButton(3) && !cancel_press){
+			if(gamepad.getButton(Key_config.SHOOT_BUTTON) && !cancel_press){
 				volume = false;
 				options = true;
 				cancel_press = true;
@@ -259,7 +275,7 @@ public class Stage {
 			if(current_option > 2) current_option = 2;
 			if(current_option < 0) current_option = 0;
 			
-			if(gamepad.getButton(2) && !ok_press){
+			if(gamepad.getButton(Key_config.JUMP_BUTTON) && !ok_press){
 				ok_press = true;
 				if(current_option == 1){
 					player.master_volume = 0;
@@ -294,28 +310,39 @@ public class Stage {
 			batch.setColor(Color.WHITE);
 		}
 		if(options){
-			font_32.draw(batch, "Options", camera.position.x-110, camera.position.y+215);
-			batch.draw(ninja_star,camera.position.x - 260, camera.position.y+40-68*current_option,64,64);
-			if(current_option == 0)
-				font_32.draw(batch,"RESUME",camera.position.x-96, camera.position.y+100);
-			else
-				font_16.draw(batch,"RESUME",camera.position.x-50, camera.position.y+75);
-			if(current_option == 1)
-				font_32.draw(batch,"VOLUME",camera.position.x-100, camera.position.y+35);
-			else
-				font_16.draw(batch,"VOLUME",camera.position.x-45, camera.position.y+5);
-			if(current_option == 2)
-				font_32.draw(batch,"PARTICLES "+(player.particles_on?"ON":"OFF"),camera.position.x-180, camera.position.y-35);
-			else
-				font_16.draw(batch,"PARTICLES "+(player.particles_on?"ON":"OFF"),camera.position.x-100, camera.position.y-60);
-			if(current_option == 3)
-				font_32.draw(batch,"RETRY STAGE",camera.position.x-165, camera.position.y-100);
-			else
-				font_16.draw(batch,"RETRY STAGE",camera.position.x-95, camera.position.y-125);	
-			if(current_option == 4)
-				font_32.draw(batch,"QUIT GAME",camera.position.x-140, camera.position.y-175);
-			else
-				font_16.draw(batch,"QUIT GAME",camera.position.x-70, camera.position.y-200);	
+			if(!set_buttons && !set_keys){
+				font_32.draw(batch, "Options", camera.position.x-110, camera.position.y+250);
+				batch.draw(ninja_star,camera.position.x - 260, camera.position.y+88-54*current_option,64,64);
+				
+				if(current_option == 0)
+					font_32.draw(batch,"RESUME",camera.position.x-96, camera.position.y+150);
+				else
+					font_16.draw(batch,"RESUME",camera.position.x-50, camera.position.y+125); 
+				if(current_option == 1)
+					font_32.draw(batch,"VOLUME",camera.position.x-100, camera.position.y+95);
+				else
+					font_16.draw(batch,"VOLUME",camera.position.x-45, camera.position.y+70);
+				//55 AND 60
+				if(current_option == 2)
+					font_32.draw(batch,"SET CONTROLS",camera.position.x-180, camera.position.y+40);
+				else
+					font_16.draw(batch,"SET CONTROLS",camera.position.x-100, camera.position.y+15);
+				
+				
+				if(current_option == 3)
+					font_32.draw(batch,"PARTICLES "+(player.particles_on?"ON":"OFF"),camera.position.x-180, camera.position.y-15);
+				else
+					font_16.draw(batch,"PARTICLES "+(player.particles_on?"ON":"OFF"),camera.position.x-100	, camera.position.y-40);
+				
+				if(current_option == 4)
+					font_32.draw(batch,"RETRY STAGE",camera.position.x-165, camera.position.y-70);
+				else
+					font_16.draw(batch,"RETRY STAGE",camera.position.x-95, camera.position.y-95);	
+				if(current_option == 5)
+					font_32.draw(batch,"QUIT GAME",camera.position.x-140, camera.position.y-125);
+				else
+					font_16.draw(batch,"QUIT GAME",camera.position.x-70, camera.position.y-150);
+			}
 		}
 		if(volume){
 			font_32.draw(batch, "Volume", camera.position.x-98, camera.position.y+215);

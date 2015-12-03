@@ -18,6 +18,7 @@ import com.paulogaspar.ninja.actors.Cannon;
 import com.paulogaspar.ninja.actors.Item;
 import com.paulogaspar.ninja.actors.Master;
 import com.paulogaspar.ninja.actors.Ninja;
+import com.paulogaspar.ninja.tools.DataManager;
 import com.paulogaspar.ninja.tools.KeyCombo;
 import com.paulogaspar.ninja.tools.Message;
 import com.paulogaspar.ninja.tools.TileMap;
@@ -157,7 +158,11 @@ public class Zone1Act1 extends Stage implements Screen{
 		
 		tilemap.update(camera, player,delta, player.master_volume);
 
-		if(combo.update(gamepad))player.bigHead();
+		if(combo.update(gamepad)){
+			player.bigHead();
+			DataManager dm = new DataManager();
+			if(dm.markAchievement("juca", player))player.showAchievement("Such Beauty");
+		}
 		
 		vwidth = Gdx.graphics.getWidth();
 		vheight = Gdx.graphics.getHeight();
@@ -168,7 +173,7 @@ public class Zone1Act1 extends Stage implements Screen{
 			options = false;
 			volume = false;
 		}
-		else if(!next_stage){ 
+		if(!tilemap.edit_mode && !next_stage){ 
 			if(gamepad == null)updateMenuKeyboard(delta);
 			else updateMenuGamepad(delta);
 		}
@@ -254,13 +259,15 @@ public class Zone1Act1 extends Stage implements Screen{
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		
-		tilemap.draw(batch,camera.position.x - 400,camera.position.y-300,camera);
-		for(Cannon c:cannons)c.draw(batch);
-		for(Item i:itens)i.draw(batch);
-		for(Master m:masters)m.draw(batch,font_16);
-		for(Message m:messages)m.draw(batch, font_16, player);
-		
-		player.draw(batch,font_16);
+		if(!set_buttons && !set_keys){
+			tilemap.draw(batch,camera.position.x - 400,camera.position.y-300,camera);
+			for(Cannon c:cannons)c.draw(batch);
+			for(Item i:itens)i.draw(batch);
+			for(Master m:masters)m.draw(batch,font_16);
+			for(Message m:messages)m.draw(batch, font_16, player);
+			player.draw(batch,font_16);
+		}
+	
 		
 		font_32.draw(batch,""+timer/1000 ,camera.position.x+300,camera.position.y+270);
 		if(stage_transition_alpha > 0){
