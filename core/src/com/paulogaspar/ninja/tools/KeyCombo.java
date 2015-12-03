@@ -43,7 +43,6 @@ public class KeyCombo {
 	}
 	
 	public boolean update(Controller c){
-		System.out.println(current);
 		if(done && playonce)return true;
 		if(timer != -1 && System.currentTimeMillis() - timer > 500){
 			current = "";

@@ -17,7 +17,7 @@ public class MyGame extends Game {
 		dm.setControls();
 		Key_config.start();
 		//dm.clearAll();
-		setScreen(new Zone1Act1(this));
+		setScreen(new Zone1Act7(this));
 	}
 
 	@Override

@@ -89,6 +89,7 @@ public class DataManager {
 		cfgprefs.clear();
 		stageprefs.clear();
 		aprefs.clear();
+		keys.clear();
 	}
 	
 	public void savePoints(String stage_id,int points){

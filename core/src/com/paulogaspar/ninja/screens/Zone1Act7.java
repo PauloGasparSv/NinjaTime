@@ -1,7 +1,6 @@
 package com.paulogaspar.ninja.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -14,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.paulogaspar.ninja.MyGame;
+import com.paulogaspar.ninja.actors.Boss;
 import com.paulogaspar.ninja.actors.Cannon;
 import com.paulogaspar.ninja.actors.Enemy;
 import com.paulogaspar.ninja.actors.Item;
@@ -24,7 +24,7 @@ import com.paulogaspar.ninja.tools.TileMap;
 
 public class Zone1Act7 extends Stage implements Screen{
 	
-	
+	private Boss boss;	
 	public Zone1Act7(MyGame game) {
 		this.game = game;
 		camera = new OrthographicCamera();
@@ -45,16 +45,25 @@ public class Zone1Act7 extends Stage implements Screen{
 		item_texture[3] = new Texture(Gdx.files.internal("Riceball/sushi4.png"));
 		font_32 = new BitmapFont(Gdx.files.internal("Misc/font.fnt"),Gdx.files.internal("Misc/font.png"),false);
 		font_16 = new BitmapFont(Gdx.files.internal("Misc/font_16.fnt"),Gdx.files.internal("Misc/font_16.png"),false);
-		main_theme = Gdx.audio.newMusic(Gdx.files.internal("Music/main_theme.mp3"));
 		bomb_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/8bit_bomb_explosion.wav"));
 		item_sound = Gdx.audio.newSound(Gdx.files.internal("Sfx/Collect_Point_00.mp3"));
 		player = new Ninja(camera,80,400);
+		
+		boss = new Boss(master_texture,player,bomb_sound);
+	
+		main_theme =Gdx.audio.newMusic(Gdx.files.internal("Music/boss.mp3"));
+
+		while(!main_theme.isPlaying()){
+			main_theme.play();
+			main_theme.setVolume(player.master_volume);
+			main_theme.setLooping(true);	
+		}
 		init();
 		player.camera_start_pos[0] = camera.position.x;
 		player.camera_start_pos[1] = camera.position.y;
 	}
 	public Zone1Act7(MyGame game,Ninja player,Texture master_texture[], Texture item_texture[],Texture cannonD,Texture cannonR,
-			Texture cannonL,Texture cannonBall, Texture ninja_star, BitmapFont font_32,BitmapFont font_16, Music main_theme,
+			Texture cannonL,Texture cannonBall, Texture ninja_star, BitmapFont font_32,BitmapFont font_16, Music m,
 			Sound bomb_sound,Sound item_sound){
 		batch = new SpriteBatch();
 		camera = new OrthographicCamera();
@@ -70,10 +79,31 @@ public class Zone1Act7 extends Stage implements Screen{
 		this.item_texture = item_texture;
 		this.font_32 = font_32;
 		this.font_16 = font_16;
-		this.main_theme = main_theme;
-	
 		this.bomb_sound = bomb_sound;
 		this.item_sound = item_sound;
+		
+		while(m.isPlaying()){
+			m.stop();
+		}		
+		m.dispose();
+
+		try{
+		main_theme = Gdx.audio.newMusic(Gdx.files.internal("Music/boss.mp3"));
+		}catch(Exception e){
+			System.out.println("Could not load boss theme");
+		}
+		
+		while(!main_theme.isPlaying()){
+			try{
+				main_theme.play();
+				main_theme.setVolume(player.master_volume);
+				main_theme.setLooping(true);
+			}
+			catch(Exception e){
+				main_theme.stop();
+			}
+		}
+		boss = new Boss(master_texture,player,bomb_sound);
 		init();
 	}
 	public void init(){
@@ -81,16 +111,7 @@ public class Zone1Act7 extends Stage implements Screen{
 		//camera.translate(3360-camera.position.x,300-camera.position.y);
 		player.init(960,390,camera);
 		
-		int counter = 0;
-		while(!main_theme.isPlaying()){
-			main_theme.play();
-			main_theme.setVolume(player.master_volume);
-			main_theme.setLooping(true);	
-			counter ++;
-		}
-		System.out.println("TOOK ME "+counter+" TIMES TO ACTUALLY PLAY THE MUSIC!");
 
-		
 		tilemap = new TileMap("zone1_act7.mapa");
 		options = false;
 		volume = false;
@@ -140,11 +161,8 @@ public class Zone1Act7 extends Stage implements Screen{
 		
 		
 		messages = new Message[0];
-		if(player.gamepad != null){
 		
-		}
-		else{
-		}
+		boss.init(player);
 		
 		start_time = System.currentTimeMillis();
 		timer = 0;
@@ -155,26 +173,13 @@ public class Zone1Act7 extends Stage implements Screen{
 		
 		Gdx.graphics.setTitle("Ninja Time Fps: "+Gdx.graphics.getFramesPerSecond());
 		tilemap.update(camera, player,delta, player.master_volume);
-
-		vwidth = Gdx.graphics.getWidth();
-		vheight = Gdx.graphics.getHeight();
-		float wscale = vwidth/800f;
-		float hscale = vheight/600f;
-		
-		if(item_counter != player.item_counter){
-			item_counter = player.item_counter;
-			item_alpha = 0;
-		}
-		if(item_counter != 0 && item_alpha < 1){
-			item_alpha += delta * 0.5f;
-		}
-		
+	
 		
 		if(tilemap.edit_mode){
 			options = false;
 			volume = false;
 		}
-		else if(!next_stage){
+		else if(!next_stage && boss.alive){
 			if(gamepad == null)updateMenuKeyboard(delta);
 			else updateMenuGamepad(delta);
 		}
@@ -184,20 +189,9 @@ public class Zone1Act7 extends Stage implements Screen{
 			start_time =System.currentTimeMillis();
 			
 			if(can_control){
+				boss.update(delta, player, tilemap.map,main_theme);
 				player.update(delta,tilemap.map,tilemap.width,tilemap.height);		
-				for(Cannon c:cannons)c.update(delta, camera,player,player.master_volume);
-				for(Master m:masters)m.update(delta, camera, player);
-				for(Item i:itens)i.update(player, delta,player.master_volume);
 				for(Message m:messages)m.update(delta, player);
-				for(int e = 0; e < goons.length; e++){
-					goons[e].update(delta, player, tilemap.map);
-					if(goons[e].isAlive()){
-						if(e == 1 && goons[e].isActive())goons[2].activate(true);
-						if(e == 1 && !goons[e].isActive()) goons[2].activate(false);
-						if(e == 5 && goons[e].isActive()){goons[6].activate(true);goons[7].activate(true);}
-						if(e == 5 && !goons[e].isActive()){ goons[6].activate(false);goons[7].activate(false);}
-					}
-				}
 			}
 			if(!tilemap.edit_mode){
 				float x = 0;
@@ -220,12 +214,7 @@ public class Zone1Act7 extends Stage implements Screen{
 				camera.translate(x,y);
 				if(x!= 0 || y != 0)camera.update();
 			}
-			else{
-				if(Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE)){
-					player.position[0] = (Gdx.input.getX() + camera.position.x*wscale - vwidth/2)/wscale;
-					player.position[1] = ((vheight-Gdx.input.getY()) + camera.position.y*hscale - vheight/2)/hscale;
-				}		
-			}
+			
 			if(player.rect().overlaps(next_stage_door)){
 			
 				if(player.interact_press&&!next_stage){
@@ -241,7 +230,6 @@ public class Zone1Act7 extends Stage implements Screen{
 				if(camera.zoom > 0.04)camera.zoom += transition_angle*0.05f;
 				camera.rotate(transition_angle*0.75f);
 				camera.update();
-				main_theme.setVolume((1-stage_transition_alpha)*player.master_volume);
 				if(camera.zoom < 0)camera.zoom = 0.01f;
 				if(stage_transition_alpha > 1){
 					stage_transition_alpha = 1;
@@ -262,7 +250,7 @@ public class Zone1Act7 extends Stage implements Screen{
 			else if(player.clock_playing != -1){
 				main_theme.setVolume(player.master_volume*0.2f);
 			}
-			else 
+			else if(boss.alive) 
 				main_theme.setVolume(player.master_volume);
 		}
 	}
@@ -274,63 +262,18 @@ public class Zone1Act7 extends Stage implements Screen{
 		
 		if(!set_buttons && !set_keys){
 			tilemap.draw(batch,camera.position.x - 400,camera.position.y-300,camera);
-			
-			for(Cannon c:cannons)c.draw(batch);
-			for(Master m:masters)m.draw(batch,font_16);
-			for(Item i:itens)i.draw(batch);
 			for(Message m:messages)m.draw(batch, font_16, player);
-			for(Enemy e:goons)e.draw(batch, player);
 			player.draw(batch,font_16);
-
-		}		
-	
-			
-		if(player.position[0] > 2800){
-			batch.setColor(new Color(1,1,1,0.97f));
-			batch.draw(tilemap.tiles[30],3392,128,64,64);
-			batch.draw(tilemap.tiles[30],3456,128,64,64);
-			batch.draw(tilemap.tiles[5],3520,128,64,64);
-			batch.setColor(Color.WHITE);
-		}
-		if(item_counter == 0){
-			batch.setColor(Color.BLACK);
-			batch.draw(item_texture[0],camera.position.x - 360,camera.position.y+180,96,96,0,0,32,32,false,false);
-			batch.draw(item_texture[0],camera.position.x - 310,camera.position.y+180,96,96,0,0,32,32,false,false);
-			batch.draw(item_texture[0],camera.position.x - 260,camera.position.y+180,96,96,0,0,32,32,false,false);
-			batch.setColor(Color.WHITE);
-		}
-		else if(item_counter == 1){
-			batch.setColor(new Color(1, 1, 1, item_alpha));
-			batch.draw(item_texture[0],camera.position.x - 360,camera.position.y+180,96,96,0,0,32,32,false,false);
-			batch.setColor(Color.BLACK);
-			batch.draw(item_texture[0],camera.position.x - 260,camera.position.y+180,96,96,0,0,32,32,false,false);
-			batch.draw(item_texture[0],camera.position.x - 310,camera.position.y+180,96,96,0,0,32,32,false,false);
-			batch.setColor(Color.WHITE);
+			boss.draw(batch,font_16,player,camera);
 		}	
-		else if(item_counter == 2) {
-			batch.draw(item_texture[0],camera.position.x - 360,camera.position.y+180,96,96,0,0,32,32,false,false);
-			batch.setColor(new Color(1, 1, 1, item_alpha));
-			batch.draw(item_texture[0],camera.position.x - 310,camera.position.y+180,96,96,0,0,32,32,false,false);
-			batch.setColor(Color.BLACK);
-			batch.draw(item_texture[0],camera.position.x - 260,camera.position.y+180,96,96,0,0,32,32,false,false);
-			batch.setColor(Color.WHITE);
-		}else{
-			batch.draw(item_texture[0],camera.position.x - 360,camera.position.y+180,96,96,0,0,32,32,false,false);
-			batch.draw(item_texture[0],camera.position.x - 310,camera.position.y+180,96,96,0,0,32,32,false,false);
-			batch.setColor(new Color(1, 1, 1, item_alpha));
-			batch.draw(item_texture[0],camera.position.x - 260,camera.position.y+180,96,96,0,0,32,32,false,false);
-			batch.setColor(Color.WHITE);
-		}
-		
-		
-		font_32.draw(batch,""+timer/1000 ,camera.position.x+300,camera.position.y+270);
-
 		
 		if(stage_transition_alpha > 0){
 			batch.setColor(new Color(0,0,0,stage_transition_alpha));
 			batch.draw(tilemap.tiles[0],camera.position.x - 450, camera.position.y -350, 1200,700);
 			batch.setColor(Color.WHITE);
 		}
+		
+		
 		
 		drawMenu();
 
@@ -340,7 +283,7 @@ public class Zone1Act7 extends Stage implements Screen{
 
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0.51f, 0.54f, 0.4f, 1);
+		Gdx.gl.glClearColor(0.41f, 0.44f, 0.3f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		update(delta);
@@ -348,6 +291,20 @@ public class Zone1Act7 extends Stage implements Screen{
 		draw();
 	}
 	
+	@Override
+	public void minorDipose(){
+		game = null;
+		batch.dispose();
+		tilemap.dispose();
+		if(cannons!=null)
+		for(int i = 0; i < cannons.length; i++)cannons[i].dispose();
+		if(masters!=null)
+		for(int i = 0; i < masters.length; i++)masters[i].dispose();
+		if(itens!=null)
+		for(int i = 0; i < itens.length; i++)itens[i].dispose();
+		if(goons!=null)
+		for(int i = 0; i < goons.length;i++)goons[i].dispose();
+	}
 	
 	@Override
 	public void dispose() {
