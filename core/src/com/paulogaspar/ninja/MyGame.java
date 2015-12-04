@@ -2,7 +2,7 @@ package com.paulogaspar.ninja;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.paulogaspar.ninja.screens.*;
+import com.paulogaspar.ninja.screens.Main_menu;
 import com.paulogaspar.ninja.tools.DataManager;
 import com.paulogaspar.ninja.tools.Key_config;
 
@@ -16,8 +16,8 @@ public class MyGame extends Game {
 		DataManager dm = new DataManager();
 		dm.setControls();
 		Key_config.start();
-		//dm.clearAll();
-		setScreen(new Zone1Act1(this));
+	
+		setScreen(new Main_menu(this));
 	}
 
 	@Override

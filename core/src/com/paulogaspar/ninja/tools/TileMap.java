@@ -166,7 +166,7 @@ public class TileMap {
 	}
 	
 	public void edit(OrthographicCamera camera,float delta){
-		if(edit_mode){	
+		if(edit_mode){
 			camera.update();
 			if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && camera.position.x - 400 < width-808)
 				camera.translate(350*delta, 0);
@@ -290,6 +290,40 @@ public class TileMap {
 		int end_y = (int)(camera_y+670)/64;
 		if(end_y > num_tiles[0]-1)
 			end_y = num_tiles[0]-1;
+		
+		for(int line = begin_y; line <= end_y; line++){
+			for(int col = begin_x; col <= end_x; col++){
+				if(map[line][col] >= 0)
+					batch.draw(tiles[map[line][col]], col*64,line*64,64,64);
+				else if(map[line][col] == -2)
+					batch.draw(tiles[23], col*64,line*64,64,64);
+				else if(map[line][col] == -3)
+					batch.draw(tiles[21], col*64,line*64,64,64);
+				else if(map[line][col] == -4)
+					batch.draw(tiles[20], col*64,line*64,64,64);
+				else if(map[line][col] == -5)
+					batch.draw(tiles[19], col*64,line*64,64,64);
+				else if(map[line][col] == -6)
+					batch.draw(tiles[25], col*64,line*64,64,64);
+				else if(map[line][col] == -7)
+					batch.draw(tiles[26], col*64,line*64,64,64);
+				else if(map[line][col] == -8)
+					batch.draw(tiles[16], col*64,line*64,64,64);
+				else if(map[line][col] == -9)
+					batch.draw(tiles[17], col*64,line*64,64,64);
+				else if(map[line][col] == -10)
+					batch.draw(tiles[22], col*64,line*64,64,64);
+			}
+		}
+		
+
+	}
+	
+	public void drawNoPlayer(SpriteBatch batch,float camera_x,float camera_y,OrthographicCamera camera){
+		int begin_x = 0;
+		int end_x = num_tiles[1]-1;
+		int begin_y = 0;
+		int end_y = num_tiles[0]-1;
 		
 		for(int line = begin_y; line <= end_y; line++){
 			for(int col = begin_x; col <= end_x; col++){

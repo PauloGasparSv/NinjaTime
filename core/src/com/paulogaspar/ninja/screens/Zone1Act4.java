@@ -163,7 +163,7 @@ public class Zone1Act4 extends Stage implements Screen{
 	
 		
 	private void update(float delta){
-		
+		System.out.println(camera.position);
 		Gdx.graphics.setTitle("Ninja Time Fps: "+Gdx.graphics.getFramesPerSecond());
 		tilemap.update(camera, player,delta, player.master_volume);
 
