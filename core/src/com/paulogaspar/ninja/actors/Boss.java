@@ -168,7 +168,7 @@ public class Boss {
 				blink = 0.55f;
 				scale -= 2*0.012f;
 				int l = life;
-				life -= System.currentTimeMillis()%2 == 1?30:2;
+				life -= System.currentTimeMillis()%2 == 1?3:2;
 				System.out.println("DAMAGE: "+(l- life));
 				got_hit.play(player.master_volume);
 			}
