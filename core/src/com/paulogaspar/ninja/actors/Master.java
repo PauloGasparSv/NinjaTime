@@ -14,7 +14,7 @@ public class Master {
 	public int current_message;
 	private int dumb_counter;
 	private int current_char;
-	private int bad_counter;
+	public int bad_counter;
 	
 	private boolean live;
 	private boolean facingR;

@@ -90,6 +90,10 @@ public class DataManager {
 		stageprefs.clear();
 		aprefs.clear();
 		keys.clear();
+		cfgprefs.flush();
+		stageprefs.flush();
+		aprefs.flush();
+		keys.flush();
 	}
 	
 	public void savePoints(String stage_id,int points){

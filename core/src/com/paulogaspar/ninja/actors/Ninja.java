@@ -60,6 +60,7 @@ public class Ninja {
 	private boolean show_a;
 	private boolean big_head;
 	private boolean edu_head;
+	public boolean hat;
 	
 	private boolean speed_code;
 	
@@ -101,11 +102,13 @@ public class Ninja {
 	private Texture secret2;
 	public Texture jump_texture;
 	public Texture white_box;
-	
+	private Texture hat_texture;
+	private TextureRegion hat_region;
 	private Particle particlefx;
 	
 	public Ninja(OrthographicCamera camera,float x, float y){
 		DataManager dm = new DataManager();
+		hat = dm.getAchievement("hat");
 		particles_on = dm.getParticles();
 		master_volume = dm.getVolume();		
 		this.camera = camera;
@@ -117,6 +120,9 @@ public class Ninja {
 		white_box = new Texture(Gdx.files.internal("Misc/box.jpg"));
 		
 		secret2 = new Texture(Gdx.files.internal("Misc/edu.png"));
+		
+		hat_texture = new Texture(Gdx.files.internal("Sensei/spr_boss_2.png"));
+		hat_region = new TextureRegion(hat_texture,0,0,16,9);
 		
 		animation =  new Animation[2];
 
@@ -923,6 +929,27 @@ public class Ninja {
 				batch.draw(frame2,position[0]+(facing_right?10:-5),position[1]+15,(facing_right?22:32),15,60,82,1,1,rotation);
 		
 			}
+			if(hat){
+				if(edu_head){
+					if(slide_r)batch.draw(hat_region,position[0]-16,position[1]+70,102,56);
+					else if(slide_l)batch.draw(hat_region,position[0]-22,position[1]+70,102,56);
+					else if(facing_right)batch.draw(hat_region,position[0]-10,position[1]+70+(spin?70:0),102,56);
+					else batch.draw(hat_region,position[0]-31,position[1]+70+(spin?70:0),102,56);
+				}
+				
+				else if(big_head){
+					if(slide_r)batch.draw(hat_region,position[0]-16,position[1]+70,96,48);
+					else if(slide_l)batch.draw(hat_region,position[0]-22,position[1]+70,96,48);
+					else if(facing_right)batch.draw(hat_region,position[0]-10,position[1]+70+(spin?70:0),96,48);
+					else batch.draw(hat_region,position[0]-28,position[1]+70+(spin?70:0),96,48);
+				}
+				else{
+					if(slide_r)batch.draw(hat_region,position[0]+8,position[1]+39,64,32);
+					else if(slide_l)batch.draw(hat_region,position[0]-12,position[1]+39,64,32);
+					else if(facing_right)batch.draw(hat_region,position[0],position[1]+38+(spin?38:0),64,32);
+					else batch.draw(hat_region,position[0]-4,position[1]+38+(spin?38:0),64,32);
+				}
+			}
 			
 			if(slow_time || stop_time)
 				batch.draw(gauge[current_gauge],position[0]+5,position[1]+70);
@@ -986,6 +1013,8 @@ public class Ninja {
 		wallslide = null;;
 		gauge = null;
 		
+		hat_region = null;
+		hat_texture.dispose();
 		secret2.dispose();
 		master_many_hit.dispose();
 		master_hit.dispose();
