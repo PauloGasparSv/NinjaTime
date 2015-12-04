@@ -82,14 +82,11 @@ public class Zone1Act2 extends Stage implements Screen{
 		disposed = false;
 		//camera.translate(0, 0);
 		
-		int counter = 0;
 		while(!main_theme.isPlaying()){
 			main_theme.play();
 			main_theme.setVolume(player.master_volume);
 			main_theme.setLooping(true);	
-			counter ++;
 		}
-		System.out.println("TOOK ME "+counter+" TIMES TO ACTUALLY PLAY THE MUSIC!");
 		
 		combo = new KeyCombo("udlrudlra");
 		

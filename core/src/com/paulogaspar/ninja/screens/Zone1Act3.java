@@ -85,16 +85,12 @@ public class Zone1Act3 extends Stage implements Screen{
 		player.init(80,600,camera);
 		
 		combo = new KeyCombo("lurdlurdba");
-		int counter = 0;
 		while(!main_theme.isPlaying()){
 			main_theme.play();
 			main_theme.setVolume(player.master_volume);
 			main_theme.setLooping(true);	
-			counter ++;
 		}
-		System.out.println("TOOK ME "+counter+" TIMES TO ACTUALLY PLAY THE MUSIC!");
 		
-		System.out.println(main_theme.isPlaying());
 		
 		tilemap = new TileMap("zone1_act3.mapa");
 		options = false;

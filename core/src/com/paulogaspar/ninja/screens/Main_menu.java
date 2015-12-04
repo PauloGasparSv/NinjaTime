@@ -20,6 +20,7 @@ import com.paulogaspar.ninja.actors.Enemy;
 import com.paulogaspar.ninja.actors.Item;
 import com.paulogaspar.ninja.actors.Master;
 import com.paulogaspar.ninja.actors.Ninja;
+import com.paulogaspar.ninja.tools.DataManager;
 import com.paulogaspar.ninja.tools.Key_config;
 import com.paulogaspar.ninja.tools.Message;
 import com.paulogaspar.ninja.tools.TileMap;
@@ -120,7 +121,10 @@ public class Main_menu extends Stage implements Screen{
 		
 	private void update(float delta){
 		tilemap.update(camera, player,delta, player.master_volume);
-		
+		if(Gdx.input.isKeyJustPressed(Input.Keys.F1)){
+			DataManager dm = new DataManager();
+			dm.clearAll();
+		}
 		if(!next_stage){
 			
 			if(gamepad == null){
@@ -245,7 +249,6 @@ public class Main_menu extends Stage implements Screen{
 	}
 	private void draw(){
 		if(disposed)return;
-		System.out.println(camera.position);
 
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();

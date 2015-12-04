@@ -78,14 +78,11 @@ public class Zone1Act4 extends Stage implements Screen{
 		camera.translate(400-camera.position.x,300-camera.position.y);
 		player.init(80,400,camera);
 
-		int counter = 0;
 		while(!main_theme.isPlaying()){
 			main_theme.play();
 			main_theme.setVolume(player.master_volume);
 			main_theme.setLooping(true);	
-			counter ++;
 		}
-		System.out.println("TOOK ME "+counter+" TIMES TO ACTUALLY PLAY THE MUSIC!");
 
 		
 		tilemap = new TileMap("zone1_act4.mapa");
@@ -163,7 +160,6 @@ public class Zone1Act4 extends Stage implements Screen{
 	
 		
 	private void update(float delta){
-		System.out.println(camera.position);
 		Gdx.graphics.setTitle("Ninja Time Fps: "+Gdx.graphics.getFramesPerSecond());
 		tilemap.update(camera, player,delta, player.master_volume);
 

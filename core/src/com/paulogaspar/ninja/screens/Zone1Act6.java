@@ -83,14 +83,11 @@ public class Zone1Act6 extends Stage implements Screen{
 		//camera.translate(3360-camera.position.x,300-camera.position.y);
 		player.init(360,180,camera);
 
-		int counter = 0;
 		while(!main_theme.isPlaying()){
 			main_theme.play();
 			main_theme.setVolume(player.master_volume);
 			main_theme.setLooping(true);	
-			counter ++;
 		}
-		System.out.println("TOOK ME "+counter+" TIMES TO ACTUALLY PLAY THE MUSIC!");
 
 		
 		tilemap = new TileMap("zone1_act6.mapa");

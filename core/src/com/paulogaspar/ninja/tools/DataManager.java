@@ -27,7 +27,6 @@ public class DataManager {
 			Key_config.TIME_BUTTON = keys.getInteger("timeb");
 			Key_config.MENU_BUTTON = keys.getInteger("menub");
 			
-			System.out.print("LOADED BUTTONS");
 			
 			Key_config.SHOOT_KEY =  keys.getInteger("shootk");
 			Key_config.JUMP_KEY =  keys.getInteger("jumpk");
@@ -81,7 +80,6 @@ public class DataManager {
 		keys.putInteger("interactk",Key_config.INTERACT_KEY);
 		
 		keys.flush();
-		System.out.println("SAVED BUTTONS");
 		
 	}
 	

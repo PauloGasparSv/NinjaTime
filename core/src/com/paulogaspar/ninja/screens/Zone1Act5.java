@@ -77,14 +77,11 @@ public class Zone1Act5 extends Stage implements Screen{
 		camera.translate(400-camera.position.x,650-camera.position.y);
 		player.init(450,640,camera);
 
-		int counter = 0;
 		while(!main_theme.isPlaying()){
 			main_theme.play();
 			main_theme.setVolume(player.master_volume);
 			main_theme.setLooping(true);	
-			counter ++;
 		}
-		System.out.println("TOOK ME "+counter+" TIMES TO ACTUALLY PLAY THE MUSIC!");
 
 		
 		tilemap = new TileMap("zone1_act5.mapa");

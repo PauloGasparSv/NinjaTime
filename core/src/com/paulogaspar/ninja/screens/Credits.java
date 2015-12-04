@@ -62,7 +62,6 @@ public class Credits extends Stage implements Screen{
 		try{
 			main_theme = Gdx.audio.newMusic(Gdx.files.internal("Music/end.mp3"));
 		}catch(Exception e){
-			System.out.println("Could not load boss theme");
 		}
 		
 		while(!main_theme.isPlaying()){

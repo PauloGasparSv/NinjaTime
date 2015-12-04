@@ -207,10 +207,6 @@ public class TileMap {
 			if(mx > num_tiles[1]-1)mx = num_tiles[1] -1;
 			if(my > num_tiles[0]-1)my = num_tiles[0] -1;
 			
-			if(Gdx.input.isKeyJustPressed(Input.Keys.TAB)){
-				System.out.println("X: "+x+" Y: "+y );
-				System.out.println("Tile x: "+(int)mx+" Tile y: "+(int)my+" Tile: "+map[my][mx]);
-			}
 			if(Gdx.input.isKeyJustPressed(Input.Keys.C))
 				ribbon = map[(int)my][(int)mx];
 			if(Gdx.input.isKeyPressed(Input.Keys.V))
